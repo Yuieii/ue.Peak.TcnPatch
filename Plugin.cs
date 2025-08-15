@@ -56,24 +56,40 @@ public class Plugin : BaseUnityPlugin
                 Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
                 Logger.LogInfo($"網址：{url}");
 
+                var client = new HttpClient();
+                
                 try
                 {
-                    var client = new HttpClient();
-                    var stream = await client.GetStreamAsync(url);
+                    var content = await client.GetStringAsync(url);
+
+                    try
+                    {
+                        _ = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
+                        Logger.LogWarning(e);
+                        return;
+                    }
 
                     var dir = Path.Combine(Paths.ConfigPath, ModGuid);
                     Directory.CreateDirectory(dir);
 
                     var path = Path.Combine(dir, TcnTranslationFileName);
                     await using var targetStream = File.OpenWrite(path);
-                    await stream.CopyToAsync(targetStream);
+                    await using var writer = new StreamWriter(targetStream);
+                    await writer.WriteAsync(content);
+                    
                     Logger.LogInfo("翻譯資料下載完成！");
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("翻譯資料下載失敗！");
+                    Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
                     Logger.LogError(e);
                 }
+                
+                client.Dispose();
             });
         }
         
