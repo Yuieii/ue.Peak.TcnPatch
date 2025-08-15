@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
@@ -20,7 +21,7 @@ public class Plugin : BaseUnityPlugin
 {
     private const string ModGuid = "ue.Peak.TcnPatch";
     private const string ModName = "ue.Peak.TcnPatch";
-    private const string ModVersion = "1.0.0";
+    private const string ModVersion = "1.0.1";
     
     internal static new ManualLogSource Logger;
         
@@ -28,6 +29,7 @@ public class Plugin : BaseUnityPlugin
 
     private const string TcnTranslationFileName = "TcnTranslations.json";
 
+    private static SemaphoreSlim _lock = new(1, 1);
     private static bool _writtenMainTable;
 
     private static PluginConfig _config;
@@ -77,10 +79,19 @@ public class Plugin : BaseUnityPlugin
                     Directory.CreateDirectory(dir);
 
                     var path = Path.Combine(dir, TcnTranslationFileName);
-                    await using var targetStream = File.OpenWrite(path);
-                    await using var writer = new StreamWriter(targetStream);
-                    await writer.WriteAsync(content);
+                    await _lock.WaitAsync();
                     
+                    try
+                    {
+                        await using var targetStream = File.Open(path, FileMode.Truncate, FileAccess.Write);
+                        await using var writer = new StreamWriter(targetStream);
+                        await writer.WriteAsync(content);
+                    }
+                    finally
+                    {
+                        _lock.Release();
+                    }
+
                     Logger.LogInfo("翻譯資料下載完成！");
                 }
                 catch (Exception e)
@@ -121,8 +132,17 @@ public class Plugin : BaseUnityPlugin
 
     private static void UpdateMainTable()
     {
-        if (!TryReadFromJson(TcnTranslationFileName, out Dictionary<string, string> table, () => []))
-            return;
+        Dictionary<string, string> table;
+        _lock.Wait();
+        try
+        {
+            if (!TryReadFromJson(TcnTranslationFileName, out table, () => []))
+                return;
+        }
+        finally
+        {
+            _lock.Release();
+        }
 
         var mainTable = LocalizedText.mainTable;
         var keys = mainTable.Keys.ToHashSet();
