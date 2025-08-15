@@ -204,11 +204,6 @@ public class Plugin : BaseUnityPlugin
         // We just need to add one more choice to the localized choices.
         var val = Enum.GetNames(typeof(LanguageSetting.Language)).Length;
         var choice = LocalizedText.GetText("CURRENT_LANGUAGE", __instance.ValueToLanguage(val));
-
-        if (__result.Contains(choice))
-        {
-        }
-        
         Logger.LogInfo("正在修正設定中的語言清單...");
         __result.Add(choice);
     }
@@ -239,7 +234,7 @@ public class Plugin : BaseUnityPlugin
             p => p.Value[(int) LocalizedText.Language.SimplifiedChinese]
         );
         
-        var json = JsonConvert.SerializeObject(table);
+        var json = JsonConvert.SerializeObject(table, Formatting.Indented);
         
         File.WriteAllText(path, json);
     }
