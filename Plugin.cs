@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -13,9 +15,13 @@ using Zorro.Settings;
 
 namespace ue.Peak.TcnPatch;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(ModGuid, ModName, ModVersion)]
 public class Plugin : BaseUnityPlugin
 {
+    private const string ModGuid = "ue.Peak.TcnPatch";
+    private const string ModName = "ue.Peak.TcnPatch";
+    private const string ModVersion = "1.0.0";
+    
     internal static new ManualLogSource Logger;
         
     private static FileSystemWatcher _watcher;
@@ -23,13 +29,16 @@ public class Plugin : BaseUnityPlugin
     private const string TcnTranslationFileName = "TcnTranslations.json";
 
     private static bool _writtenMainTable;
+
+    private static PluginConfig _config;
     
     private void Awake()
     {
         // Plugin startup logic
+        _config = new PluginConfig(Config);
         Logger = base.Logger;
 
-        Logger.LogInfo($"正在載入模組 - {MyPluginInfo.PLUGIN_GUID}");
+        Logger.LogInfo($"正在載入模組 - {ModGuid}");
         
         if (Enum.GetValues(typeof(LanguageSetting.Language))
             .Cast<int>()
@@ -38,11 +47,39 @@ public class Plugin : BaseUnityPlugin
             Logger.LogWarning("看起來繁體中文已經在設定清單裡面了！將會停用本模組。");
             return;
         }
-        
+
+        if (_config.DownloadFromRemote.Value)
+        {
+            Task.Run(async () =>
+            {
+                var url = _config.DownloadUrl.Value;
+                Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
+                Logger.LogInfo($"網址：{url}");
+
+                try
+                {
+                    var client = new HttpClient();
+                    var stream = await client.GetStreamAsync(url);
+
+                    var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+                    Directory.CreateDirectory(dir);
+
+                    var path = Path.Combine(dir, TcnTranslationFileName);
+                    await using var targetStream = File.OpenWrite(path);
+                    await stream.CopyToAsync(targetStream);
+                    Logger.LogInfo("翻譯資料下載完成！");
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("翻譯資料下載失敗！");
+                    Logger.LogError(e);
+                }
+            });
+        }
         
         Harmony.CreateAndPatchAll(typeof(Plugin));
         
-        var dir = Path.Combine(Paths.ConfigPath, MyPluginInfo.PLUGIN_GUID);
+        var dir = Path.Combine(Paths.ConfigPath, ModGuid);
         Directory.CreateDirectory(dir);
         
         _watcher = new FileSystemWatcher(dir, "*.json");
@@ -62,7 +99,7 @@ public class Plugin : BaseUnityPlugin
         
         _watcher.EnableRaisingEvents = true;
         
-        Logger.LogInfo($"已載入模組 - {MyPluginInfo.PLUGIN_GUID}");
+        Logger.LogInfo($"已載入模組 - {ModGuid}");
         Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
     }
 
@@ -95,7 +132,7 @@ public class Plugin : BaseUnityPlugin
     
     private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
     {
-        var dir = Path.Combine(Paths.ConfigPath, MyPluginInfo.PLUGIN_GUID);
+        var dir = Path.Combine(Paths.ConfigPath, ModGuid);
         Directory.CreateDirectory(dir);
         
         var path = Path.Combine(dir, fileName);
@@ -156,7 +193,7 @@ public class Plugin : BaseUnityPlugin
         if (_writtenMainTable) return;
         _writtenMainTable = true;
         
-        var dir = Path.Combine(Paths.ConfigPath, MyPluginInfo.PLUGIN_GUID);
+        var dir = Path.Combine(Paths.ConfigPath, ModGuid);
         Directory.CreateDirectory(dir);
         
         var path =  Path.Combine(dir, "_Auto" + TcnTranslationFileName);
