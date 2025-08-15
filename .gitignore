@@ -1,0 +1,5 @@
+# 一些不該出現在 Git 的東西
+bin/
+obj/
+.idea/
+*.DotSettings.user
