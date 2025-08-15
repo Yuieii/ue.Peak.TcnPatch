@@ -13,11 +13,17 @@ public class PluginConfig(ConfigFile config)
         "是否每次啟動都要從遠端下載最新的翻譯資料？ (true: 是, false: 否)"
     );
     
-    
     public ConfigEntry<string> DownloadUrl { get; } = config.Bind(
         "Update",
         "DownloadUrl",
         "https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json",
         "翻譯資料的 URL"
+    );
+
+    public ConfigEntry<LocalizedText.Language> AutoDumpLanguage { get; } = config.Bind(
+        "Debug",
+        "AutoDumpLanguage",
+        LocalizedText.Language.SimplifiedChinese,
+        "自動輸出官方參考翻譯時選擇的原始語言"
     );
 }

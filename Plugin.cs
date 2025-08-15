@@ -231,7 +231,7 @@ public class Plugin : BaseUnityPlugin
 
         var table = LocalizedText.mainTable.ToDictionary(
             p => p.Key,
-            p => p.Value[(int) LocalizedText.Language.SimplifiedChinese]
+            p => p.Value[(int) _config.AutoDumpLanguage.Value]
         );
         
         var json = JsonConvert.SerializeObject(table, Formatting.Indented);
