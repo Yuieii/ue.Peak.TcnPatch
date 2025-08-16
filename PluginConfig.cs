@@ -26,4 +26,18 @@ public class PluginConfig(ConfigFile config)
         LocalizedText.Language.SimplifiedChinese,
         "自動輸出官方參考翻譯時選擇的原始語言"
     );
+
+    public ConfigEntry<LanguagePatchMode> LanguagePatchMode { get; } = config.Bind(
+        "Patch",
+        "LanguagePatchMode",
+        TcnPatch.LanguagePatchMode.InsertAfterSimplifiedChinese,
+    "設定修正設定中的語言清單時，要放在簡體中文後面，或是取代簡體中文"
+    );
+}
+
+public enum LanguagePatchMode
+{
+    InsertAfterSimplifiedChinese,
+    ReplaceSimplifiedChinese,
+    Append,
 }
