@@ -21,7 +21,7 @@ public class Plugin : BaseUnityPlugin
 {
     private const string ModGuid = "ue.Peak.TcnPatch";
     private const string ModName = "ue.Peak.TcnPatch";
-    private const string ModVersion = "1.0.2";
+    private const string ModVersion = "1.0.3";
     
     internal static new ManualLogSource Logger;
         
@@ -255,8 +255,9 @@ public class Plugin : BaseUnityPlugin
 
             case LanguagePatchMode.Append:
             {
-                var last = Enum.GetValues(typeof(LanguageSetting.Language)).Cast<LanguageSetting.Language>().Last();
-                if (val == (int) (last + 1))
+                var index = Enum.GetValues(typeof(LanguageSetting.Language)).Length;
+                
+                if (val == index)
                 {
                     __result = LocalizedText.Language.TraditionalChinese;
                 }
