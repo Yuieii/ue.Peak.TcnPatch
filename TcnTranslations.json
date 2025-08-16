@@ -241,7 +241,7 @@
     "FROM": "出發地：",
     "TO": "目的地：",
     "REWARD": "獎勵：",
-    "ANDALLOTHER": "以及所有先前的效果。",
+    "ANDALLOTHER": "以及所有先前天階難度的效果。",
     "START": "啟程",
     "LOADING": "載入中",
     "PASSPORT": "護照",
