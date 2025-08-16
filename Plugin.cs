@@ -263,6 +263,12 @@ public class Plugin : BaseUnityPlugin
 
                 break;
             }
+
+            default:
+            {
+                // Unknown case. Do nothing.
+                return;
+            }
         }
     }
 
