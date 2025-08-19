@@ -11,6 +11,9 @@ public static class ReflectionMembers
 {
     public static class Fields
     {
+        public static TypedFieldInfo<LocalizedText, LocalizedText.Language> CurrentLanguage { get; }
+            = AccessTools.Field(typeof(LocalizedText), nameof(LocalizedText.CURRENT_LANGUAGE));
+        
         public static TypedFieldInfo<VersionString, TextMeshProUGUI> VersionStringText { get; } 
             = AccessTools.Field(typeof(VersionString), "m_text");
         public static TypedFieldInfo<LoadingScreenAnimation, string> LoadingScreenString { get; } 
