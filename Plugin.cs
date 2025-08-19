@@ -275,9 +275,9 @@ public class Plugin : BaseUnityPlugin
 
     private static bool _versionTextMissingWarned;
 
-    [HarmonyPatch(typeof(VersionString), "Update")]
+    [HarmonyPatch(typeof(VersionString), "Start")]
     [HarmonyPostfix]
-    private static void PatchVersionStringStart()
+    private static void PatchVersionStringWarnOnStart()
     {
         // Just in case the field is missing in a future release of the game (unlikely but why not)
         if (ReflectionMembers.Fields.VersionStringText != null || _versionTextMissingWarned) return;
