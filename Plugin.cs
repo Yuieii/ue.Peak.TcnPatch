@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2025 Yuieii.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
