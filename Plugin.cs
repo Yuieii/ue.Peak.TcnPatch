@@ -273,6 +273,43 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
+    private static bool _versionTextMissingWarned;
+
+    [HarmonyPatch(typeof(VersionString), "Update")]
+    [HarmonyPostfix]
+    private static void PatchVersionStringStart()
+    {
+        // Just in case the field is missing in a future release of the game (unlikely but why not)
+        if (ReflectionMembers.Fields.VersionStringText != null || _versionTextMissingWarned) return;
+        _versionTextMissingWarned = true;
+            
+        // Log a warning so we know what is happening when we don't see our credit text
+        Logger.LogWarning("VersionString: 找不到版本資訊的 m_text 欄位！");
+    }
+    
+    [HarmonyPatch(typeof(VersionString), "Update")]
+    [HarmonyPostfix]
+    private static void PatchVersionString(VersionString __instance)
+    {
+        // Just in case the field is missing in a future release of the game (unlikely but why not)
+        var textField = ReflectionMembers.Fields.VersionStringText;
+        if (textField == null) return;
+        
+        // We only want to show this when our language is Traditional Chinese
+        if (LocalizedText.CURRENT_LANGUAGE != LocalizedText.Language.TraditionalChinese) return;
+        
+        // We only want to show this when we are in the main menu
+        var parentName = __instance.transform.GetParent().gameObject.name;
+        var objectName = __instance.gameObject.name;
+        if (parentName != "Logo" || objectName != "Version") return;
+
+        var text = __instance.GetReflectionFieldValue(ReflectionMembers.Fields.VersionStringText);
+        
+        // TODO: Add custom credit support via translation .json file?
+        // TODO: Will need to add custom key support
+        text.text += "  (繁中支援by悠依)";
+    }
+
     [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
     [HarmonyPostfix]
     private static void PatchLoadMainTable()
