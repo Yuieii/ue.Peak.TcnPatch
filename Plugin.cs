@@ -21,7 +21,7 @@ public class Plugin : BaseUnityPlugin
 {
     private const string ModGuid = "ue.Peak.TcnPatch";
     private const string ModName = "ue.Peak.TcnPatch";
-    private const string ModVersion = "1.0.3";
+    private const string ModVersion = "1.0.4";
     
     internal static new ManualLogSource Logger;
         
@@ -300,16 +300,14 @@ public class Plugin : BaseUnityPlugin
     private static void PatchLoadingAnimation(LoadingScreenAnimation __instance)
     {
         var text = LocalizedText.GetText("LOADING");
-        var fieldLoadingString = typeof(LoadingScreenAnimation).GetField("loadingString", BindingFlags.NonPublic | BindingFlags.Instance);
-        var fieldDefaultLoadingStringLength = typeof(LoadingScreenAnimation).GetField("defaultLoadingStringLength", BindingFlags.NonPublic | BindingFlags.Instance);
         
-        if (fieldLoadingString == null)
+        if (ReflectionMembers.Fields.LoadingScreenString == null)
         {
             Logger.LogWarning("Patcher 找不到欄位: LoadingScreenAnimation.loadingString");
             return;
         }
         
-        if (fieldDefaultLoadingStringLength == null)
+        if (ReflectionMembers.Fields.LoadingScreenDefaultStringLength == null)
         {
             Logger.LogWarning("Patcher 找不到欄位: LoadingScreenAnimation.defaultLoadingStringLength");
             return;
@@ -318,7 +316,7 @@ public class Plugin : BaseUnityPlugin
         Logger.LogInfo("正在修正載入中動畫的文字 @ LoadingScreenAnimation.Start()...");
         
         var loadingString = $"{text}...{text}...{text}...{text}...";
-        fieldLoadingString.SetValue(__instance, loadingString);
-        fieldDefaultLoadingStringLength.SetValue(__instance, (float) loadingString.Length);
+        __instance.SetReflectionFieldValue(ReflectionMembers.Fields.LoadingScreenString, loadingString);
+        __instance.SetReflectionFieldValue(ReflectionMembers.Fields.LoadingScreenDefaultStringLength, loadingString.Length);
     }
 }
