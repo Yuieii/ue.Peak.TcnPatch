@@ -31,7 +31,7 @@ public class PluginConfig(ConfigFile config)
         "Patch",
         "LanguagePatchMode",
         TcnPatch.LanguagePatchMode.InsertAfterSimplifiedChinese,
-    "設定修正設定中的語言清單時，要放在簡體中文後面，或是取代簡體中文"
+        "設定修正設定中的語言清單時，要放在簡體中文後面，或是取代簡體中文"
     );
 }
 
