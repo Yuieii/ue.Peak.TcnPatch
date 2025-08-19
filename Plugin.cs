@@ -303,7 +303,7 @@ public class Plugin : BaseUnityPlugin
         var objectName = __instance.gameObject.name;
         if (parentName != "Logo" || objectName != "Version") return;
 
-        var text = __instance.GetReflectionFieldValue(ReflectionMembers.Fields.VersionStringText);
+        var text = __instance.GetReflectionFieldValue(textField);
         
         // TODO: Add custom credit support via translation .json file?
         // TODO: Will need to add custom key support
