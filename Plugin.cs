@@ -139,12 +139,19 @@ public class Plugin : BaseUnityPlugin
     private static void UpdateMainTable()
     {
         _lock.Wait();
+        
         try
         {
             if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
                 return;
 
             _translationFile = TranslationFile.Deserialize(obj);
+        }
+        catch (TranslationParseException e)
+        {
+            Logger.LogError(e.UserMessage);
+            Logger.LogError("翻譯資料分析失敗！");
+            return;
         }
         catch (Exception e)
         {
