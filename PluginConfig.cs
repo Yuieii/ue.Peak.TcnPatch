@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
+using System;
 using BepInEx.Configuration;
 
 namespace ue.Peak.TcnPatch;
@@ -32,6 +33,20 @@ public class PluginConfig(ConfigFile config)
         "LanguagePatchMode",
         TcnPatch.LanguagePatchMode.InsertAfterSimplifiedChinese,
         "設定修正設定中的語言清單時，要放在簡體中文後面，或是取代簡體中文"
+    );
+
+    public ConfigEntry<bool> ShowPatchCredit { get; } = config.Bind(
+        "Patch",
+        "ShowPatchCredit",
+        true,
+        "在主畫面版本文字後面顯示本模組作者？"
+    );
+    
+    public ConfigEntry<bool> ShowTranslatorCredit { get; } = config.Bind(
+        "Patch",
+        "ShowTranslatorCredit",
+        true,
+        "在主畫面版本文字後面交替顯示翻譯資料的作者？"
     );
 }
 

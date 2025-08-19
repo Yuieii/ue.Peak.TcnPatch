@@ -13,6 +13,7 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 using Zorro.Settings;
@@ -24,7 +25,7 @@ public class Plugin : BaseUnityPlugin
 {
     private const string ModGuid = "ue.Peak.TcnPatch";
     private const string ModName = "ue.Peak.TcnPatch";
-    private const string ModVersion = "1.0.4";
+    private const string ModVersion = "1.1.0";
     
     internal static new ManualLogSource Logger;
         
@@ -34,6 +35,7 @@ public class Plugin : BaseUnityPlugin
 
     private static SemaphoreSlim _lock = new(1, 1);
     private static bool _writtenMainTable;
+    private static TranslationFile _translationFile;
 
     private static PluginConfig _config;
     
@@ -69,7 +71,8 @@ public class Plugin : BaseUnityPlugin
 
                     try
                     {
-                        _ = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+                        // The content we get should at least be a valid JSON object
+                        _ = JObject.Parse(content);
                     }
                     catch (Exception e)
                     {
@@ -135,12 +138,19 @@ public class Plugin : BaseUnityPlugin
 
     private static void UpdateMainTable()
     {
-        Dictionary<string, string> table;
         _lock.Wait();
         try
         {
-            if (!TryReadFromJson(TcnTranslationFileName, out table, () => []))
+            if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
                 return;
+
+            _translationFile = TranslationFile.Deserialize(obj);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("翻譯資料分析失敗！");
+            Logger.LogError(e);
+            return;
         }
         finally
         {
@@ -149,8 +159,17 @@ public class Plugin : BaseUnityPlugin
 
         var mainTable = LocalizedText.mainTable;
         var keys = mainTable.Keys.ToHashSet();
+
+        if (_translationFile.Authors.Count > 0)
+        {
+            Logger.LogInfo($"翻譯資料作者：{string.Join("、", _translationFile.Authors)}");
+        }
+        else
+        {
+            Logger.LogInfo("翻譯資料作者：未知");
+        }
         
-        foreach (var (key, value) in table)
+        foreach (var (key, value) in _translationFile.Translations)
         {
             if (!mainTable.TryGetValue(key, out var list))
             {
@@ -294,12 +313,15 @@ public class Plugin : BaseUnityPlugin
     [HarmonyPostfix]
     private static void PatchVersionString(VersionString __instance)
     {
+        // We only want to show this when our language is Traditional Chinese
+        if (LocalizedText.CURRENT_LANGUAGE != LocalizedText.Language.TraditionalChinese) return;
+        
+        // We only want to show this when this is not explicitly disabled
+        if (!_config.ShowPatchCredit.Value) return;
+        
         // Just in case the field is missing in a future release of the game (unlikely but why not)
         var textField = ReflectionMembers.Fields.VersionStringText;
         if (textField == null) return;
-        
-        // We only want to show this when our language is Traditional Chinese
-        if (LocalizedText.CURRENT_LANGUAGE != LocalizedText.Language.TraditionalChinese) return;
         
         // We only want to show this when we are in the main menu
         var parentName = __instance.transform.GetParent().gameObject.name;
@@ -307,10 +329,14 @@ public class Plugin : BaseUnityPlugin
         if (parentName != "Logo" || objectName != "Version") return;
 
         var text = __instance.GetReflectionFieldValue(textField);
+
+        const float switchDuration = 10.0f;
+        var showTranslator = _config.ShowTranslatorCredit.Value && _translationFile.Authors.Count > 0 && Math.Floor(Time.realtimeSinceStartup / switchDuration) % 2 != 0;
+        var translatorText = $"繁中翻譯by: {string.Join("、", _translationFile.Authors)}";
+        var ueText = "繁中支援by悠依";
         
-        // TODO: Add custom credit support via translation .json file?
-        // TODO: Will need to add custom key support
-        text.text += "  (繁中支援by悠依)";
+        var shownText = showTranslator ? translatorText : ueText;
+        text.text += $"  ({shownText})";
     }
 
     [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
