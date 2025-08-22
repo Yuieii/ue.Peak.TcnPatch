@@ -14,7 +14,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ue.Peak.TcnPatch.Adaptors;
+using ue.Peak.TcnPatch.Adapters;
 using ue.Peak.TcnPatch.Patches;
 using UnityEngine;
 

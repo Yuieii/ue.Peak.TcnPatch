@@ -7,7 +7,7 @@ using System.Reflection;
 using BepInEx;
 using HarmonyLib;
 
-namespace ue.Peak.TcnPatch.Adaptors;
+namespace ue.Peak.TcnPatch.Adapters;
 
 // We could make this a dedicated plugin so it simplifies everything here.
 // Actually this support is ported from another plugin I made! -> ue.Peak.TcnPatch.MoreAscents
