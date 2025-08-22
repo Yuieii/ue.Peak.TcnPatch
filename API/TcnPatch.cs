@@ -26,6 +26,12 @@ public class TcnPatch : ITcnPatch
     
     public void RegisterLocalizationKey(string key, string unlocalized)
     {
+        if (_registeredKeys.Keys.Contains(key, StringComparer.InvariantCultureIgnoreCase))
+        {
+            Plugin.Logger.LogWarning($"已註冊過附加翻譯key「{key}」！新的同名註冊將會被忽略。");
+            return;
+        }
+        
         _registeredKeys[key] = Insert;
 
         if (CanInsertOnRegister)
