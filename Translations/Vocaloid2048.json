@@ -598,6 +598,13 @@
         "MODAL_DISCONNECTEDPHOTON_BODY": "您與 Photon 的連線已中斷，原因：#",
         "TRYAGAIN": "再試一次",
         "PICKAXE": "十字鎬",
-        "THELAVARISES": "岩漿升起..."
+        "THELAVARISES": "岩漿升起...",
+
+        // -- PEAK v1.25.a
+        // * The Looker: 彩蛋？躲在石頭後面一直看著你的那位
+        "ENABLETHELOOKER": "允許「偷窺者」"
+    },
+    "AdditionalTranslations": {
+        "PeakTcnPatch.Passport.Crabland": "蟹蟹島"
     }
 }

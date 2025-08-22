@@ -485,7 +485,7 @@
         "PUSH TO MUTE": "按住靜音",
         "ENABLECANNIBALISM": "允許同類相食",
 
-        // - PEAK v1.22a
+        // - PEAK v1.22.a
         "MESA": "平頂山",
         "FLAME": "火焰",
         "SPRAY": "噴",
@@ -522,6 +522,13 @@
         "REMOVE": "移除",
         "NAME_BIRD": "「鳥」",
         "BUGPHOBIAMODE": "恐蟲模式",
-        "NAME_STRANGE GEM": "奇怪的寶石"
+        "NAME_STRANGE GEM": "奇怪的寶石",
+
+        // -- PEAK v1.25.a
+        // * The Looker: 彩蛋？躲在石頭後面一直看著你的那位
+        "ENABLETHELOOKER": "允許「偷窺者」"
+    },
+    "AdditionalTranslations": {
+        "PeakTcnPatch.Passport.Crabland": "蟹蟹島"
     }
 }
