@@ -28,6 +28,13 @@ public class PluginConfig(ConfigFile config)
         "自動輸出官方參考翻譯時選擇的原始語言"
     );
 
+    public ConfigEntry<bool> WarnMissingAdditionalKeys { get; } = config.Bind(
+        "Debug",
+        "WarnMissingAdditionalKeys",
+        false,
+        "有缺失的附加翻譯key時是否觸發警告"
+    );
+
     public ConfigEntry<LanguagePatchMode> LanguagePatchMode { get; } = config.Bind(
         "Patch",
         "LanguagePatchMode",
