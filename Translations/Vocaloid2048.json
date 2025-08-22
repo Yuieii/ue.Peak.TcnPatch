@@ -605,6 +605,52 @@
         "ENABLETHELOOKER": "允許「偷窺者」"
     },
     "AdditionalTranslations": {
-        "PeakTcnPatch.Passport.Crabland": "蟹蟹島"
+        "PeakTcnPatch.Passport.Crabland": "蟹蟹島",
+
+        // # Mod: MoreAscents
+        // -- Ascent 8
+        "MoreAscent.FallDamageGimmick": "攀登挑戰 8",
+        "DESC_MoreAscent.FallDamageGimmick": "手上粘滿蜂蜜。",
+        "MoreAscent.FallDamageGimmick.Reward": "攀登挑戰 8 征服者",
+
+        // -- Ascent 9
+        "MoreAscent.AfflictionGimmick": "攀登挑戰 9",
+        "DESC_MoreAscent.AfflictionGimmick": "提升除了受傷、飢餓、負重外的所有體力消耗。",
+        "MoreAscent.AfflictionGimmick.Reward": "攀登挑戰 9 征服者",
+
+        // -- Ascent 10
+        "MoreAscent.LuggageGimmick": "攀登挑戰 10",
+        "DESC_MoreAscent.LuggageGimmick": "大型行李箱可能只有一件物品。",
+        "MoreAscent.LuggageGimmick.Reward": "攀登挑戰 10 征服者",
+
+        // -- Ascent 11
+        "MoreAscent.HelpingIsBadGimmick": "攀登挑戰 11",
+        "DESC_MoreAscent.HelpingIsBadGimmick": "讓你昏昏欲睡。",
+        "MoreAscent.HelpingIsBadGimmick.Reward": "攀登挑戰 11 征服者",
+
+        // -- Ascent 12
+        "MoreAscent.OccultStatueGimmick": "攀登挑戰 12",
+        "DESC_MoreAscent.OccultStatueGimmick": "不再生成古老雕像。",
+        "MoreAscent.OccultStatueGimmick.Reward": "攀登挑戰 12 征服者",
+
+        // -- Chaos 1
+        "MoreAscent.SkeletonGimmick": "混沌試煉 1",
+        "DESC_MoreAscent.SkeletonGimmick": "昏倒後你會立刻變成一具骷髏。",
+        "MoreAscent.SkeletonGimmick.Reward": "混沌試煉 1 征服者",
+
+        // -- Chaos 2
+        "MoreAscent.CampfireGimmick": "混沌試煉 2",
+        "DESC_MoreAscent.CampfireGimmick": "營火將會變得非常熱。",
+        "MoreAscent.CampfireGimmick.Reward": "混沌試煉 2 征服者",
+
+        // -- Chaos 3
+        "MoreAscent.SunHotGimmick": "混沌試煉 3",
+        "DESC_MoreAscent.SunHotGimmick": "陽光將會變得十分熱，請提防中暑！",
+        "MoreAscent.SunHotGimmick.Reward": "混沌試煉 3 征服者",
+
+        // -- Chaos 4
+        "MoreAscent.BingBongGimmick": "混沌試煉 4",
+        "DESC_MoreAscent.BingBongGimmick": "如果不加以注意的話，兵幫就會召喚邪惡的力量。",
+        "MoreAscent.BingBongGimmick.Reward": "混沌試煉 4 征服者"
     }
 }
