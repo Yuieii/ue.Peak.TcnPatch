@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BepInEx;
 using HarmonyLib;
 
 namespace ue.Peak.TcnPatch.Adaptors;
@@ -15,7 +16,7 @@ namespace ue.Peak.TcnPatch.Adaptors;
 // a separate plugin to support one another plugin.
 public static class MoreAscentsSupport
 {
-    private static readonly Lazy<Type> _gimmickHandlerType = new(() => AccessTools.TypeByName("MoreAscents.AscentGimmickHandler"));
+    private static readonly Lazy<Type> _gimmickHandlerType = new(() => Type.GetType("MoreAscents.AscentGimmickHandler"));
     
     public static bool IsMoreAscentsInstalled => _gimmickHandlerType.Value != null;
     
@@ -31,7 +32,7 @@ public static class MoreAscentsSupport
         if (hasInitializedField == null) return;
         if (!(bool)hasInitializedField.GetValue(null))
         {
-            Plugin.Logger.LogWarning("MoreAscents 還沒初始化！");
+            Plugin.Logger.LogWarning("MoreAscents 還沒初始化！？");
             return;
         }
         
@@ -86,22 +87,5 @@ public static class MoreAscentsSupport
             Plugin.Logger.LogError("無法為 MoreAscents 提供繁中支援... x_x");
             Plugin.Logger.LogError(e);
         }
-    }
-
-    [HarmonyPatch]
-    private class MoreAscentInitHook
-    {
-        [HarmonyTargetMethods]
-        private static IEnumerable<MethodBase> TargetMethods()
-        {
-            if (!IsMoreAscentsInstalled) return [];
-            
-            return [
-                AccessTools.Method(GimmickHandlerType, "Initialize")
-            ];
-        }
-
-        [HarmonyPostfix]
-        private static void PatchInitializer() => RegisterLocalizations();
     }
 }

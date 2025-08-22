@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -20,6 +21,7 @@ using UnityEngine;
 namespace ue.Peak.TcnPatch;
 
 [BepInPlugin(ModGuid, ModName, ModVersion)]
+[BepInDependency("MoreAscents", BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
@@ -39,6 +41,8 @@ public class Plugin : BaseUnityPlugin
     internal static TranslationFile CurrentTranslationFile { get; private set; }
 
     internal static PluginConfig ModConfig { get; private set; }
+
+    internal static HashSet<string> EphemeralTranslationKeys { get; } = new();
 
     private void Awake()
     {
@@ -189,6 +193,13 @@ public class Plugin : BaseUnityPlugin
             Logger.LogInfo("翻譯資料作者：未知");
         }
         
+        foreach (var removal in EphemeralTranslationKeys)
+        {
+            LocalizedText.mainTable.Remove(removal);
+        }
+        
+        EphemeralTranslationKeys.Clear();
+        
         foreach (var (key, value) in CurrentTranslationFile.Translations)
         {
             if (!mainTable.TryGetValue(key.ToUpperInvariant(), out var list))
@@ -206,6 +217,13 @@ public class Plugin : BaseUnityPlugin
         {
             if (!mainTable.TryGetValue(key.ToUpperInvariant(), out var list))
             {
+                // Found ephemeral key!
+                EphemeralTranslationKeys.Add(key.ToUpperInvariant());
+                
+                var table = Enumerable.Repeat("", Enum.GetValues(typeof(LocalizedText.Language)).Length).ToList();
+                table[(int) LocalizedText.Language.English] = value;
+                LocalizedText.mainTable[key.ToUpperInvariant()] = table;
+                
                 continue;
             }
 

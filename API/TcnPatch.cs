@@ -44,6 +44,7 @@ public class TcnPatch : ITcnPatch
             var table = Enumerable.Repeat("", Enum.GetValues(typeof(LocalizedText.Language)).Length).ToList();
             table[(int) LocalizedText.Language.English] = unlocalized;
             LocalizedText.mainTable[key.ToUpperInvariant()] = table;
+            Plugin.EphemeralTranslationKeys.Remove(key.ToUpperInvariant());
         }
     }
     
