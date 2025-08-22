@@ -13,6 +13,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ue.Peak.TcnPatch.Adaptors;
 using ue.Peak.TcnPatch.Patches;
 using UnityEngine;
 
@@ -114,6 +115,8 @@ public class Plugin : BaseUnityPlugin
         
         var api = API.TcnPatch.InternalInstance;
         api.RegisterLocalizationKey("PeakTcnPatch.Passport.Crabland", "CRABLAND");
+        
+        MoreAscentsSupport.RegisterLocalizations();
         
         Logger.LogInfo($"已載入模組 - {ModGuid}");
         Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
