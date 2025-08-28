@@ -515,8 +515,12 @@
     "NAME_BIRD": "「鳥」",
     "BUGPHOBIAMODE": "恐蟲模式",
     "NAME_STRANGE GEM": "奇怪的寶石",
-
+    
     // -- PEAK v1.25.a
     // * The Looker: 彩蛋？躲在石頭後面一直看著你的那位
-    "ENABLETHELOOKER": "允許「偷窺者」"
+    "ENABLETHELOOKER": "啟用「探頭小鬼」",
+
+    // -- PEAK v1.27.a
+    "TEXTURE QUALITY": "貼圖品質",
+    "PHOTOSENSITIVEMODE": "光敏感模式"
 }
