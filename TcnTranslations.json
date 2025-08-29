@@ -522,5 +522,6 @@
 
     // -- PEAK v1.27.a
     "TEXTURE QUALITY": "貼圖品質",
-    "PHOTOSENSITIVEMODE": "光敏感模式"
+    "PHOTOSENSITIVEMODE": "光敏感模式",
+    "COLORBLINDNESSMODE": "色盲模式"
 }
