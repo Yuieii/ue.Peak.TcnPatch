@@ -1,4 +1,6 @@
-# PEAK 繁體中文化
+# PeakTcnPatch
+![v1.2.1](https://img.shields.io/badge/v1.2.1-blue)
+![PEAK v1.27.a](https://img.shields.io/badge/PEAK-v1.27.a-red) \
 這是悠依的 PEAK 繁體中文化模組～
 
 ## 關於模組
