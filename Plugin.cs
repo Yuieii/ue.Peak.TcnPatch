@@ -127,15 +127,10 @@ public class Plugin : BaseUnityPlugin
         
         Logger.LogInfo($"已載入模組 - {ModGuid}");
         Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
-
-        _ = LoadTranslationsAsync();
     }
 
-    private static async Task LoadTranslationsAsync()
+    private void Start()
     {
-        // Wait for the next frame, so all Awake() should have been called then.
-        await Utils.WaitForNextFrameAsync();
-        
         var dir = Path.Combine(Paths.ConfigPath, ModGuid);
         Directory.CreateDirectory(dir);
         
