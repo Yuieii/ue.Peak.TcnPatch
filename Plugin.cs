@@ -28,6 +28,8 @@ public class Plugin : BaseUnityPlugin
     public const string ModName = "ue.Peak.TcnPatch";
     public const string ModVersion = "1.2.1";
     
+    internal static Plugin Instance { get; private set; }
+    
     internal new static ManualLogSource Logger { get; private set; }
         
     private static FileSystemWatcher _watcher;
@@ -47,9 +49,10 @@ public class Plugin : BaseUnityPlugin
     private void Awake()
     {
         // Plugin startup logic
+        Instance = this;
         ModConfig = new PluginConfig(Config);
         Logger = base.Logger;
-
+        
         Logger.LogInfo($"正在載入模組 - {ModGuid}");
         
         if (Enum.GetValues(typeof(LanguageSetting.Language))
@@ -125,12 +128,13 @@ public class Plugin : BaseUnityPlugin
         Logger.LogInfo($"已載入模組 - {ModGuid}");
         Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
 
-        StartCoroutine(LoadTranslationCoroutine());
+        _ = LoadTranslationsAsync();
     }
 
-    private static IEnumerator LoadTranslationCoroutine()
+    private static async Task LoadTranslationsAsync()
     {
-        yield return new WaitForEndOfFrame();
+        // Wait for the next frame, so all Awake() should have been called then.
+        await Utils.WaitForNextFrameAsync();
         
         var dir = Path.Combine(Paths.ConfigPath, ModGuid);
         Directory.CreateDirectory(dir);
@@ -139,7 +143,7 @@ public class Plugin : BaseUnityPlugin
 
         _watcher.NotifyFilter = NotifyFilters.LastWrite;
         
-        _watcher.Changed += (sender, args) =>
+        _watcher.Changed += (_, args) =>
         {
             if (args.Name == TcnTranslationFileName)
             {
