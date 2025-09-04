@@ -180,8 +180,7 @@
         "NAME_SPORTS DRINK": "運動飲料",
         "NAME_STONE": "石頭",
         "NAME_TRAIL MIX": "混合堅果",
-        "NAME_WARP COMPASS": "曲遷羅盤",
-        // 傳送？
+        "NAME_WARP COMPASS": "曲遷羅盤", // 傳送？
         "NAME_ORANGE WINTERBERRY": "橙雪莓",
         "NAME_YELLOW WINTERBERRY": "黃雪莓",
         "EAT": "吃",
@@ -210,8 +209,7 @@
         "OPEN?": "開啟？",
         "PLACE": "放置",
         "REVIVE": "復活",
-        "WARP": "曲遷",
-        // 傳送？
+        "WARP": "曲遷", // 傳送？
         "USE ON #TARGETCHAR": "用在 #targetchar 身上",
         "DROP": "丢下",
         "THROW": "投擲",
@@ -481,6 +479,7 @@
         "CLIMBING EXTRA FIELD OF VIEW": "攀爬視野提升",
         "PUSH TO MUTE": "按住靜音",
         "ENABLECANNIBALISM": "允許吃人",
+        
         // - PEAK v1.22.a
         "MESA": "平頂山",
         "FLAME": "火焰",
