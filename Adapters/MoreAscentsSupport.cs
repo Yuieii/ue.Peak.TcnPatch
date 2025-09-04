@@ -40,22 +40,26 @@ public static class MoreAscentsSupport
         _setupSupport = true;
         
         Plugin.Logger.LogInfo("偵測到 MoreAscents！正在為 MoreAscents 提供繁中支援...");
-
+        
+        const string noSupport = "無法為 MoreAscents 提供繁中支援... x_x";
+        
         try
         {
-            var gimmickType = AccessTools.TypeByName("MoreAscents.AscentGimmick");
-            if (gimmickType == null) return;
+            if (!TryFindTypeOrWarn("MoreAscents.AscentGimmick", out var gimmickType))
+                return;
 
-            var gimmickGetTitleMethod = AccessTools.Method(gimmickType, "GetTitle");
-            if (gimmickGetTitleMethod == null) return;
+            if (!TryFindMethodOrWarn(gimmickType, "GetTitle", 
+                    out var gimmickGetTitleMethod)) return;
+            
+            if (!TryFindMethodOrWarn(gimmickType, "GetDescription", 
+                    out var gimmickGetDescriptionMethod)) return;
+            
+            if (!TryFindMethodOrWarn(gimmickType, "GetTitleReward",
+                    out var gimmickGetTitleRewardMethod)) return;
 
-            var gimmickGetDescriptionMethod = AccessTools.Method(gimmickType, "GetDescription");
-            if (gimmickGetDescriptionMethod == null) return;
-
-            var gimmickGetTitleRewardMethod = AccessTools.Method(gimmickType, "GetTitleReward");
-            if (gimmickGetTitleRewardMethod == null) return;
-
-            var field = AccessTools.Field(GimmickHandlerType, "gimmicks");
+            if (!TryFindFieldOrWarn(GimmickHandlerType, "gimmicks", out var field))
+                return;
+            
             var gimmicks = (IReadOnlyList<object>)field.GetValue(null);
 
             var instanceProp = AccessTools.PropertyGetter(typeof(AscentData), "Instance");
@@ -76,16 +80,48 @@ public static class MoreAscentsSupport
 
                 API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}",
                     (string)gimmickGetTitleMethod.Invoke(gimmick, []));
-                API.TcnPatch.Instance.RegisterLocalizationKey($"DESC_{prefix}",
+                
+                // Although `AscentData` has a `description` field, it is unused at runtime (!)
+                // PEAK currently uses `LocalizedText.GetDescriptionIndex(data.title)` as its translation key
+                // for the ascent description
+                API.TcnPatch.Instance.RegisterLocalizationKey(LocalizedText.GetDescriptionIndex(prefix),
                     (string)gimmickGetDescriptionMethod.Invoke(gimmick, []));
+                
                 API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}.Reward",
                     (string)gimmickGetTitleRewardMethod.Invoke(gimmick, []));
             }
         }
         catch (Exception e)
         {
-            Plugin.Logger.LogError("無法為 MoreAscents 提供繁中支援... x_x");
+            Plugin.Logger.LogError(noSupport);
             Plugin.Logger.LogError(e);
+        }
+
+        bool TryFindTypeOrWarn(string typeName, out Type type)
+        {
+            type = AccessTools.TypeByName(typeName);
+            if (type != null) return true;
+        
+            Plugin.Logger.LogWarning($"無法找到 {typeName} 類型！{noSupport}");    
+            return false;
+        }
+        
+        bool TryFindMethodOrWarn(Type type, string methodName, out MethodInfo method)
+        {
+            method = AccessTools.Method(type, methodName);
+            if (method != null) return true;
+        
+            Plugin.Logger.LogWarning($"無法找到 {type.Name}.{methodName}() 方法！{noSupport}");    
+            return false;
+        }
+        
+        bool TryFindFieldOrWarn(Type type, string fieldName, out FieldInfo field)
+        {
+            field = AccessTools.Field(type, fieldName);
+            if (field != null) return true;
+        
+            Plugin.Logger.LogWarning($"無法找到 {type.Name}.{fieldName} 欄位！{noSupport}");    
+            return false;
         }
     }
 }
