@@ -1,6 +1,6 @@
 {
     // 以下翻譯文字來自夜芷冰的 PEAK 繁體中文翻譯
-    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/3cdebdc7cc8384b1ff25471509d8620438cc60e6/BepInEx/config/zh-tw-voc/Text
+    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/eb5989bc2f1f2a33d0acce5691ba9042ae2f0876/BepInEx/config/zh-tw-voc/Text
     // --
     
     "FormatVersion": 0,
@@ -103,7 +103,7 @@
         "CARRY": "背起#",
         "FEED TO #TARGETCHAR": "餵給#targetchar",
         "HEAL #TARGETCHAR": "治療#targetchar",
-        "HEAT UP #TARGETCHAR": "送溫暖給#targetchar", // 為 XXX 取暖
+        "HEAT UP #TARGETCHAR": "為#targetchar取暖",
         "USE ON #TARGETCHAR": "用在#targetchar上",
         "ANCIENT STATUE": "古老雕像",
         "REVIVESCOUTS": "復活所有朋友",
@@ -137,12 +137,12 @@
         "ROPE": "繩索",
 
         // -- 報告
-        "SPECTATING": "正在觀察：", // 正在旁觀
+        "SPECTATING": "正在旁觀：",
         "YOURSELF": "你自己",
         "LEFTTODIE": "<size=125%>朋友提早溜掉了<br>你最後孤獨地倒下了",
         "DEAD": "死亡",
         "YOUPEAKED": "你登頂了！",
-        "PROMOTEDTO": "晉升為：", // 舊版打錯？ upstream打錯？
+        "PROMOTEDTO": "晉升為：",
         "NEWFIT": "新造型！",
         "NEWSASH": "新腰帶！",
         "NEWHAT": "新帽子！",
@@ -155,8 +155,39 @@
         "TIMELINE": "時間線",
         "NEWBADGES": "新徽章",
         "NEXT": "下一步",
-        "JOINEDTHEEXPEDITION": "# 加入探險。",
-        "LEFTTHEEXPEDITION": "# 離開探險。",
+        "JOINEDTHEEXPEDITION": "# 加入探險。", // # joined the expedition.
+        "LEFTTHEEXPEDITION": "# 離開探險。", // # left the expedition.
+        
+        // -- 遺漏缺失-感謝悠依 @Yuieii 補充
+        // -- 部分翻譯有作微調
+        // (哦好害羞...!!!)
+        "OK": "好",
+        "TOMB": "古墓",
+        "MODAL_MISMATCH_TITLE": "遊戲版本不相符",
+        
+        // 呼叫夜芷冰: 這裡 [#] 和 [&] 應該都是變數
+        // r:"Host has different game version: (.+) while you have (.+)\."=房間主持人使用的版本是$1，而你的版本是$2。
+        "MODAL_MISMATCH_BODY": "房間主持人使用的版本是[#]，而你的版本是[&]。", 
+        
+        "MODAL_CANTFINDLOBBY_TITLE": "無法找到大廳",
+        "MODAL_CANTFINDLOBBY_BODY": "此邀請可能已過期。",
+        "MODAL_FAILEDTOFETCH_BODY": "無法獲取大廳資訊。",
+        "MODAL_CANTJOINLOBBY_TITLE": "無法加入大廳",
+        "MODAL_CANTCREATELOBBY_TITLE": "無法創建大廳",
+        "MODAL_INVALIDLOBBY_BODY": "Steam 大廳似乎無效。",
+        "MODAL_OUTOFDATE_BODY": "請關閉遊戲，並在 Steam 上更新遊戲...",
+        "CLOSETHEGAME": "請關閉並更新遊戲。",
+        "MODAL_FAILEDPHOTON_TITLE": "無法找到 Photon 房間", // 大寫?
+        "MODAL_DISCONNECTEDPHOTON_TITLE": "與 Photon 連線中斷", // 大寫?
+        
+        // 呼叫夜芷冰: 這裡 # 應該是變數
+        // r:"You disconnected from Photon, reason: (.+)"=你已從 Photon 斷開連接，原因：$1。
+        "MODAL_DISCONNECTEDPHOTON_BODY": "你已從 Photon 斷開連接，原因：#",
+        
+        "FAILEDTOCONNECT": "無法連線到 Photon 網路",
+        "TRYCONNECTAGAIN": "請嘗試重新連線，或以離線模式遊玩？",
+        "TRYAGAIN": "請再試一次",
+        "PICKAXE": "十字鎬",
 
         // # Settings
         // -- 設定頁：一般
@@ -255,7 +286,7 @@
         "DESC_BALLOONBADGE": "不受到墜落傷害下逃離島嶼。",
         "NAME_LEAVE NO TRACE": "無痕徽章",
         "DESC_LEAVE NO TRACE": "山上不遺留任何物品下逃離島嶼。",
-        "NAME_HASTY": "快速攀登者徽章", // was "Speed Climber Badge"
+        "NAME_HASTY": "快速攀登者徽章", // "Speed Climber Badge" -> "Hasty Badge"
         "DESC_HASTY": "在一小時內逃離島嶼。",
         "NAME_BINGBONGBADGE": "兵幫徽章",
         "DESC_BINGBONGBADGE": "幫助兵幫逃離島嶼。",
@@ -290,7 +321,7 @@
         "NAME_NOMAD": "遊牧徽章",
         "DESC_NOMAD": "攀越「台地」。",
         "NAME_ULTIMATE": "終極徽章",
-        "DESC_ULTIMATE": "從100公尺外接住飛碟。", // 飛盤
+        "DESC_ULTIMATE": "從100公尺外接住飛盤。",
         "NAME_COOL CUCUMBER": "酷黃瓜徽章",
         "DESC_COOL CUCUMBER": "在不超過10%熱量的情況下攀越「台地」。",
         "NAME_NEEDLEPOINT": "針繡徽章",
@@ -363,7 +394,10 @@
         "EIGHT": "八",
         "NINE": "九",
         "TEN": "十",
+        
+        // -- 地方
         "THEFOGRISES": "起霧了……",
+        "THELAVARISES": "岩漿升起...",
 
         // # NeedTPMText
         // -- 護照
@@ -395,13 +429,14 @@
         "NAME_CONCH": "海螺",
         "NAME_BACKPACK": "背包",
         "NAME_GRANOLA BAR": "燕麥棒",
-        "NAME_TRAIL MIX": "什錦果仁", // 綜合堅果
+        "NAME_TRAIL MIX": "綜合堅果",
         "NAME_LANTERN": "燈籠",
         "NAME_BUGLE": "號角",
         "NAME_COMPASS": "指北針",
         "NAME_COCONUT": "椰子",
         "NAME_COCONUT HALF": "半個椰子",
         "NAME_ANTI-ROPE SPOOL": "反重力繩索",
+        "ANTI-ROPE": "反重力繩索",
         "NAME_ROPE SPOOL": "一卷繩索",
         "NAME_ENERGY DRINK": "能量飲料",
         "NAME_FIRST AID KIT": "急救包",
@@ -575,31 +610,7 @@
         "TITLE_BONUSRULE?": "大家都去哪了？",
         "BODY_BONUSRULE?": "\t我睡了一個好舒服的覺，但醒來時整個隊伍都不見了！\n\n\t我相信他們就在附近。他們不會蠢到因為我小睡一下就違反<color=red>規則0</color>吧！",
         "WEMADEIT": "我們成功了！\n\n\t即使沒有領隊的幫忙，我們還是獲救了！\n\n\tSněžnýPerník第一個登頂。\nZedorfska毫髮無傷地脫險。\nCaptainBear受了傷但精神很好。\nSqudel和Kirpich有點瘀傷，幸好他們有彼此！\nRonokopl讓隊伍吃飽又安全。\n\n\tMyres先生，如果你在讀這個……我們找不到你！對不起！",
-
-        // # ?
-        // -- 其他我找不到哪裡有翻到，是我漏掉還是他漏掉我也不知道-w-(?)
-        "TOMB": "古墓",
-        "ANTI-ROPE": "反重力繩索",
-        "CLOSETHEGAME": "關閉並更新遊戲。",
-        "OK": "好",
-        "FAILEDTOCONNECT": "無法連線至 Photon 網路",
-        "TRYCONNECTAGAIN": "嘗試重新連線或以離線模式遊玩？",
-        "MODAL_MISMATCH_TITLE": "遊戲版本不相容",
-        "MODAL_MISMATCH_BODY": "房間主持人使用的版本是 [#]，你用的是 [&]。",
-        "MODAL_CANTFINDLOBBY_TITLE": "無法找到大廳",
-        "MODAL_CANTFINDLOBBY_BODY": "這個邀請可能已經過期。",
-        "MODAL_FAILEDTOFETCH_BODY": "無法取得大廳資料",
-        "MODAL_CANTJOINLOBBY_TITLE": "無法加入大廳",
-        "MODAL_CANTCREATELOBBY_TITLE": "無法建立大廳",
-        "MODAL_INVALIDLOBBY_BODY": "Steam 大廳似乎無效。",
-        "MODAL_OUTOFDATE_BODY": "關閉遊戲，並且透過 Steam 更新遊戲...",
-        "MODAL_FAILEDPHOTON_TITLE": "無法找到 Photon 房間", // 大寫?
-        "MODAL_DISCONNECTEDPHOTON_TITLE": "與 Photon 連線中斷", // 大寫?
-        "MODAL_DISCONNECTEDPHOTON_BODY": "您與 Photon 的連線已中斷，原因：#",
-        "TRYAGAIN": "再試一次",
-        "PICKAXE": "十字鎬",
-        "THELAVARISES": "岩漿升起...",
-
+        
         // -- PEAK v1.25.a
         "ENABLETHELOOKER": "允許<i>偵察兵NPC</i>隨機出現",
 
