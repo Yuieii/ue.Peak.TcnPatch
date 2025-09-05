@@ -371,7 +371,7 @@
         "ANDALLOTHER": "<alpha=#FF>還包含先前的所有效果", // ?
         "UNLOCKED": "# 已解鎖！",
         "ASCENTSUNLOCKED": "攀登挑戰已解鎖",
-        "ASCENTSUNLOCKEDTEXT": "Ready for a greater challenge? Ascents add modifiers that make summiting the PEAK more difficult.<br><br>Set your Ascent Level at the Airport Kiosk!",
+        "ASCENTSUNLOCKEDTEXT": "準備好迎接更大的挑戰了嗎？提升難度會增加不同攀登挑戰，讓登頂更具挑戰性。\n\n在登機檯設定你的提升等級！", // Gate Kiosk = 登機櫃位
         "PRESSANYBUTTON": "按任意鍵繼續",
 
         // # LoadingAndRepeat
