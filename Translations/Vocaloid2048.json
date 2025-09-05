@@ -164,11 +164,7 @@
         "OK": "好",
         "TOMB": "古墓",
         "MODAL_MISMATCH_TITLE": "遊戲版本不相符",
-        
-        // 呼叫夜芷冰: 這裡 [#] 和 [&] 應該都是變數
-        // r:"Host has different game version: (.+) while you have (.+)\."=房間主持人使用的版本是$1，而你的版本是$2。
         "MODAL_MISMATCH_BODY": "房間主持人使用的版本是[#]，而你的版本是[&]。", 
-        
         "MODAL_CANTFINDLOBBY_TITLE": "無法找到大廳",
         "MODAL_CANTFINDLOBBY_BODY": "此邀請可能已過期。",
         "MODAL_FAILEDTOFETCH_BODY": "無法獲取大廳資訊。",
@@ -179,11 +175,7 @@
         "CLOSETHEGAME": "請關閉並更新遊戲。",
         "MODAL_FAILEDPHOTON_TITLE": "無法找到 Photon 房間", // 大寫?
         "MODAL_DISCONNECTEDPHOTON_TITLE": "與 Photon 連線中斷", // 大寫?
-        
-        // 呼叫夜芷冰: 這裡 # 應該是變數
-        // r:"You disconnected from Photon, reason: (.+)"=你已從 Photon 斷開連接，原因：$1。
         "MODAL_DISCONNECTEDPHOTON_BODY": "你已從 Photon 斷開連接，原因：#",
-        
         "FAILEDTOCONNECT": "無法連線到 Photon 網路",
         "TRYCONNECTAGAIN": "請嘗試重新連線，或以離線模式遊玩？",
         "TRYAGAIN": "請再試一次",
@@ -286,7 +278,7 @@
         "DESC_BALLOONBADGE": "不受到墜落傷害下逃離島嶼。",
         "NAME_LEAVE NO TRACE": "無痕徽章",
         "DESC_LEAVE NO TRACE": "山上不遺留任何物品下逃離島嶼。",
-        "NAME_HASTY": "快速攀登者徽章", // "Speed Climber Badge" -> "Hasty Badge"
+        "NAME_HASTY": "快速攀登者徽章",
         "DESC_HASTY": "在一小時內逃離島嶼。",
         "NAME_BINGBONGBADGE": "兵幫徽章",
         "DESC_BINGBONGBADGE": "幫助兵幫逃離島嶼。",
@@ -555,7 +547,7 @@
         "PROMPT_RULE2_3": "攀爬時按下[SPRINT]來衝刺",
         "TITLE_RULE3": "<size=45>總是向朋友伸出援手！</size>",
         "BODY_RULE3": "\t沒有什麼比團隊團結更重要！<br><br>\t當你的雙手空著時，伸手幫助正在攀爬的朋友，讓他們安全到達下一個落腳點！",
-        "PROMPT_RULE3": "<size=80%>空手時按下[USESECONDARY]來幫助朋友更容易爬上來</size>", // 85% -> 80%
+        "PROMPT_RULE3": "<size=80%>空手時按下[USESECONDARY]來幫助朋友更容易爬上來</size>",
         "BODY_RULE3_1": "\t你也可以從下方幫忙！蹲下來讓另一位童軍站在你頭上，然後跳起幫助他爬得更高！",
         "PROMPT_RULE3_1": "按[CROUCH]蹲下",
         "TITLE_RULE4": "<size=45>保持警覺活下去！</size>",
@@ -594,12 +586,12 @@
 
         // -- 3
         "TITLE_BONUSRULE3": "接受神秘力量！",
-        "BODY_BONUSRULE3": "\t<size=120%>哇哦！我們的一個朋友踩到海膽死了！本來我都要難過死了……但另一個夥伴摸了那座奇怪的雕像，就把朋友復活了！</size>", // 150% -> 120%
-        "BODY_BONUSRULE3_1": "\t<size=120%>看來這座島打破了死亡的規則……真瘋狂！或許當大家都還活著時，再摸一下那個雕像會發生更有趣的事情……</size>", // 150% -> 120%
+        "BODY_BONUSRULE3": "\t<size=120%>哇哦！我們的一個朋友踩到海膽死了！本來我都要難過死了……但另一個夥伴摸了那座奇怪的雕像，就把朋友復活了！</size>",
+        "BODY_BONUSRULE3_1": "\t<size=120%>看來這座島打破了死亡的規則……真瘋狂！或許當大家都還活著時，再摸一下那個雕像會發生更有趣的事情……</size>",
 
         // -- 4
         "TITLE_BONUSRULE4": "<size=85%>擠在一起！",
-        "BODY_BONUSRULE4": "\t隨著我們靠近山頂，氣溫開始急劇下降。必須隨時找掩護，強風中暴露在空曠處簡直是死路一條。", // Fixed inconsistent translation for "PEAK"
+        "BODY_BONUSRULE4": "\t隨著我們靠近頂峰，氣溫開始急劇下降。必須隨時找掩護，強風中暴露在空曠處簡直是死路一條。", // the PEAK = 山頂
         "BODY_BONUSRULE4_1": "\t如果一切都無效，和朋友們擠在一起分享體溫，或許能救你免於凍死。",
 
         // -- 5
