@@ -42,7 +42,7 @@
 
 ---
 
-目前提供數種翻譯資料：
+目前這裡提供數種翻譯資料：
 
 ### 官方簡中 → 繁中
 `https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json`
@@ -59,3 +59,6 @@
 - 由夜芷冰從英文翻譯成繁體中文。
   - 如果您比較習慣夜芷冰的翻譯的話，可以使用這個翻譯資料 
   - 不定時從[上游](https://github.com/Vocaloid2048/PEAK-zh-tw-Translation)更新
+
+歡迎提供更多翻譯資料！或者您也可以自己 fork 一份自己的翻譯資料！ \
+~~想要弄成文言文當然是沒問題的！（比讚）~~
