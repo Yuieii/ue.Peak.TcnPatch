@@ -15,13 +15,6 @@ public class TcnPatch : ITcnPatch
     
     public void RegisterLocalizationKey(string key, string unlocalized)
     {
-        if (Plugin.RegisteredTable.TryGetValue(key, out var translation))
-        {
-            Plugin.RegisteredTable[key] = new Plugin.RegisteredTranslation(unlocalized, translation.Translation);
-        }
-        else
-        {
-            Plugin.RegisteredTable[key] = new Plugin.RegisteredTranslation(unlocalized, unlocalized);
-        }
+        Plugin.RegisteredOrigTable[key] = unlocalized;
     }
 }

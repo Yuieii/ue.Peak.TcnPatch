@@ -155,13 +155,8 @@ public class Plugin : BaseUnityPlugin
     }
 
     internal static Dictionary<string, string> TcnTable { get; } = new();
-    internal static Dictionary<string, RegisteredTranslation> RegisteredTable { get; } = new();
-
-    internal class RegisteredTranslation(string original, string tcn)
-    {
-        public string Original { get; } = original;
-        public string Translation { get; } = tcn;
-    }
+    internal static Dictionary<string, string> RegisteredTable { get; } = new();
+    internal static Dictionary<string, string> RegisteredOrigTable { get; } = new();
 
     internal static bool TryGetVanilla(string id, out string result) 
         => TcnTable.TryGetValue(id.ToUpperInvariant(), out result);
@@ -170,14 +165,12 @@ public class Plugin : BaseUnityPlugin
     {
         language ??= LocalizedText.CURRENT_LANGUAGE;
         
-        if (RegisteredTable.TryGetValue(id, out var eph))
+        if (language == LocalizedText.Language.TraditionalChinese && RegisteredTable.TryGetValue(id, out result))
         {
-            result = language == LocalizedText.Language.TraditionalChinese ? eph.Translation : eph.Original;
             return true;
         }
-
-        result = null;
-        return false;
+        
+        return RegisteredOrigTable.TryGetValue(id, out result);
     }
     
     private static void UpdateMainTable()
@@ -237,14 +230,7 @@ public class Plugin : BaseUnityPlugin
         
         foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
         {
-            if (RegisteredTable.TryGetValue(key, out var translation))
-            {
-                RegisteredTable[key] = new RegisteredTranslation(translation.Original, value);
-            }
-            else
-            {
-                RegisteredTable[key] = new RegisteredTranslation(value, value);
-            }
+            RegisteredTable[key] = value;
         }
 
         var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;

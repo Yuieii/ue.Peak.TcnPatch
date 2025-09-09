@@ -75,24 +75,24 @@ public class LocalizedTextPatch
         Directory.CreateDirectory(dir);
         
         var path =  Path.Combine(dir, "_Auto" + Plugin.TcnTranslationFileName);
-
+        var language = Plugin.ModConfig.AutoDumpLanguage.Value;
         var table = LocalizedText.mainTable
             .Where(p => VanillaLocalizationKeys.Contains(p.Key))
             .ToDictionary(
                 p => p.Key,
-                p => p.Value[(int) Plugin.ModConfig.AutoDumpLanguage.Value]
+                p => p.Value[(int) language]
             );
         
         var additionalTable = LocalizedText.mainTable
             .Where(p => !VanillaLocalizationKeys.Contains(p.Key))
             .ToDictionary(
                 p => p.Key,
-                p => p.Value[(int) Plugin.ModConfig.AutoDumpLanguage.Value]
+                p => p.Value[(int) language]
             );
         
-        foreach (var (key, translation) in Plugin.RegisteredTable)
+        foreach (var (key, value) in Plugin.RegisteredOrigTable)
         {
-            additionalTable[key] = translation.Translation;
+            additionalTable[key] = value;
         }
         
         var json = JsonConvert.SerializeObject(
