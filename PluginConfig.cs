@@ -55,6 +55,13 @@ public class PluginConfig(ConfigFile config)
         true,
         "在主畫面版本文字後面交替顯示翻譯資料的作者？"
     );
+
+    public ConfigEntry<bool> ShowModVersionInPatchCredit { get; } = config.Bind(
+        "Patch",
+        "ShowModVersionInPatchCredit",
+        true,
+        $"在主畫面版本文字後面顯示這個模組的版本？ (v{Plugin.ModVersion})"
+    );
 }
 
 public enum LanguagePatchMode

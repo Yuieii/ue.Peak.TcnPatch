@@ -49,7 +49,9 @@ public class VersionStringPatch
                              Plugin.CurrentTranslationFile.Authors.Count > 0 &&
                              Math.Floor(Time.realtimeSinceStartup / switchDuration) % 2 != 0;
         var translatorText = $"繁中翻譯by: {string.Join("、", Plugin.CurrentTranslationFile.Authors)}";
-        var ueText = $"繁中支援v{Plugin.ModVersion} by悠依";
+        var ueText = Plugin.ModConfig.ShowModVersionInPatchCredit.Value 
+            ? $"繁中支援v{Plugin.ModVersion} by悠依"
+            : "繁中支援by悠依";
         
         var shownText = showTranslator ? translatorText : ueText;
         text.text += $"  ({shownText})";
