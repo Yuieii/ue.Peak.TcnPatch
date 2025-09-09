@@ -1,6 +1,6 @@
 {
     // 以下翻譯文字來自夜芷冰的 PEAK 繁體中文翻譯
-    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/eb5989bc2f1f2a33d0acce5691ba9042ae2f0876/BepInEx/config/zh-tw-voc/Text
+    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/950ee7901d2df3c5f82059e62d489e28364fcfa2/BepInEx/config/zh-tw-voc/Text
     // --
     
     "FormatVersion": 0,
@@ -198,14 +198,18 @@
         "REDUCE CAMERA BOBBING": "減少鏡頭晃動",
         "CLIMBING EXTRA FIELD OF VIEW": "攀山時更大視野範圍",
         "ONLYATMAINMENU": "該設定只能在主選單的設定更改",
+        "PHOTOSENSITIVEMODE": "光敏感模式",
+        "ENABLETHELOOKER": "允許<i>偵察兵NPC</i>隨機出現",
+        "TEXTURE QUALITY": "材質品質",
         "OFF": "關閉",
         "ON": "開啟",
         "LOBBY MODE": "大廳模式",
-        "FRIENDS": "所有好友",
+        "FRIENDS": "允許好友申請加入",
         "INVITE ONLY": "僅限邀請",
         "ACCESSIBILITY": "輔助功能",
-        "ENABLECANNIBALISM": "啟用同類相食",
+        "ENABLECANNIBALISM": "允許互吃麻吉",
         "BUGPHOBIAMODE": "蟲子去去走！",
+        "COLORBLINDNESSMODE": "色盲模式",
 
         // -- 圖形
         "GRAPHICS": "圖形",
@@ -602,14 +606,6 @@
         "TITLE_BONUSRULE?": "大家都去哪了？",
         "BODY_BONUSRULE?": "\t我睡了一個好舒服的覺，但醒來時整個隊伍都不見了！\n\n\t我相信他們就在附近。他們不會蠢到因為我小睡一下就違反<color=red>規則0</color>吧！",
         "WEMADEIT": "我們成功了！\n\n\t即使沒有領隊的幫忙，我們還是獲救了！\n\n\tSněžnýPerník第一個登頂。\nZedorfska毫髮無傷地脫險。\nCaptainBear受了傷但精神很好。\nSqudel和Kirpich有點瘀傷，幸好他們有彼此！\nRonokopl讓隊伍吃飽又安全。\n\n\tMyres先生，如果你在讀這個……我們找不到你！對不起！",
-        
-        // -- PEAK v1.25.a
-        "ENABLETHELOOKER": "允許<i>偵察兵NPC</i>隨機出現",
-
-        // -- PEAK v1.27.a
-        "TEXTURE QUALITY": "材質品質",
-        "PHOTOSENSITIVEMODE": "光敏感模式",
-        "COLORBLINDNESSMODE": "色盲模式"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
