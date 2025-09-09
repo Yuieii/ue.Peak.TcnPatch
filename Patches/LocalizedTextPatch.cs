@@ -16,6 +16,31 @@ public class LocalizedTextPatch
 
     public static HashSet<string> VanillaLocalizationKeys { get; } = [];
 
+    [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.GetText), typeof(string), typeof(bool))]
+    [HarmonyPrefix]
+    private static void PatchGetText(string id, ref string __result, ref bool __runOriginal) 
+        => PatchGetText(id, LocalizedText.CURRENT_LANGUAGE, ref __result, ref __runOriginal);
+
+    [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.GetText), typeof(string), typeof(LocalizedText.Language))]
+    [HarmonyPrefix]
+    private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
+    {
+        if (Plugin.TryGetRegistered(id, language, out var result))
+        {
+            __runOriginal = false;
+            __result = result;
+            return;
+        }
+        
+        if (language != LocalizedText.Language.TraditionalChinese) return;
+        
+        if (Plugin.TryGetVanilla(id, out result))
+        {
+            __runOriginal = false;
+            __result = result;
+        }
+    }
+    
     [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
     [HarmonyPriority(Priority.First)]
     [HarmonyPostfix]
@@ -36,10 +61,6 @@ public class LocalizedTextPatch
         {
             VanillaLocalizationKeys.Add(key);
         }
-
-        var api = API.TcnPatch.InternalInstance;
-        api.InsertExistingLocalizations();
-        api.CanInsertOnRegister = true;
     }
 
     [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
@@ -65,9 +86,14 @@ public class LocalizedTextPatch
         var additionalTable = LocalizedText.mainTable
             .Where(p => !VanillaLocalizationKeys.Contains(p.Key))
             .ToDictionary(
-                p => API.TcnPatch.InternalInstance.ReplaceAsRegisteredCase(p.Key),
+                p => p.Key,
                 p => p.Value[(int) Plugin.ModConfig.AutoDumpLanguage.Value]
             );
+        
+        foreach (var (key, translation) in Plugin.RegisteredTable)
+        {
+            additionalTable[key] = translation.Translation;
+        }
         
         var json = JsonConvert.SerializeObject(
             new AutoDumpRecord(table, additionalTable), 
@@ -93,6 +119,8 @@ public class LocalizedTextPatch
 
     private class AutoDumpRecord(Dictionary<string, string> translations, Dictionary<string, string> additionalTranslations)
     {
+        public int FormatVersion { get; } = TranslationFile.CurrentFormatVersion;
+        public List<string> Authors { get; } = [];
         public Dictionary<string, string> Translations { get; } = translations;
         public Dictionary<string, string> AdditionalTranslations { get; } = additionalTranslations;
     }

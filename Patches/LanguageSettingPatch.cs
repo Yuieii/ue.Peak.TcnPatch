@@ -13,6 +13,13 @@ public class LanguageSettingPatch
     [HarmonyPostfix]
     private static void PatchLanguageChoices(LanguageSetting __instance, ref List<string> __result)
     {
+        if (Plugin.HasOfficialTcn)
+        {
+            // Now (?) we have official Traditional Chinese.
+            // The game should now interpret the language settings in its own way.
+            return;
+        }
+        
         switch (Plugin.ModConfig.LanguagePatchMode.Value)
         {
             case LanguagePatchMode.ReplaceSimplifiedChinese:
@@ -46,6 +53,13 @@ public class LanguageSettingPatch
     [HarmonyPostfix]
     private static void PatchValueToLanguage(int val, ref LocalizedText.Language __result)
     {
+        if (Plugin.HasOfficialTcn)
+        {
+            // Now (?) we have official Traditional Chinese.
+            // The game should now interpret the language settings in its own way.
+            return;
+        }
+        
         switch (Plugin.ModConfig.LanguagePatchMode.Value)
         {
             case LanguagePatchMode.InsertAfterSimplifiedChinese:

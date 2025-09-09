@@ -26,7 +26,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
     public const string ModName = "ue.Peak.TcnPatch";
-    public const string ModVersion = "1.2.1";
+    public const string ModVersion = "1.3.0";
     
     internal static Plugin Instance { get; private set; }
     
@@ -46,6 +46,8 @@ public class Plugin : BaseUnityPlugin
 
     internal static HashSet<string> EphemeralTranslationKeys { get; } = new();
 
+    internal static bool HasOfficialTcn { get; private set; }
+
     private void Awake()
     {
         // Plugin startup logic
@@ -59,8 +61,8 @@ public class Plugin : BaseUnityPlugin
             .Cast<int>()
             .Any(values => values == (int) LocalizedText.Language.TraditionalChinese))
         {
-            Logger.LogWarning("看起來繁體中文已經在設定清單裡面了！將會停用本模組。");
-            return;
+            // We have official Traditional Chinese now!
+            HasOfficialTcn = true;
         }
 
         if (ModConfig.DownloadFromRemote.Value)
@@ -152,6 +154,32 @@ public class Plugin : BaseUnityPlugin
         _watcher.EnableRaisingEvents = true;
     }
 
+    internal static Dictionary<string, string> TcnTable { get; } = new();
+    internal static Dictionary<string, RegisteredTranslation> RegisteredTable { get; } = new();
+
+    internal class RegisteredTranslation(string original, string tcn)
+    {
+        public string Original { get; } = original;
+        public string Translation { get; } = tcn;
+    }
+
+    internal static bool TryGetVanilla(string id, out string result) 
+        => TcnTable.TryGetValue(id.ToUpperInvariant(), out result);
+
+    internal static bool TryGetRegistered(string id, LocalizedText.Language? language, out string result)
+    {
+        language ??= LocalizedText.CURRENT_LANGUAGE;
+        
+        if (RegisteredTable.TryGetValue(id, out var eph))
+        {
+            result = language == LocalizedText.Language.TraditionalChinese ? eph.Translation : eph.Original;
+            return true;
+        }
+
+        result = null;
+        return false;
+    }
+    
     private static void UpdateMainTable()
     {
         _lock.Wait();
@@ -191,44 +219,32 @@ public class Plugin : BaseUnityPlugin
         {
             Logger.LogInfo("翻譯資料作者：未知");
         }
-        
-        foreach (var removal in EphemeralTranslationKeys)
-        {
-            LocalizedText.mainTable.Remove(removal);
-        }
-        
-        EphemeralTranslationKeys.Clear();
+
+        TcnTable.Clear();
+        RegisteredTable.Clear();
         
         foreach (var (key, value) in CurrentTranslationFile.Translations)
         {
-            if (!mainTable.TryGetValue(key.ToUpperInvariant(), out var list))
+            if (!mainTable.ContainsKey(key.ToUpperInvariant()))
             {
                 Logger.LogWarning($"已忽略未知的翻譯key：「{key}」！");
                 continue;
             }
 
-            const int index = (int)LocalizedText.Language.TraditionalChinese;
-            list[index] = value;
+            TcnTable[key] = value;
             keys.Remove(key);
         }
         
         foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
         {
-            if (!mainTable.TryGetValue(key.ToUpperInvariant(), out var list))
+            if (RegisteredTable.TryGetValue(key, out var translation))
             {
-                // Found ephemeral key!
-                EphemeralTranslationKeys.Add(key.ToUpperInvariant());
-                
-                var table = Enumerable.Repeat("", Enum.GetValues(typeof(LocalizedText.Language)).Length).ToList();
-                table[(int) LocalizedText.Language.English] = value;
-                LocalizedText.mainTable[key.ToUpperInvariant()] = table;
-                
-                continue;
+                RegisteredTable[key] = new RegisteredTranslation(translation.Original, value);
             }
-
-            const int index = (int)LocalizedText.Language.TraditionalChinese;
-            list[index] = value;
-            keys.Remove(key);
+            else
+            {
+                RegisteredTable[key] = new RegisteredTranslation(value, value);
+            }
         }
 
         var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;

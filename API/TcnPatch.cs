@@ -13,48 +13,15 @@ public class TcnPatch : ITcnPatch
     
     internal static TcnPatch InternalInstance { get; } = new();
     
-    private readonly Dictionary<string, Action> _registeredKeys = new();
-    
-    public HashSet<string> RegisteredAdditionalKeys => _registeredKeys.Keys.ToHashSet();
-
-    internal string ReplaceAsRegisteredCase(string key)
-    {
-        var keys = RegisteredAdditionalKeys.ToList();
-        var index = keys.FindIndex(k => k.ToUpperInvariant() == key);
-        return index == -1 ? key : keys[index];
-    }
-    
     public void RegisterLocalizationKey(string key, string unlocalized)
     {
-        if (_registeredKeys.Keys.Contains(key, StringComparer.InvariantCultureIgnoreCase))
+        if (Plugin.RegisteredTable.TryGetValue(key, out var translation))
         {
-            Plugin.Logger.LogWarning($"已註冊過附加翻譯key「{key}」！新的同名註冊將會被忽略。");
-            return;
+            Plugin.RegisteredTable[key] = new Plugin.RegisteredTranslation(unlocalized, translation.Translation);
         }
-        
-        _registeredKeys[key] = Insert;
-
-        if (CanInsertOnRegister)
+        else
         {
-            Insert();
-        }
-        
-        void Insert()
-        {
-            var table = Enumerable.Repeat("", Enum.GetValues(typeof(LocalizedText.Language)).Length).ToList();
-            table[(int) LocalizedText.Language.English] = unlocalized;
-            LocalizedText.mainTable[key.ToUpperInvariant()] = table;
-            Plugin.EphemeralTranslationKeys.Remove(key.ToUpperInvariant());
-        }
-    }
-    
-    internal bool CanInsertOnRegister { get; set; }
-    
-    internal void InsertExistingLocalizations()
-    {
-        foreach (var register in _registeredKeys.Values)
-        {
-            register();
+            Plugin.RegisteredTable[key] = new Plugin.RegisteredTranslation(unlocalized, unlocalized);
         }
     }
 }
