@@ -57,4 +57,5 @@
 ### 夜芷冰繁體中文
 `https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/Translations/Vocaloid2048.json`
 - 由夜芷冰從英文翻譯成繁體中文。
-  - 會不定時從[上游](https://github.com/Vocaloid2048/PEAK-zh-tw-Translation)更新
+  - 如果您比較習慣夜芷冰的翻譯的話，可以使用這個翻譯資料 
+  - 不定時從[上游](https://github.com/Vocaloid2048/PEAK-zh-tw-Translation)更新
