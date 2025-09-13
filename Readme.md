@@ -46,6 +46,7 @@
 
 ### 官方簡中 → 繁中
 `https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json`
+- 目前預設提供的翻譯資料
 - 由官方簡體中文翻譯成繁體中文，附加一點翻譯修正。
   - 在原文無錯誤的情況下盡可能保留原文
 
