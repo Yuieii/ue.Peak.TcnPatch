@@ -561,7 +561,7 @@
         "NAME_BASKETBALL": "籃球",
         "PROMPT_REBIND": "請按下想要分配給 <br><size=125%><color=#DDBE55>@</color></size> 的鍵位",
         "NAME_BUNDLED UP": "包裹嚴實獎章",
-        "DESC_BUNDLED UP": "在全程寒冷值未超過 20% 的情况下爬過雪山。",
+        "DESC_BUNDLED UP": "在全程寒冷值未超過 20% 的情況下爬過雪山。",
         "ID": "繁體中文", // ??????? 
         "BB_YES": "對！",
         "BB_YEAH": "嗯…好…",
