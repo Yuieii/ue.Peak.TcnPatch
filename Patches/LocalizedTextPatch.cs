@@ -34,10 +34,11 @@ public class LocalizedTextPatch
         
         if (language != LocalizedText.Language.TraditionalChinese) return;
         
-        if (Plugin.TryGetVanilla(id, out result))
+        if (Plugin.TryGetVanilla(id, out result) && !string.IsNullOrEmpty(result))
         {
             __runOriginal = false;
             __result = result;
+            return;
         }
     }
     

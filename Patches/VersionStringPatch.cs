@@ -37,13 +37,18 @@ public class VersionStringPatch
         var textField = ReflectionMembers.Fields.VersionStringText;
         if (textField == null) return;
         
-        // We only want to show this when we are in the main menu
+        var text = __instance.GetReflectionFieldValue(textField);
+        
         var parentName = __instance.transform.GetParent().gameObject.name;
         var objectName = __instance.gameObject.name;
-        if (parentName != "Logo" || objectName != "Version") return;
+        if (parentName != "Logo" || objectName != "Version")
+        {
+            // We only want to show this when we are in game
+            text.text += $"<br><size=70%><alpha=#88>{Plugin.ModName} v{Plugin.ModVersion}<alpha=#FF></size>";
+            return;
+        }
 
-        var text = __instance.GetReflectionFieldValue(textField);
-
+        // We only want to show this when we are in the main menu
         const float switchDuration = 10.0f;
         var showTranslator = Plugin.ModConfig.ShowTranslatorCredit.Value &&
                              Plugin.CurrentTranslationFile.Authors.Count > 0 &&
