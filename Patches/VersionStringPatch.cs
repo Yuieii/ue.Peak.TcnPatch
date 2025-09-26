@@ -2,6 +2,7 @@
 
 using System;
 using HarmonyLib;
+using TMPro;
 using UnityEngine;
 
 namespace ue.Peak.TcnPatch.Patches;
@@ -13,14 +14,34 @@ public class VersionStringPatch
 
     [HarmonyPatch(typeof(VersionString), "Start")]
     [HarmonyPostfix]
-    private static void PatchVersionStringWarnOnStart()
+    private static void PatchVersionStringWarnOnStart(VersionString __instance)
     {
         // Just in case the field is missing in a future release of the game (unlikely but why not)
-        if (ReflectionMembers.Fields.VersionStringText != null || _versionTextMissingWarned) return;
-        _versionTextMissingWarned = true;
+        if (ReflectionMembers.Fields.VersionStringText == null)
+        {
+            if (_versionTextMissingWarned) return;
             
-        // Log a warning so we know what is happening when we don't see our credit text
-        Plugin.Logger.LogWarning("VersionString: 找不到版本資訊的 m_text 欄位！");
+            _versionTextMissingWarned = true;
+
+            // Log a warning so we know what is happening when we don't see our credit text
+            Plugin.Logger.LogWarning("VersionString: 找不到版本資訊的 m_text 欄位！");
+            return;
+        }
+
+        // I am attempting to fix the alignment by adjusting the anchored position relatively
+        var parentName = __instance.transform.GetParent().gameObject.name;
+        var objectName = __instance.gameObject.name;
+        if (objectName == "Version" && parentName == "MainPage")
+        {
+            var rect = __instance.GetComponent<RectTransform>();
+            var anchored = rect.anchoredPosition;
+            anchored.y -= 10;
+            rect.anchoredPosition = anchored;
+            
+            var textField = ReflectionMembers.Fields.VersionStringText;
+            var text = __instance.GetReflectionFieldValue(textField);
+            text.verticalAlignment = VerticalAlignmentOptions.Top;
+        }
     }
     
     [HarmonyPatch(typeof(VersionString), "Update")]
@@ -66,9 +87,12 @@ public class VersionStringPatch
         // PEAK >=v.1.31.a
         // -- The version text has now moved to the top left!
         // -- We have more space to write information about the translation data and this mod
-        text.text += $"<br><size=70%><alpha=#88>{Plugin.ModName} v{Plugin.ModVersion}<alpha=#FF></size>";
-        if (parentName != "MainPage") return;
-        
+        if (parentName != "MainPage")
+        {
+            text.text += $"<br><size=70%><alpha=#88>{Plugin.ModName} v{Plugin.ModVersion}<alpha=#FF></size>";
+            return;
+        }
+
         // Main menu only
         text.text += $"<br><size=70%>{ueText}</size>";
         text.text += $"<br><size=70%>{translatorText}</size>";
