@@ -569,7 +569,7 @@
         "BB_SURE": "可…可以？",
         "BB_IFYOUWANNA": "如果你想的話…",
         "BB_OKAY": "好…",
-        "BB_IFISAYYES": "我要是同意的話，你會帶我一起嗎？",
+        "BB_IFISAYYES": "要是我同意的話，你會帶我一起走嗎？",
         "BB_DEFINITELY": "嗯好，當然囉！",
         "BB_FINE": "我覺得可以…",
         "BB_PLEASEDONT": "拜…拜託不要…",
@@ -587,10 +587,10 @@
         "BB_UH": "嗚…嗚呃呃呃…",
         "BB_IMBINGBONG": "我是賓邦！",
         "BB_IMISSMYWIFE": "我好想念老婆…",
-        "BB_MAYBE": "大概吧",
+        "BB_MAYBE": "大概吧…",
         "BB_ASKYOURFRIENDS": "你應該去找朋友來幫忙！",
         "PHOTOBOOTH": "拍貼機",
-        "START2": "開始",
+        "START2": "開拍",
 
         // -- PEAK v1.31.a
         "JUMPTOCLIMB": "按跳躍鍵攀牆"
