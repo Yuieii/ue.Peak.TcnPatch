@@ -592,7 +592,10 @@
         "BB_MAYBE": "maaaaaaaaybe",
         "BB_ASKYOURFRIENDS": "you should ask your friends for help!",
         "PHOTOBOOTH": "PHOTOBOOTH",
-        "START2": "start"
+        "START2": "start",
+
+        // -- PEAK v1.31.a
+        "JUMPTOCLIMB": "JUMP TO GRAB WALL"
     },
     "AdditionalTranslations": {
         "PeakTcnPatch.Passport.Crabland": "CRABLAND"

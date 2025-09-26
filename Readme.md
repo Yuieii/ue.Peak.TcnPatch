@@ -1,6 +1,6 @@
 # PeakTcnPatch
 <!-- shields.io: 為什麼他不給我用 JSON 的 endpoint :( -->
-![v1.3.0](https://img.shields.io/badge/v1.3.0-blue)
+![v1.3.2](https://img.shields.io/badge/v1.3.0-blue)
 ![支援的 PEAK 版本](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2FYuieii%2Fue.Peak.TcnPatch%2Frefs%2Fheads%2Fmaster%2FDocs%2FMetadata.json&search=%22GameVersion%22%3A%20%22(.%2B)%22&replace=%241&label=PEAK&color=red) \
 這是悠依的 PEAK 繁體中文化模組～
 

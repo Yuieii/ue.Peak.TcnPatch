@@ -26,7 +26,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
     public const string ModName = "ue.Peak.TcnPatch";
-    public const string ModVersion = "1.3.1";
+    public const string ModVersion = "1.3.2";
     
     internal static Plugin Instance { get; private set; }
     

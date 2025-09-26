@@ -590,7 +590,10 @@
         "BB_MAYBE": "大概吧",
         "BB_ASKYOURFRIENDS": "你應該去找朋友來幫忙！",
         "PHOTOBOOTH": "拍貼機",
-        "START2": "開始"
+        "START2": "開始",
+
+        // -- PEAK v1.31.a
+        "JUMPTOCLIMB": "按跳躍鍵攀牆"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
