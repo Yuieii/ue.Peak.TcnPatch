@@ -95,6 +95,10 @@ public class VersionStringPatch
 
         // Main menu only
         text.text += $"<br><size=70%>{ueText}</size>";
-        text.text += $"<br><size=70%>{translatorText}</size>";
+
+        if (showTranslator)
+        {
+            text.text += $"<br><size=70%>{translatorText}</size>";
+        }
     }
 }
