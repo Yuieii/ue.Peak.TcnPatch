@@ -1,8 +1,8 @@
 {
     // 以下翻譯文字來自夜芷冰的 PEAK 繁體中文翻譯
-    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/950ee7901d2df3c5f82059e62d489e28364fcfa2/BepInEx/config/zh-tw-voc/Text
+    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/c5bf35efc68d78370134a56a74ad73a87c9a9476/BepInEx/config/zh-tw-voc/Text
     // --
-    
+
     "FormatVersion": 0,
     "Authors": ["夜芷冰", "悠依"],
     "Translations": {
@@ -20,6 +20,7 @@
 
         // -- 雜項
         "VERSIONOUTOFDATE": "版本過舊",
+        "ASCENTSUNLOCKEDTEXT": "準備好迎接更大的挑戰了嗎？提升難度會增加不同攀登挑戰，讓登頂更具挑戰性。\n\n在登機檯設定你的提升等級！", // Gate Kiosk = 登機櫃位
         "MODAL_OUTOFDATE_TITLE": "版本過舊",
 
         // -- 主選單
@@ -68,6 +69,7 @@
         "SPRINTLEAP": "衝刺/跳躍 (攀爬時)",
         "PING": "標記位置",
         "EMOTE": "表情動作",
+        "PROMPT_REBIND": "按下按鍵以分配給<br><size=125%><color=#DDBE55>@</color></size>",
 
         "LIGHT": "點燃",
         "EXTINGUISH": "熄滅",
@@ -98,6 +100,7 @@
         "SCOUTCANNONFUSE": "導火線",
         "NAME_THORN": "荊棘",
         "REMOVE": "拔走它",
+        "ASK": "詢問", // ask - 好像沒有找到這個? 看夜芷冰的截圖好像也沒翻到的樣子
 
         "SOMEONESBACKPACK": "#的背包",
         "CARRY": "背起#",
@@ -157,14 +160,14 @@
         "NEXT": "下一步",
         "JOINEDTHEEXPEDITION": "# 加入探險。", // # joined the expedition.
         "LEFTTHEEXPEDITION": "# 離開探險。", // # left the expedition.
-        
+
         // -- 遺漏缺失-感謝悠依 @Yuieii 補充
         // -- 部分翻譯有作微調
         // (哦好害羞...!!!)
         "OK": "好",
         "TOMB": "古墓",
         "MODAL_MISMATCH_TITLE": "遊戲版本不相符",
-        "MODAL_MISMATCH_BODY": "房間主持人使用的版本是[#]，而你的版本是[&]。", 
+        "MODAL_MISMATCH_BODY": "房間主持人使用的版本是[#]，而你的版本是[&]。",
         "MODAL_CANTFINDLOBBY_TITLE": "無法找到大廳",
         "MODAL_CANTFINDLOBBY_BODY": "此邀請可能已過期。",
         "MODAL_FAILEDTOFETCH_BODY": "無法獲取大廳資訊。",
@@ -181,6 +184,35 @@
         "TRYAGAIN": "請再試一次",
         "PICKAXE": "十字鎬",
 
+        // -- BB_Updates - v1.30.a
+        "BB_YES": "對！",
+        "BB_YEAH": "嗯...",
+        "BB_IGUESSSO": "我想是吧...",
+        "BB_SURE": "好吧...",
+        "BB_IFYOUWANNA": "如果你想要的話...",
+        "BB_OKAY": "好吧...", // ue: 感覺如果 sure... 和 okay... 可以有不同說法會更好
+        "BB_IFISAYYES": "如果我說是的，你會帶我一起去嗎？",
+        "BB_DEFINITELY": "嗯...當然！",
+        "BB_FINE": "我覺得這樣很好...",
+        "BB_PLEASEDONT": "不...請不要這樣...",
+        "BB_NAH": "不...",
+        "BB_INTENSENO": "不!!!!!!",
+        "BB_DONTDOIT": "不要這樣...",
+        "BB_BADIDEA": "我覺得這樣不好...",
+        "BB_NO": "不。",
+        "BB_NUHUH": "不不不...",
+        "BB_DEFINITELYNOT": "絕~對~不...",
+        "BB_NONONO": "不不不不不",
+        "BB_IMNOTSURE": "我不太確定...",
+        "BB_IDUNNO": "我不知道",
+        "BB_NOTCOMFORTABLE": "我不太想回答這個...",
+        "BB_UH": "嗯...嗯...",
+        "BB_IMBINGBONG": "我是兵幫",
+        "BB_IMISSMYWIFE": "我想念我的妻子",
+        "BB_MAYBE": "或或或或許吧...",
+        "BB_ASKYOURFRIENDS": "你該找朋友幫忙！",
+        "PHOTOBOOTH": "拍貼機",
+
         // # Settings
         // -- 設定頁：一般
         "GENERAL": "一般",
@@ -191,8 +223,6 @@
         "CONTROLLER SENSITIVITY": "手把靈敏度",
         "CONTROLLER ICONS": "手把按鈕圖標風格",
         "AUTO": "自動",
-        "STYLE1": "風格1",
-        "STYLE2": "風格2",
         "INVERT Y": "反轉 Y 軸",
         "INVERT X": "反轉 X 軸",
         "REDUCE CAMERA BOBBING": "減少鏡頭晃動",
@@ -242,6 +272,32 @@
         "SFX VOLUME": "音效音量",
         "MUSIC VOLUME": "音樂音量",
         "VOICES VOLUME": "語音音量",
+
+        // -- v1.30.a 更新
+        "RESET": "重置", // 我也沒找到 PEAK 裡面這個字在哪
+        "MOVE FORWARD": "前進",
+        "MOVE BACKWARD": "後退",
+        "MOVE LEFT": "左移",
+        "MOVE RIGHT": "右移",
+        "INVENTORY SLOT": "物品欄",
+        "BACKPACK SLOT": "背包欄",
+        "SCROLL": "滾動",
+        "SCROLL FORWARD": "向前滾動",
+        "SCROLL BACKWARD": "向後滾動",
+        "SWAPITEMLEFT": "交換左側物品", // 向左切換物品 (將目前已選擇的物品欄切換到目前的欄位左邊的那一個欄位)
+        "SWAPITEMRIGHT": "交換右側物品", // 向右切換物品
+        "SWAPITEMDOWN": "存放物品",
+        "RESTOREDEFAULTS": "全部重置",
+        "CLIMBUSE": "攀爬 / 使用物品",
+        "HELPINGHANDUSE": "伸出援手 / 使用物品替代鍵",
+        "REBINDCONTROLS": "重新綁定按鍵",
+        "REBIND": "重新綁定",
+        "INPUTICONS": "輸入圖示",
+        "KBM": "鍵盤 & 滑鼠",
+        "STYLE1": "手把風格 1 (XBox)",
+        "STYLE2": "手把風格 2 (PS)",
+        "GAMEPAD": "手把",
+        "CANCEL": "取消",
 
         // # Achievements
         // -- 成就
@@ -334,6 +390,8 @@
         "DESC_MEGAENTOMOLOGY": "在蟻獅攻擊中生存下來。",
         "NAME_ASTRONOMY": "天文學徽章",
         "DESC_ASTRONOMY": "過於仔細地觀察炙熱的太陽。",
+        "NAME_BUNDLED UP": "保暖徽章",
+        "DESC_BUNDLED UP": "在不超過20%寒冷值的情況下攀越「阿爾卑斯山脈」。",
 
         // -- 階級
         "TADPOLE SCOUT": "蝌蚪童軍",
@@ -367,8 +425,9 @@
         "ANDALLOTHER": "<alpha=#FF>還包含先前的所有效果", // ?
         "UNLOCKED": "# 已解鎖！",
         "ASCENTSUNLOCKED": "攀登挑戰已解鎖",
-        "ASCENTSUNLOCKEDTEXT": "準備好迎接更大的挑戰了嗎？提升難度會增加不同攀登挑戰，讓登頂更具挑戰性。\n\n在登機檯設定你的提升等級！", // Gate Kiosk = 登機櫃位
         "PRESSANYBUTTON": "按任意鍵繼續",
+        "REWARD": "獎勵：",
+        "START": "開始",
 
         // # LoadingAndRepeat
         // -- 載入頁面
@@ -390,7 +449,7 @@
         "EIGHT": "八",
         "NINE": "九",
         "TEN": "十",
-        
+
         // -- 地方
         "THEFOGRISES": "起霧了……",
         "THELAVARISES": "岩漿升起...",
@@ -501,6 +560,15 @@
         "NAME_TORCH": "火把",
         "NAME_STRANGE GEM": "奇怪的寶石",
 
+        // -- REF: https://drive.google.com/file/d/1bnCe3M8Nga5bIQ8b_4_dzP-LVSVhFA8B/view
+        "NAME_ROOK": "車",
+        "NAME_BISHOP": "主教",
+        "NAME_KNIGHT": "馬",
+        "NAME_KING": "王",
+        "NAME_QUEEN": "后",
+        "NAME_PAWN": "兵",
+        "NAME_BASKETBALL": "籃球",
+
         // -- 漿果
         "NAME_GREEN CRISPBERRY": "綠色脆莓",
         "NAME_RED CRISPBERRY": "紅色脆莓",
@@ -525,8 +593,6 @@
         // -- 求生指南
         "OPEN/CLOSE": "<size=80%>開啟/關閉",
         "FLIP PAGE": "翻頁",
-        "REWARD": "REWARD:",
-        "START": "START",
 
         "HOWTONOTDIE": "<size=50%>《求生指南》",
         "AGUIDEBY": "撰寫自<br>童軍領袖 邁爾斯", // Fixed!
@@ -606,6 +672,9 @@
         "TITLE_BONUSRULE?": "大家都去哪了？",
         "BODY_BONUSRULE?": "\t我睡了一個好舒服的覺，但醒來時整個隊伍都不見了！\n\n\t我相信他們就在附近。他們不會蠢到因為我小睡一下就違反<color=red>規則0</color>吧！",
         "WEMADEIT": "我們成功了！\n\n\t即使沒有領隊的幫忙，我們還是獲救了！\n\n\tSněžnýPerník第一個登頂。\nZedorfska毫髮無傷地脫險。\nCaptainBear受了傷但精神很好。\nSqudel和Kirpich有點瘀傷，幸好他們有彼此！\nRonokopl讓隊伍吃飽又安全。\n\n\tMyres先生，如果你在讀這個……我們找不到你！對不起！",
+
+        // # ue: 其他避免跳遺漏警告的東西
+        "ID": "繁體中文" // 應該是跟語言名字一樣  但不知道會出現在哪裡
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
