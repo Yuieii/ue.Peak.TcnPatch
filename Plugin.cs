@@ -26,7 +26,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
     public const string ModName = "ue.Peak.TcnPatch";
-    public const string ModVersion = "1.3.3";
+    public const string ModVersion = "1.3.4";
     
     internal static Plugin Instance { get; private set; }
     
@@ -99,7 +99,7 @@ public class Plugin : BaseUnityPlugin
                     
                     try
                     {
-                        await using var targetStream = File.Open(path, FileMode.Truncate, FileAccess.Write);
+                        await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
                         await using var writer = new StreamWriter(targetStream);
                         await writer.WriteAsync(content);
                     }
