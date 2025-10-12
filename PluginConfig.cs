@@ -46,14 +46,14 @@ public class PluginConfig(ConfigFile config)
         "Patch",
         "ShowPatchCredit",
         true,
-        "在主畫面版本文字後面顯示本模組作者？"
+        "在主畫面版本文字下方顯示本模組作者？"
     );
     
     public ConfigEntry<bool> ShowTranslatorCredit { get; } = config.Bind(
         "Patch",
         "ShowTranslatorCredit",
         true,
-        "在主畫面版本文字後面交替顯示翻譯資料的作者？"
+        "在主畫面版本文字下方顯示翻譯資料的作者？"
     );
 
     public ConfigEntry<bool> ShowModVersionInPatchCredit { get; } = config.Bind(
@@ -67,6 +67,8 @@ public class PluginConfig(ConfigFile config)
 public enum LanguagePatchMode
 {
     InsertAfterSimplifiedChinese,
+    ReplaceEnglish,
     ReplaceSimplifiedChinese,
     Append,
+    TraditionalChineseOnly,
 }

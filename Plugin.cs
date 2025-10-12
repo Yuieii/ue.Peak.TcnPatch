@@ -26,7 +26,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
     public const string ModName = "ue.Peak.TcnPatch";
-    public const string ModVersion = "1.3.4";
+    public const string ModVersion = "1.3.5";
     
     internal static Plugin Instance { get; private set; }
     
@@ -246,6 +246,9 @@ public class Plugin : BaseUnityPlugin
                 Logger.LogWarning($"*附加翻譯* 缺少「{missing}」翻譯key！");
             }
         }
+        
+        // Perform a force refresh on all localizable text
+        LocalizedText.RefreshAllText();
     }
     
     private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class

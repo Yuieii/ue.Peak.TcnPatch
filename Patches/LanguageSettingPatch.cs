@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 
 namespace ue.Peak.TcnPatch.Patches;
@@ -22,9 +23,10 @@ public class LanguageSettingPatch
         
         switch (Plugin.ModConfig.LanguagePatchMode.Value)
         {
+            case LanguagePatchMode.ReplaceEnglish:
             case LanguagePatchMode.ReplaceSimplifiedChinese:
             {
-                // We already replaced Simplified Chinese to Traditional Chinese in ValueToLanguage.
+                // We already replaced the language to Traditional Chinese in ValueToLanguage.
                 // The localized choices will be automatically affected by that change.
                 return;
             }
@@ -40,7 +42,15 @@ public class LanguageSettingPatch
                 __result.Add(choice);
                 break;
             }
-
+            
+            case LanguagePatchMode.TraditionalChineseOnly:
+            {
+                // We already replaced the language to Traditional Chinese in ValueToLanguage.
+                // We only have to limit the choices so we have Traditional Chinese only.
+                __result = __result.Take(1).ToList();
+                break;
+            }
+            
             default:
             {
                 // Unknown case. Do nothing.
@@ -70,6 +80,16 @@ public class LanguageSettingPatch
                 break;
             }
             
+            case LanguagePatchMode.ReplaceEnglish:
+            {
+                if (val == (int)LanguageSetting.Language.English)
+                {
+                    __result = LocalizedText.Language.TraditionalChinese;
+                }
+                
+                break;
+            }
+            
             case LanguagePatchMode.ReplaceSimplifiedChinese:
             {
                 if (val == (int)LanguageSetting.Language.SimplifiedChinese)
@@ -89,6 +109,12 @@ public class LanguageSettingPatch
                     __result = LocalizedText.Language.TraditionalChinese;
                 }
 
+                break;
+            }
+            
+            case LanguagePatchMode.TraditionalChineseOnly:
+            {
+                __result = LocalizedText.Language.TraditionalChinese;
                 break;
             }
 
