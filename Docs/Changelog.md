@@ -37,39 +37,39 @@
 - 微調部分code，改掉我的懶懶病（？）避免日後出錯的時候沒有人能第一時間看出來
 ## 移除
 - 已移除 Thunderstore 安裝包附帶的翻譯資料
-    - 安裝包若有附帶翻譯資料，每次更新時已儲存的資料都會被安裝包覆蓋
-    - 直接覆蓋會影響使用自訂翻譯資料、或者正在即時修改翻譯資料的大家（包含我）
-    - 若要取得翻譯資料，請至 GitHub 上下載即可
+  - 安裝包若有附帶翻譯資料，每次更新時已儲存的資料都會被安裝包覆蓋
+  - 直接覆蓋會影響使用自訂翻譯資料、或者正在即時修改翻譯資料的大家（包含我）
+  - 若要取得翻譯資料，請至 GitHub 上下載即可
 
 # 1.2.0
 ## 新增
 - 開始支援自訂翻譯key
-    - 使用情境：模組支援、官方未設定成可以翻譯的文字、漏翻的文字 (`LOC: ...`)
+  - 使用情境：模組支援、官方未設定成可以翻譯的文字、漏翻的文字 (`LOC: ...`)
 - 支援 [MoreAscents](https://thunderstore.io/c/peak/p/asdfmovie402/MoreAscents/)
-    - 這僅僅是作為展示而新增的支援，之後**對其他模組的支援**很有可能會分開變成**單獨另外安裝的支援模組**
+  - 這僅僅是作為展示而新增的支援，之後**對其他模組的支援**很有可能會分開變成**單獨另外安裝的支援模組**
 
 # 1.1.0
 ## 新增
 - 現在會在主畫面的版本號小字後面加上「繁中支援by悠依」的字樣
-    - 這個改變可以在設定檔中取消
-    - 預設會與「繁中翻譯by: *(翻譯資料作者)*」交替顯示
-    - 這個改變可以在設定檔中取消
+  - 這個改變可以在設定檔中取消
+  - 預設會與「繁中翻譯by: *(翻譯資料作者)*」交替顯示
+  - 這個改變可以在設定檔中取消
 - 為了支援以上更動，翻譯資料格式也改變了
-    - 模組會繼續支援舊的格式
-    - GitHub 上的翻譯資料會持續使用舊格式一段時間
+  - 模組會繼續支援舊的格式
+  - GitHub 上的翻譯資料會持續使用舊格式一段時間
 
 # 1.0.3
 ## 修正
 - 修正使用 `Append` 模式時無法加入繁體中文選項（變成兩個英文選項）
-    - ~~沒有測試就丟上來了，2ㄏ~~
+  - ~~沒有測試就丟上來了，2ㄏ~~
 
 # 1.0.2
 ## 新增
 - 設定檔新增了可以調整「在語言選項內加入繁體中文選項的方式」的模組設定
 - 設定檔新增了可以調整「自動輸出官方參考翻譯時選擇的原始語言」的模組設定
 - 現在 [GitHub](https://github.com/Yuieii/ue.Peak.TcnPatch/) 上提供了兩種翻譯資料，可以在模組設定檔案更改翻譯資料來源
-    - 預設將採用[接近原始文字的翻譯](https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json)
-    - 可以選用[另一個翻譯](https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations-ue.json)，我有做過比較多更改
+  - 預設將採用[接近原始文字的翻譯](https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json)
+  - 可以選用[另一個翻譯](https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations-ue.json)，我有做過比較多更改
 
 # 1.0.1
 ## 修正
