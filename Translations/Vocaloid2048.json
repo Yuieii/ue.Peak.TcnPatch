@@ -1,6 +1,6 @@
 {
     // 以下翻譯文字來自夜芷冰的 PEAK 繁體中文翻譯
-    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/c5bf35efc68d78370134a56a74ad73a87c9a9476/BepInEx/config/zh-tw-voc/Text
+    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/50aa2e9a295433575dbf4d7d9c0d2b93683e8945/BepInEx/config/zh-tw-voc/Text
     // --
 
     "FormatVersion": 0,
@@ -298,6 +298,11 @@
         "STYLE2": "手把風格 2 (PS)",
         "GAMEPAD": "手把",
         "CANCEL": "取消",
+
+        // -- v1.32.a 更新
+        // ue: 「捉住牆壁」語感上很像 "catch" wall... 
+        // ue: 「抓」可以代表 grab/catch，但是「捉」比較感覺像是只有 catch 而已
+        "JUMPTOCLIMB": "跳起時自動捉住牆壁", 
 
         // # Achievements
         // -- 成就
