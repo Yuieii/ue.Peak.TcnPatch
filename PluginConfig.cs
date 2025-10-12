@@ -66,9 +66,28 @@ public class PluginConfig(ConfigFile config)
 
 public enum LanguagePatchMode
 {
+    /// <summary>
+    /// 放在簡體中文後面；位於簡體中文和日文之間 
+    /// </summary>
     InsertAfterSimplifiedChinese,
+    
+    /// <summary>
+    /// 取代英文的選項 
+    /// </summary>
     ReplaceEnglish,
+    
+    /// <summary>
+    /// 取代簡體中文的選項 
+    /// </summary>
     ReplaceSimplifiedChinese,
+    
+    /// <summary>
+    /// 放在語言清單的最下面
+    /// </summary>
     Append,
+    
+    /// <summary>
+    /// 只有繁體中文可以用
+    /// </summary>
     TraditionalChineseOnly,
 }
