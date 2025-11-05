@@ -28,6 +28,23 @@ public class PluginConfig(ConfigFile config)
         "自動輸出官方參考翻譯時選擇的原始語言"
     );
 
+    public ConfigEntry<bool> EnableAutoDumpLanguage { get; } = config.Bind(
+        "Debug",
+        "EnableAutoDumpLanguage",
+        true,
+        string.Join('\n', 
+            "是否自動輸出遊戲內的翻譯表以供參考",
+            " (有 ModConfig 的話即時更改可以重新輸出)"
+        )
+    );
+    
+    public ConfigEntry<bool> WarnUnknownTranslationKeys { get; } = config.Bind(
+        "Debug",
+        "WarnUnknownTranslationKeys",
+        false,
+        "有未知的非附加翻譯key時是否觸發警告"
+    );
+    
     public ConfigEntry<bool> WarnMissingAdditionalKeys { get; } = config.Bind(
         "Debug",
         "WarnMissingAdditionalKeys",
@@ -39,7 +56,7 @@ public class PluginConfig(ConfigFile config)
         "Patch",
         "LanguagePatchMode",
         TcnPatch.LanguagePatchMode.InsertAfterSimplifiedChinese,
-        "設定修正設定中的語言清單時，要放在簡體中文後面，或是取代簡體中文"
+        "設定如何修正設定中的語言清單"
     );
 
     public ConfigEntry<bool> ShowPatchCredit { get; } = config.Bind(

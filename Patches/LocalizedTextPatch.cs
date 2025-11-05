@@ -25,7 +25,7 @@ public class LocalizedTextPatch
     [HarmonyPrefix]
     private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
     {
-        if (Plugin.TryGetRegistered(id, language, out var result))
+        if (Plugin.TryGetRegistered(id, language, out var result) && !string.IsNullOrEmpty(result))
         {
             __runOriginal = false;
             __result = result;
@@ -71,10 +71,22 @@ public class LocalizedTextPatch
     {
         if (_writtenMainTable) return;
         _writtenMainTable = true;
+
+        if (!Plugin.ModConfig.EnableAutoDumpLanguage.Value) return;
+        
+        DumpLanguageEntries();
+    }
+
+    internal static void DumpLanguageEntries()
+    {
+        Plugin.Logger.LogInfo($"正在自動輸出翻譯表至 _Auto{Plugin.TcnTranslationFileName}...");
         
         var dir = Path.Combine(Paths.ConfigPath, Plugin.ModGuid);
-        Directory.CreateDirectory(dir);
-        
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+
         var path =  Path.Combine(dir, "_Auto" + Plugin.TcnTranslationFileName);
         var language = Plugin.ModConfig.AutoDumpLanguage.Value;
         var table = LocalizedText.mainTable
@@ -102,20 +114,6 @@ public class LocalizedTextPatch
         );
         
         File.WriteAllText(path, json);
-
-        Plugin.EmptyTranslationFile = new TranslationFile();
-        
-        foreach (var key in LocalizedText.mainTable.Keys)
-        {
-            if (VanillaLocalizationKeys.Contains(key))
-            {
-                Plugin.EmptyTranslationFile.Translations[key] = "";
-            }
-            else
-            {
-                Plugin.EmptyTranslationFile.AdditionalTranslations[key] = "";
-            }
-        }
     }
 
     private class AutoDumpRecord(Dictionary<string, string> translations, Dictionary<string, string> additionalTranslations)

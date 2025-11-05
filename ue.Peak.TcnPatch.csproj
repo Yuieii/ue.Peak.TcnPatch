@@ -40,11 +40,17 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(PeakLibDir)\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>$(PeakLibDir)\Unity.InputSystem.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(PeakLibDir)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(PeakLibDir)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Zorro.Core.Runtime">
+      <HintPath>$(PeakLibDir)\Zorro.Core.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Zorro.Settings.Runtime">
       <HintPath>$(PeakLibDir)\Zorro.Settings.Runtime.dll</HintPath>

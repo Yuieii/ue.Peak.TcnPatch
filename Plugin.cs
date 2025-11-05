@@ -16,17 +16,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ue.Peak.TcnPatch.Adapters;
 using ue.Peak.TcnPatch.Patches;
-using UnityEngine;
 
 namespace ue.Peak.TcnPatch;
 
 [BepInPlugin(ModGuid, ModName, ModVersion)]
 [BepInDependency("MoreAscents", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("com.github.PEAKModding.PEAKLib.UI", BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BaseUnityPlugin
 {
     public const string ModGuid = "ue.Peak.TcnPatch";
     public const string ModName = "ue.Peak.TcnPatch";
-    public const string ModVersion = "1.3.5";
+    public const string ModVersion = "1.4.0";
     
     internal static Plugin Instance { get; private set; }
     
@@ -53,6 +53,13 @@ public class Plugin : BaseUnityPlugin
         // Plugin startup logic
         Instance = this;
         ModConfig = new PluginConfig(Config);
+        
+        ModConfig.EnableAutoDumpLanguage.SettingChanged += (_, _) =>
+        {
+            if (!ModConfig.EnableAutoDumpLanguage.Value) return;
+            LocalizedTextPatch.DumpLanguageEntries();
+        };
+        
         Logger = base.Logger;
         
         Logger.LogInfo($"正在載入模組 - {ModGuid}");
@@ -218,19 +225,30 @@ public class Plugin : BaseUnityPlugin
         
         foreach (var (key, value) in CurrentTranslationFile.Translations)
         {
-            if (!mainTable.ContainsKey(key.ToUpperInvariant()))
+            var upper = key.ToUpperInvariant();
+            
+            if (TcnTable.ContainsKey(upper))
             {
-                Logger.LogWarning($"已忽略未知的翻譯key：「{key}」！");
+                Logger.LogInfo($"發現重複的翻譯key：「{key}」！已存在大寫的同名key！");
                 continue;
             }
+            
+            if (!mainTable.ContainsKey(upper))
+            {
+                if (ModConfig.WarnUnknownTranslationKeys.Value)
+                {
+                    Logger.LogWarning($"正在使用未知的翻譯key：「{upper}」！");
+                }
+            }
 
-            TcnTable[key] = value;
-            keys.Remove(key);
+            TcnTable[upper] = value;
+            keys.Remove(upper);
         }
         
         foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
         {
             RegisteredTable[key] = value;
+            keys.Remove(key);
         }
 
         var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;
