@@ -54,7 +54,7 @@ public class LoadingScreenAnimationPatch
         // What we are trying to add:
         // + ldsfld       valuetype LocalizedText/Language LocalizedText::CURRENT_LANGUAGE
         // + ldc.i4.s     LocalizedText.Language.TraditionalChinese
-        // + beq.s        **Runs branch of LocalizedText.Language.SimplifiedChinese**
+        // + beq.s        IL_xxxx  **Runs branch of LocalizedText.Language.SimplifiedChinese**
 
         Plugin.Logger.LogInfo("正在插入新的 IL code...");
         var branchTarget = list[branch];
