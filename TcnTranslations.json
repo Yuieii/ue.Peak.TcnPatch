@@ -650,11 +650,9 @@
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
         "PeakTcnPatch.Passport.Crabland": "蟹蟹島",
-
-        // -- PEAK v1.41.a (...。)
-        // 雖然最新版 PeakTcnPatch 已經會額外處理未知翻譯key，但這是額外餵給舊版模組的資料
-        // 之後會移除這些附加翻譯！
-        "DESC_Applied Esoterica": "通過非正經手段復活一位朋友。",
-        "DESC_APPLIED ESOTERICA.": "通過非正經手段復活一位朋友。"
+        
+        // -- ModConfig (via PEAKLib.UI)
+        "MOD SETTINGS": "模組設定",
+        "MOD CONTROLS": "模組按鍵設定"
     }
 }
