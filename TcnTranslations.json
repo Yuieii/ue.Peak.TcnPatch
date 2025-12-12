@@ -645,7 +645,10 @@
         "NAME_SKELETON": "骷髏",
         "NAME_SKELETON_PLAYER": "#骷髏",
         "REVIVE_BOOKOFBONES": "復活？",
-        "NAME_MANDRAKE": "曼德拉草"
+        "NAME_MANDRAKE": "曼德拉草",
+
+        // -- PEAK v1.49.a - bbno$
+        "NAME_BUGLEBBNO": "喇叭？"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",

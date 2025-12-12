@@ -647,7 +647,10 @@
         "NAME_SKELETON": "SKELETON",
         "NAME_SKELETON_PLAYER": "#'S SKELETON",
         "REVIVE_BOOKOFBONES": "REVIVE?",
-        "NAME_MANDRAKE": "MANDRAKE"
+        "NAME_MANDRAKE": "MANDRAKE",
+
+        // -- PEAK v1.49.a - bbno$
+        "NAME_BUGLEBBNO": "BUGLE?"
     },
     "AdditionalTranslations": {
         "PeakTcnPatch.Passport.Crabland": "CRABLAND"
