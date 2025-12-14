@@ -5,109 +5,108 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-namespace ue.Peak.TcnPatch;
-
-public class TranslationParseException : Exception
+namespace ue.Peak.TcnPatch
 {
-    public TranslationParseException(string message, string userMessage) : base(message)
+    public class TranslationParseException : Exception
     {
-        UserMessage = userMessage;
+        public TranslationParseException(string message, string userMessage) : base(message)
+        {
+            UserMessage = userMessage;
+        }
+
+        public TranslationParseException(string message) : base(message)
+        {
+            UserMessage = message;
+        }
+
+        public string UserMessage { get; }
     }
 
-    public TranslationParseException(string message) : base(message)
+    public class TranslationFile
     {
-        UserMessage = message;
-    }
+        public const int CurrentFormatVersion = 0;
 
-    public string UserMessage { get; }
-}
+        public const string FormatVersionKey = "FormatVersion";
+        public const string AuthorKey = "Authors";
+        public const string TranslationEntriesKey = "Translations";
+        public const string AdditionalTranslationEntriesKey = "AdditionalTranslations";
 
-public class TranslationFile
-{
-    public const int CurrentFormatVersion = 0;
+        public List<string> Authors { get; } = new();
 
-    public const string FormatVersionKey = "FormatVersion";
-    public const string AuthorKey = "Authors";
-    public const string TranslationEntriesKey = "Translations";
-    public const string AdditionalTranslationEntriesKey = "AdditionalTranslations";
-
-    public List<string> Authors { get; } = new();
-
-    public Dictionary<string, string> Translations { get; } = new();
+        public Dictionary<string, string> Translations { get; } = new();
     
-    // Apart from `Translations`, additional translations contains those which may come from other mods.
-    // Mods (or supporting adapter) can register new localization keys via the provided API.
-    public Dictionary<string, string> AdditionalTranslations { get; } = new();
+        // Apart from `Translations`, additional translations contains those which may come from other mods.
+        // Mods (or supporting adapter) can register new localization keys via the provided API.
+        public Dictionary<string, string> AdditionalTranslations { get; } = new();
 
-    public static TranslationFile Deserialize(JObject obj)
-    {
-        var schemefulKeys = new[]
+        public static TranslationFile Deserialize(JObject obj)
         {
-            FormatVersionKey, TranslationEntriesKey
-        };
-        
-        if (!schemefulKeys.All(obj.ContainsKey))
-        {
-            return InternalDeserializeFromLegacy(obj);
-        }
-
-        var result = new TranslationFile();
-        
-        // -- Format version
-        var formatVersionToken = obj[FormatVersionKey]!;
-        if (formatVersionToken.Type != JTokenType.Integer)
-        {
-            throw new TranslationParseException(
-                $"Format version must be an integer value, found {formatVersionToken.Type}",
-                "無效的格式版本！格式版本必須為一個整數！"
-            );
-        }
-        
-        var formatVersion = formatVersionToken.Value<int>();
-        if (formatVersion > CurrentFormatVersion)
-        {
-            Plugin.Logger.LogWarning("正在讀取過新版本的翻譯資料！可能會無法正確讀取。");
-        }
-
-        // Author info
-        if (obj.TryGetValue(AuthorKey, out var authorsToken))
-        {
-            if (authorsToken is JArray authorsArr)
+            var schemefulKeys = new[]
             {
-                foreach (var authorToken in authorsArr)
-                {
-                    result.Authors.Add(authorToken.Value<string>());
-                }
-            }
-            else if (authorsToken is JValue authorsValue)
+                FormatVersionKey, TranslationEntriesKey
+            };
+        
+            if (!schemefulKeys.All(obj.ContainsKey))
             {
-                result.Authors.Add(authorsValue.Value<string>());
+                return InternalDeserializeFromLegacy(obj);
             }
-            else
-            {
-                Plugin.Logger.LogWarning($"無效的翻譯者資料！ ({AuthorKey})");
-            }
-        }
 
-        {
-            // Translation entries.
-            var entries = obj[TranslationEntriesKey];
-            if (entries is not JObject entriesObj)
+            var result = new TranslationFile();
+        
+            // -- Format version
+            var formatVersionToken = obj[FormatVersionKey]!;
+            if (formatVersionToken.Type != JTokenType.Integer)
             {
                 throw new TranslationParseException(
-                    $"Translation entries must be an object, found {entries.Type}",
-                    $"無效的翻譯資料！ ({TranslationEntriesKey})"
+                    $"Format version must be an integer value, found {formatVersionToken.Type}",
+                    "無效的格式版本！格式版本必須為一個整數！"
                 );
             }
-
-            foreach (var (key, value) in entriesObj)
+        
+            var formatVersion = formatVersionToken.Value<int>();
+            if (formatVersion > CurrentFormatVersion)
             {
-                result.Translations[key] = value!.Value<string>();
+                Plugin.Logger.LogWarning("正在讀取過新版本的翻譯資料！可能會無法正確讀取。");
             }
-        }
 
-        {
-            if (obj.TryGetValue(AdditionalTranslationEntriesKey, out var entries)) 
+            // Author info
+            obj.GetOptional(AuthorKey).IfSome(authorsToken =>
+            {
+                if (authorsToken is JArray authorsArr)
+                {
+                    foreach (var authorToken in authorsArr)
+                    {
+                        result.Authors.Add(authorToken.Value<string>());
+                    }
+                }
+                else if (authorsToken is JValue authorsValue)
+                {
+                    result.Authors.Add(authorsValue.Value<string>());
+                }
+                else
+                {
+                    Plugin.Logger.LogWarning($"無效的翻譯者資料！ ({AuthorKey})");
+                }
+            });
+
+            {
+                // Translation entries.
+                var entries = obj[TranslationEntriesKey];
+                if (entries is not JObject entriesObj)
+                {
+                    throw new TranslationParseException(
+                        $"Translation entries must be an object, found {entries.Type}",
+                        $"無效的翻譯資料！ ({TranslationEntriesKey})"
+                    );
+                }
+
+                foreach (var (key, value) in entriesObj)
+                {
+                    result.Translations[key] = value!.Value<string>();
+                }
+            }
+
+            obj.GetOptional(AdditionalTranslationEntriesKey).IfSome(entries =>
             {
                 // Additional translation entries.
                 if (entries is not JObject entriesObj)
@@ -130,21 +129,21 @@ public class TranslationFile
                     additionalKeys.Add(key);
                     result.AdditionalTranslations[key] = value!.Value<string>();
                 }
-            }
+            });
+
+            return result;
         }
 
-        return result;
-    }
-
-    private static TranslationFile InternalDeserializeFromLegacy(JObject obj)
-    {
-        var result = new TranslationFile();
-        
-        foreach (var (key, value) in obj)
+        private static TranslationFile InternalDeserializeFromLegacy(JObject obj)
         {
-            result.Translations[key] = value!.Value<string>();
-        }
+            var result = new TranslationFile();
+        
+            foreach (var (key, value) in obj)
+            {
+                result.Translations[key] = value!.Value<string>();
+            }
 
-        return result;
+            return result;
+        }
     }
 }

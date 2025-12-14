@@ -4,37 +4,19 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using TMPro;
 
-namespace ue.Peak.TcnPatch;
-
-internal static class ReflectionExtensions
+namespace ue.Peak.TcnPatch
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TValue GetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo) 
-        => (TValue) fieldInfo.FieldInfo.GetValue(owner);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, out TValue result)
+    internal static class ReflectionExtensions
     {
-        if (fieldInfo == null)
+        extension<TOwner>(TOwner owner)
         {
-            result = default;
-            return false;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public TValue GetReflectionFieldValue<TValue>(ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo) 
+                => (TValue) fieldInfo.FieldInfo.GetValue(owner);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void SetReflectionFieldValue<TValue>(ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, TValue value) 
+                => fieldInfo.FieldInfo.SetValue(owner, value);
         }
-
-        result = (TValue) fieldInfo.FieldInfo.GetValue(owner);
-        return true;
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, TValue value) 
-        => fieldInfo.FieldInfo.SetValue(owner, value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TrySetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, TValue value)
-    {
-        if (fieldInfo == null) return false;
-
-        fieldInfo.FieldInfo.SetValue(owner, value);
-        return true;
     }
 }

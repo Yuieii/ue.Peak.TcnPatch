@@ -2,25 +2,29 @@
 
 using HarmonyLib;
 
-namespace ue.Peak.TcnPatch.Patches;
-
-[HarmonyPatch]
-public class PassportManagerPatch
+namespace ue.Peak.TcnPatch.Patches
 {
-    [HarmonyPatch(typeof(PassportManager), "Awake")]
-    [HarmonyPostfix]
-    private static void PatchCrabland(PassportManager __instance)
+    [HarmonyPatch]
+    public class PassportManagerPatch
     {
-        var transform = __instance.transform.Find("PassportUI/Canvas/Panel/Panel/BG/Text/Nationality/Text");
-        if (transform == null)
+        [HarmonyPatch(typeof(PassportManager), "Awake")]
+        [HarmonyPostfix]
+        private static void PatchCrabland(PassportManager __instance)
         {
-            // - Might be moved somewhere...
-            Plugin.Logger.LogDebug("!!: Failed to find the Crabland text in passport UI");
-            return;
+            __instance.transform
+                .Find("PassportUI/Canvas/Panel/Panel/BG/Text/Nationality/Text")
+                .ToOptionUnity()
+                .IfNone(() =>
+                {
+                    // - Might be moved somewhere...
+                    Plugin.Logger.LogDebug("!!: Failed to find the Crabland text in passport UI");
+                })
+                .IfSome(transform =>
+                {
+                    var localized = transform.gameObject.AddComponent<LocalizedText>();
+                    localized.index = "PeakTcnPatch.Passport.Crabland";
+                    localized.RefreshText();
+                });
         }
-        
-        var localized = transform.gameObject.AddComponent<LocalizedText>();
-        localized.index = "PeakTcnPatch.Passport.Crabland";
-        localized.RefreshText();
     }
 }
