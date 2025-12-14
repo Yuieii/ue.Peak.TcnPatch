@@ -3,7 +3,6 @@
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Xml;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,6 +10,15 @@ using ue.Bundler;
 
 var basePath = "../../../..";
 var sourceFilePath = Path.Combine(basePath, "ue.Peak.TcnPatch/Plugin.cs");
+var docsBasePath = Path.Combine(basePath, "Docs");
+var dllBasePath = Path.Combine(basePath, "ue.Peak.TcnPatch/bin/Debug/netstandard2.1");
+
+if (!File.Exists(Path.Combine(dllBasePath, "ue.Peak.TcnPatch.dll")))
+{
+    Console.Error.WriteLine("Compile the plugin DLL first!");
+    Environment.Exit(-1);
+}
+
 using var sourceFile = File.OpenRead(sourceFilePath);
 using var textReader = new StreamReader(sourceFile);
 
@@ -66,12 +74,25 @@ using var archive = new ZipArchive(modZip, ZipArchiveMode.Create);
     JsonSerializer.Serialize(manifestJson, manifest, options);
 }
 
-var docsBasePath = Path.Combine(basePath, "Docs");
-var dllBasePath = Path.Combine(basePath, "ue.Peak.TcnPatch/bin/Debug/netstandard2.1");
 archive.CreateEntryFromFile(Path.Combine(dllBasePath, "ue.Peak.TcnPatch.dll"), "ue.Peak.TcnPatch.dll");
 archive.CreateEntryFromFile(Path.Combine(dllBasePath, "ue.Core.dll"), "ue.Core.dll");
 archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Icon.png"), "icon.png");
-archive.CreateEntryFromFile(Path.Combine(basePath, "Readme.md"), "README.md");
+
+{
+    using var fileStream = File.OpenRead(Path.Combine(basePath, "Readme.md"));
+    using var reader = new StreamReader(fileStream);
+    
+    var content = reader.ReadToEnd()
+        .Replace("\r", "")
+        .Replace("> [!TIP]\n", "")
+        .Replace("> [!IMPORTANT]\n", "");
+
+    var readmeEntry = archive.CreateEntry("README.md");
+    using var entryStream = readmeEntry.Open();
+    using var writer = new StreamWriter(entryStream);
+    writer.Write(content);
+}
+
 archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Changelog.md"), "CHANGELOG.md");
 
 Console.WriteLine("Created an archive file for Thunderstore.");
