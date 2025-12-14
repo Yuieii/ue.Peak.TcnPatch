@@ -1,6 +1,6 @@
 {
     // 以下翻譯文字來自夜芷冰的 PEAK 繁體中文翻譯
-    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/50aa2e9a295433575dbf4d7d9c0d2b93683e8945/BepInEx/config/zh-tw-voc/Text
+    // https://github.com/Vocaloid2048/PEAK-zh-tw-Translation/tree/9793b8ef8a66defa30b92167ea5c66392f77c7f4/BepInEx/config/zh-tw-voc/Text
     // --
 
     "FormatVersion": 0,
@@ -117,13 +117,21 @@
 
         // -- 表情動作
         "SALUTE": "敬禮",
-        "THUMBS UP": "豎起大拇指",
+        "THUMBS UP": "讚哦",
         "THINK": "思考",
         "NO-NO": "搖頭拒絕",
         "PLAY DEAD": "裝死",
-        "SHRUG": "聳肩",
+        "SHRUG": "窩不知道",
         "CROSSED ARMS": "雙臂交叉",
         "DANCE": "跳舞",
+        "BACKFLIP": "後空翻",
+        "CINEMA": "絕·對·電·影",
+        "CRASHOUT": "無能狂怒",
+        "DANCE2": "長夜月搖",
+        "DEFEAT": "涼拌了",
+        "FLEX": "健美",
+        "PUNCHFIST": "欠扁哦",
+        "WAVE": "揮手",
 
         // -- 道具的形容詞
         "STASHITEM": "放下<br>#",
@@ -158,8 +166,8 @@
         "TIMELINE": "時間線",
         "NEWBADGES": "新徽章",
         "NEXT": "下一步",
-        "JOINEDTHEEXPEDITION": "# 加入探險。", // # joined the expedition.
-        "LEFTTHEEXPEDITION": "# 離開探險。", // # left the expedition.
+        "JOINEDTHEEXPEDITION": "# 加入探險", // # joined the expedition.
+        "LEFTTHEEXPEDITION": "# 離開探險", // # left the expedition.
 
         // -- 遺漏缺失-感謝悠依 @Yuieii 補充
         // -- 部分翻譯有作微調
@@ -212,6 +220,13 @@
         "BB_MAYBE": "或或或或許吧...",
         "BB_ASKYOURFRIENDS": "你該找朋友幫忙！",
         "PHOTOBOOTH": "拍貼機",
+
+        // -- Update - v1.42.a
+        "READ": "閱讀",
+        "STRUGGLE": "掙扎",
+        "REVIVE_BOOKOFBONES": "要復活嗎？",
+        "GEM_ACTIVATED": "Gem Activated",
+        "GEM_DEACTIVATED": "Gem Deactivated",
 
         // # Settings
         // -- 設定頁：一般
@@ -398,6 +413,29 @@
         "NAME_BUNDLED UP": "保暖徽章",
         "DESC_BUNDLED UP": "在不超過20%寒冷值的情況下攀越「阿爾卑斯山脈」。",
 
+        "NAME_FORESTRY": "林業徽章",
+        "DESC_FORESTRY": "攀越「紅杉森林」。",
+        "NAME_TREAD LIGHTLY": "凌菇微步徽章",
+        "DESC_TREAD LIGHTLY": "在不超過25%孢子值的情況下攀越「紅杉森林」。",
+        "NAME_WEB SECURITY": "「網路」安全徽章",
+        "DESC_WEB SECURITY": "從蜘蛛網中逃脫並生存下來。",
+        "NAME_UNDEAD ENCOUNTER": "不死生物接觸徽章",
+        "DESC_UNDEAD ENCOUNTER": "在被殭屍咬傷後自行治癒一次。",
+        "NAME_ADVANCED MYCOLOGY": "進階真菌學徽章",
+        "DESC_ADVANCED MYCOLOGY": "在單次探險中嘗試進食5種不同的菇莓。",
+        "NAME_DISASTER RESPONSE": "災害應變徽章",
+        "DESC_DISASTER RESPONSE": "使用救援爪拉動昏迷的好友30公尺。",
+        "NAME_CALCIUM INTAKE": "鈣質攝取徽章",
+        "DESC_CALCIUM INTAKE": "使用強化乳抵禦總共100點傷害。",
+        "NAME_COMPETITIVE EATING": "大胃王徽章",
+        "DESC_COMPETITIVE EATING": "在5秒內吃掉3根熱狗。",
+        "NAME_APPLIED ESOTERICA": "玄學應用徽章",
+        "DESC_APPLIED ESOTERICA": "使用非正式手段復活一位朋友。",
+        "NAME_MYCOACROBATICS": "真菌雜技徽章",
+        "DESC_MYCOACROBATICS": "從蘑菇上彈跳40公尺高。",
+        "NAME_CRYPTOGASTRONOMY": "秘傳料理徽章",
+        "DESC_CRYPTOGASTRONOMY": "烹飪並吃掉曼德拉草。",
+
         // -- 階級
         "TADPOLE SCOUT": "蝌蚪童軍",
         "RABBIT SCOUT": "兔子童軍",
@@ -469,6 +507,7 @@
         // -- Biomes
         "SHORE": "海邊",
         "TROPICS": "熱帶雨林",
+        "ROOTS": "紅杉森林",
         "ALPINE": "阿爾卑斯山脈",
         "MESA": "台地",
         "CALDERA": "炎石柱地",
@@ -593,6 +632,22 @@
         "NAME_YELLOW BERRYNANA": "黃色香蕉莓",
         "NAME_RED PRICKLEBERRY": "紅刺莓",
         "NAME_GOLD PRICKLEBERRY": "金刺莓",
+        
+        // -- Update in 1.42.a
+        "NAME_CLOUD FUNGUS": "雲菇",
+        "NAME_RESCUE CLAW": "救援爪",
+        "NAME_PURPLE SHROOMBERRY": "紫色菇莓",
+        "NAME_BLUE SHROOMBERRY": "藍色菇莓",
+        "NAME_GREEN SHROOMBERRY": "綠色菇莓",
+        "NAME_RED SHROOMBERRY": "紅色菇莓",
+        "NAME_YELLOW SHROOMBERRY": "黃色菇莓",
+        "NAME_THEBOOKOFBONES": "骸骨之書",
+        "NAME_SKELETON": "骷髏",
+        "NAME_SKELETON_PLAYER": "# 的骷髏", // 嗶嗶!! @Vocaloid2048
+        "NAME_MANDRAKE": "曼德拉草",
+        "NAME_CHECKPOINT FLAG": "檢查點旗幟",
+        "NAME_HOT DOG": "熱狗",
+        "NAME_FORTIFIED MILK": "強化乳",
 
         // # Book
         // -- 求生指南
@@ -684,6 +739,8 @@
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
         "PeakTcnPatch.Passport.Crabland": "蟹蟹島",
+        "NAME_Climbing Chalk": "攀岩粉",
+        "NAME_Skull": "骷髏頭",
 
         // # Mod: MoreAscents
         // -- Ascent 8
