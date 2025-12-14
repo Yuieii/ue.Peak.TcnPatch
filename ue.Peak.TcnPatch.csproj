@@ -24,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ue.Core" Version="*" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="UnityEngine.Modules" Version="6000.0.36" IncludeAssets="compile" />
@@ -39,10 +40,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(PeakLibDir)\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="ue.Core">
-      <!-- Maybe I should publish this to NuGet...? -->
-      <HintPath>..\ue.Libs\ue.Core\bin\Debug\netstandard2.1\ue.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(PeakLibDir)\Unity.TextMeshPro.dll</HintPath>
