@@ -65,7 +65,7 @@ var options = new JsonSerializerOptions
 
 options.Converters.Add(new DependencyConverter());
 
-using var modZip = File.Open("Yuieii-PeakTcnPatch.zip", FileMode.Create, FileAccess.Write);
+using var modZip = File.Open($"Yuieii-PeakTcnPatch-{version}.zip", FileMode.Create, FileAccess.Write);
 using var archive = new ZipArchive(modZip, ZipArchiveMode.Create);
 
 {
