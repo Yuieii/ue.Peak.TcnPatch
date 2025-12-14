@@ -44,9 +44,6 @@
       <!-- Maybe I should publish this to NuGet...? -->
       <HintPath>..\ue.Libs\ue.Core\bin\Debug\netstandard2.1\ue.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.InputSystem">
-      <HintPath>$(PeakLibDir)\Unity.InputSystem.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(PeakLibDir)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
