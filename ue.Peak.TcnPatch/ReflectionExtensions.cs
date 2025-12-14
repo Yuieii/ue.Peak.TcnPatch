@@ -8,15 +8,12 @@ namespace ue.Peak.TcnPatch
 {
     internal static class ReflectionExtensions
     {
-        extension<TOwner>(TOwner owner)
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public TValue GetReflectionFieldValue<TValue>(ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo) 
-                => (TValue) fieldInfo.FieldInfo.GetValue(owner);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TValue GetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo) 
+            => (TValue) fieldInfo.FieldInfo.GetValue(owner);
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void SetReflectionFieldValue<TValue>(ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, TValue value) 
-                => fieldInfo.FieldInfo.SetValue(owner, value);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetReflectionFieldValue<TOwner, TValue>(this TOwner owner, ReflectionMembers.TypedFieldInfo<TOwner, TValue> fieldInfo, TValue value) 
+            => fieldInfo.FieldInfo.SetValue(owner, value);
     }
 }
