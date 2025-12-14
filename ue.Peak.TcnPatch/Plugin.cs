@@ -14,8 +14,8 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ue.Core;
 using ue.Peak.TcnPatch.Adapters;
+using ue.Peak.TcnPatch.Core;
 using ue.Peak.TcnPatch.Patches;
 
 namespace ue.Peak.TcnPatch
@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.3";
+        public const string ModVersion = "1.5.7";
     
         internal static Plugin Instance { get; private set; }
     

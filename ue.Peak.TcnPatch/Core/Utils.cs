@@ -10,7 +10,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ue.Core
+namespace ue.Peak.TcnPatch.Core
 {
     public enum Never;
 

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ue.Core
+namespace ue.Peak.TcnPatch.Core
 {
     public static class Option
     {

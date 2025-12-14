@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace ue.Core
+namespace ue.Peak.TcnPatch.Core
 {
     public static class Result
     {

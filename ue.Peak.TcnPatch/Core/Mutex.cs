@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ue.Core
+namespace ue.Peak.TcnPatch.Core
 {
     public static class MutexExtensions
     {

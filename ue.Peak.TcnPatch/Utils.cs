@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using ue.Core;
+using ue.Peak.TcnPatch.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
