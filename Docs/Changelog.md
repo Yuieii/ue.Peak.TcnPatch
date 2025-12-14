@@ -1,8 +1,9 @@
-# 1.5.1 ~ 1.5.3
+# 1.5.1 ~ 1.5.4
 ## 修正
 - 以下都是程式相關更改，因為似乎有什麼東西被 Thunderstore 擋下來，所以正在慢慢嘗試撤回一些更動，讓他恢復審核通過
-  - 將 `ue.Core.dll` 程式碼內嵌至 `ue.Peak.TcnPatch.dll`
-  - 將所有 extension block 改回傳統的 extension methods
+  - 1.5.1 / 1.5.2: 將所有 extension block 改回傳統的 extension methods
+  - 1.5.3: 將 `ue.Core.dll` 程式碼內嵌至 `ue.Peak.TcnPatch.dll`
+  - 1.5.4: 移除 `Option` 和 `Result` 類別，移除多餘 methods
 - 如果這個訊息有出現在 Thunderstore，那就代表以上功能被自動審核擋下來了 :(
 
 # 1.5.0

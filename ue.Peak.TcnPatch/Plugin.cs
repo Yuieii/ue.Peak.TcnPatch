@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.3";
+        public const string ModVersion = "1.5.4";
     
         internal static Plugin Instance { get; private set; }
     
@@ -171,47 +171,46 @@ namespace ue.Peak.TcnPatch
         // Registered from API, contains unlocalized texts
         internal static Dictionary<string, string> KeyToUnlocalizedLookup { get; } = new();
 
-        internal static Option<string> GetVanilla(string id) 
-            => TranslationsLookup.GetOptional(id.ToUpperInvariant());
+        internal static bool TryGetVanilla(string id, out string result) 
+            => TranslationsLookup.TryGetValue(id.ToUpperInvariant(), out result);
 
-        internal static Option<string> GetRegistered(string id, LocalizedText.Language? language)
+        internal static bool TryGetRegistered(string id, LocalizedText.Language? language, out string result)
         {
             language ??= LocalizedText.CURRENT_LANGUAGE;
-
-            var result = language == LocalizedText.Language.TraditionalChinese
-                ? AdditionalTranslationsLookup.GetOptional(id)
-                : Option<string>.None;
         
-            return result.OrGet(() => KeyToUnlocalizedLookup.GetOptional(id));
+            if (language == LocalizedText.Language.TraditionalChinese && AdditionalTranslationsLookup.TryGetValue(id, out result))
+            {
+                return true;
+            }
+        
+            return KeyToUnlocalizedLookup.TryGetValue(id, out result);
         }
     
         private static void UpdateMainTable()
         {
             var flow = _lock.EnterScope(() =>
             {
-                return TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
-                    .Select(TranslationFile.Deserialize)
-                    .Select(f =>
-                    {
-                        CurrentTranslationFile = f;
-                        return ReturnFlow.Continue;
-                    })
-                    .SelectError(ex =>
-                    {
-                        if (ex is TranslationParseException e)
-                        {
-                            Logger.LogError(e.UserMessage);
-                            Logger.LogError("翻譯資料分析失敗！");
-                        }
-                        else
-                        {
-                            Logger.LogError("翻譯資料分析失敗！");
-                            Logger.LogError(ex);
-                        }
-                    
+                try
+                {
+                    if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
                         return ReturnFlow.Break;
-                    })
-                    .Branch();
+
+                    CurrentTranslationFile = TranslationFile.Deserialize(obj);
+                }
+                catch (TranslationParseException e)
+                {
+                    Logger.LogError(e.UserMessage);
+                    Logger.LogError("翻譯資料分析失敗！");
+                    return ReturnFlow.Break;
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("翻譯資料分析失敗！");
+                    Logger.LogError(e);
+                    return ReturnFlow.Break;
+                }
+
+                return ReturnFlow.Continue;
             });
 
             if (flow == ReturnFlow.Break) 
@@ -278,52 +277,34 @@ namespace ue.Peak.TcnPatch
             LocalizedText.RefreshAllText();
         }
 
-        private static Result<T, Exception> TryReadFromJson<T>(string fileName, Func<T> defaultContent) where T : class
+        private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
         {
+            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+            Directory.CreateDirectory(dir);
+        
+            var path = Path.Combine(dir, fileName);
+
+            if (!File.Exists(path))
+            {
+                var def = JsonConvert.SerializeObject(defaultContent());
+                File.WriteAllText(path, def);
+            }
+        
             try
             {
-                var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-                Directory.CreateDirectory(dir);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var reader = new StreamReader(stream);
 
-                var path = Path.Combine(dir, fileName);
-
-                if (!File.Exists(path))
-                {
-                    var def = JsonConvert.SerializeObject(defaultContent());
-                    File.WriteAllText(path, def);
-                }
-
-                try
-                {
-                    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    using var reader = new StreamReader(stream);
-                    return Result.Success(JsonConvert.DeserializeObject<T>(reader.ReadToEnd()));
-                }
-                catch (Exception e)
-                {
-                    Logger.LogError($"無法讀取 JSON 設定：{fileName}");
-                    Logger.LogError(e);
-                    return Result.Error(e);
-                }
+                result = JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+                return true;
             }
             catch (Exception e)
             {
-                return Result.Error(e);
+                Logger.LogError($"無法讀取 JSON 設定：{fileName}");
+                Logger.LogError(e);
+                result = null;
+                return false;
             }
-        }
-    
-        [Obsolete("Use the Result version instead.", true)]
-        private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
-        {
-            var res = TryReadFromJson(fileName, defaultContent);
-            if (res.IsSuccess)
-            {
-                result = res.Unwrap();
-                return true;
-            }
-
-            result = null;
-            return false;
         }
     }
 }

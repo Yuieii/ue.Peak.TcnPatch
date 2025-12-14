@@ -26,23 +26,23 @@ namespace ue.Peak.TcnPatch.Patches
         [HarmonyPrefix]
         private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
         {
-            var (runOriginal, res) = Plugin.GetRegistered(id, language)
-                .Where(result => !string.IsNullOrEmpty(result))
-                .OrGet(() =>
-                {
-                    if (language != LocalizedText.Language.TraditionalChinese)
-                        return Option.None;
-
-                    return Plugin.GetVanilla(id)
-                        .Where(result => !string.IsNullOrEmpty(result));
-                })
-                .Select(result => (false, result))
-                .OrElse((true, null));
-
-            __runOriginal = runOriginal;
-            __result = res;
+            if (Plugin.TryGetRegistered(id, language, out var result) && !string.IsNullOrEmpty(result))
+            {
+                __runOriginal = false;
+                __result = result;
+                return;
+            }
+            
+            if (language != LocalizedText.Language.TraditionalChinese) return;
+            
+            if (Plugin.TryGetVanilla(id, out result) && !string.IsNullOrEmpty(result))
+            {
+                __runOriginal = false;
+                __result = result;
+                return;
+            }
         }
-    
+        
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
         [HarmonyPriority(Priority.First)]
         [HarmonyPostfix]
@@ -58,7 +58,7 @@ namespace ue.Peak.TcnPatch.Patches
 
                 return;
             }
-        
+            
             foreach (var key in LocalizedText.mainTable.Keys)
             {
                 VanillaLocalizationKeys.Add(key);
@@ -74,14 +74,14 @@ namespace ue.Peak.TcnPatch.Patches
             _writtenMainTable = true;
 
             if (!Plugin.ModConfig.EnableAutoDumpLanguage.Value) return;
-        
+            
             DumpLanguageEntries();
         }
 
         internal static void DumpLanguageEntries()
         {
             Plugin.Logger.LogInfo($"正在自動輸出翻譯表至 _Auto{Plugin.TcnTranslationFileName}...");
-        
+            
             var dir = Path.Combine(Paths.ConfigPath, Plugin.ModGuid);
             if (!Directory.Exists(dir))
             {
@@ -96,24 +96,24 @@ namespace ue.Peak.TcnPatch.Patches
                     p => p.Key,
                     p => p.Value[(int) language]
                 );
-        
+            
             var additionalTable = LocalizedText.mainTable
                 .Where(p => !VanillaLocalizationKeys.Contains(p.Key))
                 .ToDictionary(
                     p => p.Key,
                     p => p.Value[(int) language]
                 );
-        
+            
             foreach (var (key, value) in Plugin.KeyToUnlocalizedLookup)
             {
                 additionalTable[key] = value;
             }
-        
+            
             var json = JsonConvert.SerializeObject(
                 new AutoDumpRecord(table, additionalTable), 
                 Formatting.Indented
             );
-        
+            
             File.WriteAllText(path, json);
         }
 
