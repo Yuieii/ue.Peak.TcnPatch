@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using ue.Core;
 
 namespace ue.Peak.TcnPatch
 {
@@ -70,7 +71,7 @@ namespace ue.Peak.TcnPatch
             }
 
             // Author info
-            if (obj.TryGetValue(AuthorKey, out var authorsToken))
+            obj.GetOptional(AuthorKey).IfSome(authorsToken =>
             {
                 if (authorsToken is JArray authorsArr)
                 {
@@ -87,7 +88,7 @@ namespace ue.Peak.TcnPatch
                 {
                     Plugin.Logger.LogWarning($"無效的翻譯者資料！ ({AuthorKey})");
                 }
-            }
+            });
 
             {
                 // Translation entries.
@@ -106,32 +107,30 @@ namespace ue.Peak.TcnPatch
                 }
             }
 
+            obj.GetOptional(AdditionalTranslationEntriesKey).IfSome(entries =>
             {
-                if (obj.TryGetValue(AdditionalTranslationEntriesKey, out var entries)) 
+                // Additional translation entries.
+                if (entries is not JObject entriesObj)
                 {
-                    // Additional translation entries.
-                    if (entries is not JObject entriesObj)
-                    {
-                        throw new TranslationParseException(
-                            $"Additional translation entries must be an object, found {entries.Type}",
-                            $"無效的附加翻譯資料！ ({AdditionalTranslationEntriesKey})"
-                        );
-                    }
-                
-                    var additionalKeys = new List<string>();
-                    foreach (var (key, value) in entriesObj)
-                    {
-                        if (additionalKeys.Contains(key, StringComparer.InvariantCultureIgnoreCase))
-                        {
-                            Plugin.Logger.LogWarning($"翻譯資料出現已註冊過的附加翻譯key「{key}」！新的同名翻譯將會被忽略。");
-                            continue;
-                        }
-                    
-                        additionalKeys.Add(key);
-                        result.AdditionalTranslations[key] = value!.Value<string>();
-                    }
+                    throw new TranslationParseException(
+                        $"Additional translation entries must be an object, found {entries.Type}",
+                        $"無效的附加翻譯資料！ ({AdditionalTranslationEntriesKey})"
+                    );
                 }
-            }
+                
+                var additionalKeys = new List<string>();
+                foreach (var (key, value) in entriesObj)
+                {
+                    if (additionalKeys.Contains(key, StringComparer.InvariantCultureIgnoreCase))
+                    {
+                        Plugin.Logger.LogWarning($"翻譯資料出現已註冊過的附加翻譯key「{key}」！新的同名翻譯將會被忽略。");
+                        continue;
+                    }
+                    
+                    additionalKeys.Add(key);
+                    result.AdditionalTranslations[key] = value!.Value<string>();
+                }
+            });
 
             return result;
         }

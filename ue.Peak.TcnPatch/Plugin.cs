@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,8 +11,10 @@ using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ue.Core;
 using ue.Peak.TcnPatch.Adapters;
 using ue.Peak.TcnPatch.Patches;
 
@@ -26,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.6";
+        public const string ModVersion = "1.5.3";
     
         internal static Plugin Instance { get; private set; }
     
@@ -36,7 +37,7 @@ namespace ue.Peak.TcnPatch
 
         public const string TcnTranslationFileName = "TcnTranslations.json";
 
-        private static SemaphoreSlim _lock = new(1, 1);
+        private static readonly SemaphoreSlim _lock = new(1, 1);
 
         internal static TranslationFile EmptyTranslationFile { get; set; }
 
@@ -47,6 +48,9 @@ namespace ue.Peak.TcnPatch
         internal static HashSet<string> EphemeralTranslationKeys { get; } = new();
 
         internal static bool HasOfficialTcn { get; private set; }
+        
+        [CanBeNull]
+        private Harmony _harmony;
 
         private void Awake()
         {
@@ -74,7 +78,7 @@ namespace ue.Peak.TcnPatch
 
             if (ModConfig.DownloadFromRemote.Value)
             {
-                Task.Run(async () =>
+                _ = Task.Run(async () =>
                 {
                     var url = ModConfig.DownloadUrl.Value;
                     Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
@@ -102,18 +106,12 @@ namespace ue.Peak.TcnPatch
                         Directory.CreateDirectory(dir);
 
                         var path = Path.Combine(dir, TcnTranslationFileName);
-                        await _lock.WaitAsync();
-                    
-                        try
+                        await _lock.EnterScopeAsync(async () =>
                         {
                             await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
                             await using var writer = new StreamWriter(targetStream);
                             await writer.WriteAsync(content);
-                        }
-                        finally
-                        {
-                            _lock.Release();
-                        }
+                        });
 
                         Logger.LogInfo("翻譯資料下載完成！");
                     }
@@ -126,8 +124,8 @@ namespace ue.Peak.TcnPatch
                     client.Dispose();
                 });
             }
-        
-            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
+
+            _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
         
             var api = API.TcnPatch.InternalInstance;
             api.RegisterLocalizationKey("PeakTcnPatch.Passport.Crabland", "CRABLAND");
@@ -161,52 +159,63 @@ namespace ue.Peak.TcnPatch
             _watcher.EnableRaisingEvents = true;
         }
 
-        internal static Dictionary<string, string> TcnTable { get; } = new();
-        internal static Dictionary<string, string> RegisteredTable { get; } = new();
-        internal static Dictionary<string, string> RegisteredOrigTable { get; } = new();
+        private void OnDestroy()
+        {
+            _harmony?.UnpatchSelf();
+        }
 
-        internal static bool TryGetVanilla(string id, out string result) 
-            => TcnTable.TryGetValue(id.ToUpperInvariant(), out result);
+        internal static Dictionary<string, string> TranslationsLookup { get; } = new();
+    
+        internal static Dictionary<string, string> AdditionalTranslationsLookup { get; } = new();
+    
+        // Registered from API, contains unlocalized texts
+        internal static Dictionary<string, string> KeyToUnlocalizedLookup { get; } = new();
 
-        internal static bool TryGetRegistered(string id, LocalizedText.Language? language, out string result)
+        internal static Option<string> GetVanilla(string id) 
+            => TranslationsLookup.GetOptional(id.ToUpperInvariant());
+
+        internal static Option<string> GetRegistered(string id, LocalizedText.Language? language)
         {
             language ??= LocalizedText.CURRENT_LANGUAGE;
+
+            var result = language == LocalizedText.Language.TraditionalChinese
+                ? AdditionalTranslationsLookup.GetOptional(id)
+                : Option<string>.None;
         
-            if (language == LocalizedText.Language.TraditionalChinese && RegisteredTable.TryGetValue(id, out result))
-            {
-                return true;
-            }
-        
-            return RegisteredOrigTable.TryGetValue(id, out result);
+            return result.OrGet(() => KeyToUnlocalizedLookup.GetOptional(id));
         }
     
         private static void UpdateMainTable()
         {
-            _lock.Wait();
-        
-            try
+            var flow = _lock.EnterScope(() =>
             {
-                if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
-                    return;
+                return TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
+                    .Select(TranslationFile.Deserialize)
+                    .Select(f =>
+                    {
+                        CurrentTranslationFile = f;
+                        return ReturnFlow.Continue;
+                    })
+                    .SelectError(ex =>
+                    {
+                        if (ex is TranslationParseException e)
+                        {
+                            Logger.LogError(e.UserMessage);
+                            Logger.LogError("翻譯資料分析失敗！");
+                        }
+                        else
+                        {
+                            Logger.LogError("翻譯資料分析失敗！");
+                            Logger.LogError(ex);
+                        }
+                    
+                        return ReturnFlow.Break;
+                    })
+                    .Branch();
+            });
 
-                CurrentTranslationFile = TranslationFile.Deserialize(obj);
-            }
-            catch (TranslationParseException e)
-            {
-                Logger.LogError(e.UserMessage);
-                Logger.LogError("翻譯資料分析失敗！");
+            if (flow == ReturnFlow.Break) 
                 return;
-            }
-            catch (Exception e)
-            {
-                Logger.LogError("翻譯資料分析失敗！");
-                Logger.LogError(e);
-                return;
-            }
-            finally
-            {
-                _lock.Release();
-            }
 
             var mainTable = LocalizedText.mainTable;
             var keys = mainTable.Keys.ToHashSet();
@@ -220,14 +229,14 @@ namespace ue.Peak.TcnPatch
                 Logger.LogInfo("翻譯資料作者：未知");
             }
 
-            TcnTable.Clear();
-            RegisteredTable.Clear();
+            TranslationsLookup.Clear();
+            AdditionalTranslationsLookup.Clear();
         
             foreach (var (key, value) in CurrentTranslationFile.Translations)
             {
                 var upper = key.ToUpperInvariant();
             
-                if (TcnTable.ContainsKey(upper))
+                if (TranslationsLookup.ContainsKey(upper))
                 {
                     Logger.LogInfo($"發現重複的翻譯key：「{key}」！已存在大寫的同名key！");
                     continue;
@@ -241,13 +250,13 @@ namespace ue.Peak.TcnPatch
                     }
                 }
 
-                TcnTable[upper] = value;
+                TranslationsLookup[upper] = value;
                 keys.Remove(upper);
             }
         
             foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
             {
-                RegisteredTable[key] = value;
+                AdditionalTranslationsLookup[key] = value;
                 keys.Remove(key);
             }
 
@@ -268,35 +277,53 @@ namespace ue.Peak.TcnPatch
             // Perform a force refresh on all localizable text
             LocalizedText.RefreshAllText();
         }
-    
-        private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
-        {
-            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-            Directory.CreateDirectory(dir);
-        
-            var path = Path.Combine(dir, fileName);
 
-            if (!File.Exists(path))
-            {
-                var def = JsonConvert.SerializeObject(defaultContent());
-                File.WriteAllText(path, def);
-            }
-        
+        private static Result<T, Exception> TryReadFromJson<T>(string fileName, Func<T> defaultContent) where T : class
+        {
             try
             {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using var reader = new StreamReader(stream);
+                var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+                Directory.CreateDirectory(dir);
 
-                result = JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
-                return true;
+                var path = Path.Combine(dir, fileName);
+
+                if (!File.Exists(path))
+                {
+                    var def = JsonConvert.SerializeObject(defaultContent());
+                    File.WriteAllText(path, def);
+                }
+
+                try
+                {
+                    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using var reader = new StreamReader(stream);
+                    return Result.Success(JsonConvert.DeserializeObject<T>(reader.ReadToEnd()));
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError($"無法讀取 JSON 設定：{fileName}");
+                    Logger.LogError(e);
+                    return Result.Error(e);
+                }
             }
             catch (Exception e)
             {
-                Logger.LogError($"無法讀取 JSON 設定：{fileName}");
-                Logger.LogError(e);
-                result = null;
-                return false;
+                return Result.Error(e);
             }
+        }
+    
+        [Obsolete("Use the Result version instead.", true)]
+        private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
+        {
+            var res = TryReadFromJson(fileName, defaultContent);
+            if (res.IsSuccess)
+            {
+                result = res.Unwrap();
+                return true;
+            }
+
+            result = null;
+            return false;
         }
     }
 }

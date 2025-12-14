@@ -6,6 +6,7 @@ using System.Linq;
 using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json;
+using ue.Core;
 
 namespace ue.Peak.TcnPatch.Patches
 {
@@ -25,21 +26,21 @@ namespace ue.Peak.TcnPatch.Patches
         [HarmonyPrefix]
         private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
         {
-            if (Plugin.TryGetRegistered(id, language, out var result) && !string.IsNullOrEmpty(result))
-            {
-                __runOriginal = false;
-                __result = result;
-                return;
-            }
-        
-            if (language != LocalizedText.Language.TraditionalChinese) return;
-        
-            if (Plugin.TryGetVanilla(id, out result) && !string.IsNullOrEmpty(result))
-            {
-                __runOriginal = false;
-                __result = result;
-                return;
-            }
+            var (runOriginal, res) = Plugin.GetRegistered(id, language)
+                .Where(result => !string.IsNullOrEmpty(result))
+                .OrGet(() =>
+                {
+                    if (language != LocalizedText.Language.TraditionalChinese)
+                        return Option.None;
+
+                    return Plugin.GetVanilla(id)
+                        .Where(result => !string.IsNullOrEmpty(result));
+                })
+                .Select(result => (false, result))
+                .OrElse((true, null));
+
+            __runOriginal = runOriginal;
+            __result = res;
         }
     
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
@@ -103,7 +104,7 @@ namespace ue.Peak.TcnPatch.Patches
                     p => p.Value[(int) language]
                 );
         
-            foreach (var (key, value) in Plugin.RegisteredOrigTable)
+            foreach (var (key, value) in Plugin.KeyToUnlocalizedLookup)
             {
                 additionalTable[key] = value;
             }

@@ -6,14 +6,15 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using ue.Core;
 
 namespace ue.Peak.TcnPatch.Adapters
 {
     // We could make this a dedicated plugin so it simplifies everything here.
-// Actually this support is ported from another plugin I made! -> ue.Peak.TcnPatch.MoreAscents
+    // Actually this support is ported from another plugin I made! -> ue.Peak.TcnPatch.MoreAscents
 
-// The only advantage I can think of by doing everything here is users don't need to install
-// a separate plugin to support one another plugin.
+    // The only advantage I can think of by doing everything here is users don't need to install
+    // a separate plugin to support one another plugin.
     public static class MoreAscentsSupport
     {
         private static readonly Lazy<Type> _gimmickHandlerType = new(() => Type.GetType("MoreAscents.AscentGimmickHandler"));
@@ -45,32 +46,37 @@ namespace ue.Peak.TcnPatch.Adapters
         
             try
             {
-                if (!TryFindTypeOrWarn("MoreAscents.AscentGimmick", out var gimmickType))
-                    return;
+                if (!FindType("MoreAscents.AscentGimmick")
+                        .IfError(e => e())
+                        .TryUnwrap(out var gimmickType)) return;
 
-                if (!TryFindMethodOrWarn(gimmickType, "GetTitle", 
-                        out var gimmickGetTitleMethod)) return;
-            
-                if (!TryFindMethodOrWarn(gimmickType, "GetDescription", 
-                        out var gimmickGetDescriptionMethod)) return;
-            
-                if (!TryFindMethodOrWarn(gimmickType, "GetTitleReward",
-                        out var gimmickGetTitleRewardMethod)) return;
+                if (!FindMethod(gimmickType, "GetTitle")
+                        .IfError(e => e())
+                        .TryUnwrap(out var gimmickGetTitleMethod)) return;
+                
+                if (!FindMethod(gimmickType, "GetDescription")
+                        .IfError(e => e())
+                        .TryUnwrap(out var gimmickGetDescriptionMethod)) return;
+                
+                if (!FindMethod(gimmickType, "GetTitleReward")
+                        .IfError(e => e())
+                        .TryUnwrap(out var gimmickGetTitleRewardMethod)) return;
 
-                if (!TryFindFieldOrWarn(GimmickHandlerType, "gimmicks", out var field))
-                    return;
+                if (!FindField(GimmickHandlerType, "gimmicks")
+                        .IfError(e => e())
+                        .TryUnwrap(out var field)) return;
             
-                var gimmicks = (IReadOnlyList<object>)field.GetValue(null);
+                var gimmicks = (IReadOnlyList<object>) field.GetValue(null);
 
                 var instanceProp = AccessTools.PropertyGetter(typeof(AscentData), "Instance");
-                var ascentData = (AscentData)instanceProp.Invoke(null, []);
+                var ascentData = (AscentData) instanceProp.Invoke(null, []);
                 var ascents = ascentData.ascents;
 
                 foreach (var gimmick in gimmicks)
                 {
                     var data = ascents.FirstOrDefault(d =>
-                        d.title == (string)gimmickGetTitleMethod.Invoke(gimmick, []) &&
-                        d.description == (string)gimmickGetDescriptionMethod.Invoke(gimmick, []));
+                        d.title == (string) gimmickGetTitleMethod.Invoke(gimmick, []) &&
+                        d.description == (string) gimmickGetDescriptionMethod.Invoke(gimmick, []));
 
                     if (data == null) continue;
 
@@ -79,16 +85,16 @@ namespace ue.Peak.TcnPatch.Adapters
                     data.titleReward = $"{prefix}.Reward";
 
                     API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}",
-                        (string)gimmickGetTitleMethod.Invoke(gimmick, []));
+                        (string) gimmickGetTitleMethod.Invoke(gimmick, []));
                 
-                    // Although `AscentData` has a `description` field, it is unused at runtime (!)
+                    // Although `AscentData` has a `description` field, it is currently *unused* at runtime (!)
                     // PEAK currently uses `LocalizedText.GetDescriptionIndex(data.title)` as its translation key
                     // for the ascent description
                     API.TcnPatch.Instance.RegisterLocalizationKey(LocalizedText.GetDescriptionIndex(prefix),
-                        (string)gimmickGetDescriptionMethod.Invoke(gimmick, []));
+                        (string) gimmickGetDescriptionMethod.Invoke(gimmick, []));
                 
                     API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}.Reward",
-                        (string)gimmickGetTitleRewardMethod.Invoke(gimmick, []));
+                        (string) gimmickGetTitleRewardMethod.Invoke(gimmick, []));
                 }
             }
             catch (Exception e)
@@ -97,31 +103,37 @@ namespace ue.Peak.TcnPatch.Adapters
                 Plugin.Logger.LogError(e);
             }
 
-            bool TryFindTypeOrWarn(string typeName, out Type type)
+            Result<Type, Action> FindType(string typeName)
             {
-                type = AccessTools.TypeByName(typeName);
-                if (type != null) return true;
-        
-                Plugin.Logger.LogWarning($"無法找到 {typeName} 類型！{noSupport}");    
-                return false;
+                var type = AccessTools.TypeByName(typeName);
+                if (type != null) return Result.Success(type);
+
+                return Result.Error(() =>
+                {
+                    Plugin.Logger.LogWarning($"無法找到 {typeName} 類型！{noSupport}"); 
+                });
             }
-        
-            bool TryFindMethodOrWarn(Type type, string methodName, out MethodInfo method)
+            
+            Result<MethodInfo, Action> FindMethod(Type type, string methodName)
             {
-                method = AccessTools.Method(type, methodName);
-                if (method != null) return true;
-        
-                Plugin.Logger.LogWarning($"無法找到 {type.Name}.{methodName}() 方法！{noSupport}");    
-                return false;
+                var method = AccessTools.Method(type, methodName);
+                if (method != null) return Result.Success(method);
+
+                return Result.Error(() =>
+                {
+                    Plugin.Logger.LogWarning($"無法找到 {type.Name}.{methodName}() 方法！{noSupport}");    
+                });
             }
-        
-            bool TryFindFieldOrWarn(Type type, string fieldName, out FieldInfo field)
+
+            Result<FieldInfo, Action> FindField(Type type, string fieldName)
             {
-                field = AccessTools.Field(type, fieldName);
-                if (field != null) return true;
-        
-                Plugin.Logger.LogWarning($"無法找到 {type.Name}.{fieldName} 欄位！{noSupport}");    
-                return false;
+                var field = AccessTools.Field(type, fieldName);
+                if (field != null) return Result.Success(field);
+
+                return Result.Error(() =>
+                {
+                    Plugin.Logger.LogWarning($"無法找到 {type.Name}.{fieldName} 欄位！{noSupport}");
+                });
             }
         }
     }
