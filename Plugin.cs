@@ -15,6 +15,7 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ue.Core;
 using ue.Peak.TcnPatch.Adapters;
 using ue.Peak.TcnPatch.Patches;
 

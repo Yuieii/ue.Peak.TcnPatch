@@ -6,6 +6,7 @@ using System.Linq;
 using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json;
+using ue.Core;
 
 namespace ue.Peak.TcnPatch.Patches
 {

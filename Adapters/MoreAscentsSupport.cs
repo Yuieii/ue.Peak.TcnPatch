@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using ue.Core;
 
 namespace ue.Peak.TcnPatch.Adapters
 {
@@ -84,16 +85,16 @@ namespace ue.Peak.TcnPatch.Adapters
                     data.titleReward = $"{prefix}.Reward";
 
                     API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}",
-                        (string)gimmickGetTitleMethod.Invoke(gimmick, []));
+                        (string) gimmickGetTitleMethod.Invoke(gimmick, []));
                 
                     // Although `AscentData` has a `description` field, it is currently *unused* at runtime (!)
                     // PEAK currently uses `LocalizedText.GetDescriptionIndex(data.title)` as its translation key
                     // for the ascent description
                     API.TcnPatch.Instance.RegisterLocalizationKey(LocalizedText.GetDescriptionIndex(prefix),
-                        (string)gimmickGetDescriptionMethod.Invoke(gimmick, []));
+                        (string) gimmickGetDescriptionMethod.Invoke(gimmick, []));
                 
                     API.TcnPatch.Instance.RegisterLocalizationKey($"{prefix}.Reward",
-                        (string)gimmickGetTitleRewardMethod.Invoke(gimmick, []));
+                        (string) gimmickGetTitleRewardMethod.Invoke(gimmick, []));
                 }
             }
             catch (Exception e)

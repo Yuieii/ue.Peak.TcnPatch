@@ -7,28 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ue.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace ue.Peak.TcnPatch
 {
-    public enum Never;
-
-    public struct Unit
-    {
-        public static Unit Instance => new();
-    }
-
     public static class Utils
     {
-        extension<TKey, TValue>(IDictionary<TKey, TValue> dict)
-        {
-            public Option<TValue> GetOptional(TKey key) 
-                => dict.TryGetValue(key, out var value) 
-                    ? Option.Some(value) 
-                    : Option<TValue>.None;
-        }
-
         extension<T>(T obj) where T: Object
         {
             public Option<T> ToOptionUnity()
@@ -39,87 +25,6 @@ namespace ue.Peak.TcnPatch
             }
         }
         
-        extension(SemaphoreSlim semaphore)
-        {
-            public async Task<IDisposable> CreateScopeAsync() 
-                => await SemaphoreSlimGuard.CreateAsync(semaphore);
-        
-            public IDisposable CreateScope()
-                => new SemaphoreSlimGuard(semaphore);
-
-            public void EnterScope(Action action)
-            {
-                using var scope = semaphore.CreateScope();
-                action();
-            }
-
-            public T EnterScope<T>(Func<T> func)
-            {
-                using var scope = semaphore.CreateScope();
-                return func();
-            }
-
-            public async Task EnterScopeAsync(Action action)
-            {
-                using var scope = await semaphore.CreateScopeAsync();
-                action();
-            }
-
-            public async Task<T> EnterScopeAsync<T>(Func<T> func)
-            {
-                using var scope = await semaphore.CreateScopeAsync();
-                return func();
-            }
-        
-            public async Task EnterScopeAsync(Func<Task> action)
-            {
-                using var scope = await semaphore.CreateScopeAsync();
-                await action();
-            }
-        
-            public async Task<T> EnterScopeAsync<T>(Func<Task<T>> action)
-            {
-                using var scope = await semaphore.CreateScopeAsync();
-                return await action();
-            }
-        }
-
-        extension(Exception ex)
-        {
-            [DoesNotReturn]
-            public void Rethrow() 
-                => ExceptionDispatchInfo.Capture(ex).Throw();
-
-            [DoesNotReturn]
-            public T Rethrow<T>()
-            {
-                ExceptionDispatchInfo.Capture(ex).Throw();
-                return default;
-            }
-        }
-
-        private class SemaphoreSlimGuard : IDisposable
-        {
-            private readonly SemaphoreSlim _semaphore;
-
-            public SemaphoreSlimGuard(SemaphoreSlim semaphore, bool wait = true)
-            {
-                _semaphore = semaphore;
-                if (wait) semaphore.Wait();
-            }
-
-            public static async Task<SemaphoreSlimGuard> CreateAsync(SemaphoreSlim semaphore)
-            {
-                await semaphore.WaitAsync();
-                return new SemaphoreSlimGuard(semaphore, false);
-            }
-
-            public void Dispose()
-            {
-                _semaphore.Release();
-            }
-        }
-    
         public static Task WaitForFramesAsync(int frames)
         {
             var tcs = new TaskCompletionSource<bool>();

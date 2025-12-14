@@ -40,6 +40,10 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(PeakLibDir)\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="ue.Core">
+      <!-- Maybe I should publish this to NuGet...? -->
+      <HintPath>..\ue.Libs\ue.Core\bin\Debug\netstandard2.1\ue.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>$(PeakLibDir)\Unity.InputSystem.dll</HintPath>
     </Reference>
