@@ -3,6 +3,14 @@
     <File Path="Docs/Changelog.md" />
     <File Path="Readme.md" />
   </Folder>
+  <Folder Name="/Translations/">
+    <File Path="TcnTranslations-sc.json" />
+    <File Path="TcnTranslations.json" />
+    <File Path="Translations/English.json" />
+    <File Path="Translations/LiteraryChinese.json" />
+    <File Path="Translations/SimplifiedChinese.json" />
+    <File Path="Translations/Vocaloid2048.json" />
+  </Folder>
   <Project Path="ue.Bundler/ue.Bundler.csproj" />
   <Project Path="ue.Peak.TcnPatch/ue.Peak.TcnPatch.csproj" />
 </Solution>
