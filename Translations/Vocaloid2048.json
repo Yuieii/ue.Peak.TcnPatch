@@ -225,8 +225,6 @@
         "READ": "閱讀",
         "STRUGGLE": "掙扎",
         "REVIVE_BOOKOFBONES": "要復活嗎？",
-        "GEM_ACTIVATED": "Gem Activated",
-        "GEM_DEACTIVATED": "Gem Deactivated",
 
         // # Settings
         // -- 設定頁：一般
@@ -732,9 +730,10 @@
         "TITLE_BONUSRULE?": "大家都去哪了？",
         "BODY_BONUSRULE?": "\t我睡了一個好舒服的覺，但醒來時整個隊伍都不見了！\n\n\t我相信他們就在附近。他們不會蠢到因為我小睡一下就違反<color=red>規則0</color>吧！",
         "WEMADEIT": "我們成功了！\n\n\t即使沒有領隊的幫忙，我們還是獲救了！\n\n\tSněžnýPerník第一個登頂。\nZedorfska毫髮無傷地脫險。\nCaptainBear受了傷但精神很好。\nSqudel和Kirpich有點瘀傷，幸好他們有彼此！\nRonokopl讓隊伍吃飽又安全。\n\n\tMyres先生，如果你在讀這個……我們找不到你！對不起！",
-
-        // # ue: 其他避免跳遺漏警告的東西
-        "ID": "繁體中文" // 應該是跟語言名字一樣  但不知道會出現在哪裡
+        
+        // # ue: 大概是真的沒翻到的字
+        "GEM_ACTIVATED": "Gem Activated",
+        "GEM_DEACTIVATED": "Gem Deactivated"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
