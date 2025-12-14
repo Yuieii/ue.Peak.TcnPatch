@@ -1,5 +1,10 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.SocialPlatforms;
+
 namespace ue.Peak.TcnPatch.API
 {
     public class TcnPatch : ITcnPatch
@@ -10,7 +15,7 @@ namespace ue.Peak.TcnPatch.API
     
         public void RegisterLocalizationKey(string key, string unlocalized)
         {
-            Plugin.KeyToUnlocalizedLookup[key] = unlocalized;
+            Plugin.RegisteredOrigTable[key] = unlocalized;
         }
     }
 }

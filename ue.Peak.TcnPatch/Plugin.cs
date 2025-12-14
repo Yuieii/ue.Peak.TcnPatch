@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,10 +12,8 @@ using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ue.Core;
 using ue.Peak.TcnPatch.Adapters;
 using ue.Peak.TcnPatch.Patches;
 
@@ -27,7 +26,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.4";
+        public const string ModVersion = "1.5.5";
     
         internal static Plugin Instance { get; private set; }
     
@@ -37,7 +36,7 @@ namespace ue.Peak.TcnPatch
 
         public const string TcnTranslationFileName = "TcnTranslations.json";
 
-        private static readonly SemaphoreSlim _lock = new(1, 1);
+        private static SemaphoreSlim _lock = new(1, 1);
 
         internal static TranslationFile EmptyTranslationFile { get; set; }
 
@@ -48,9 +47,6 @@ namespace ue.Peak.TcnPatch
         internal static HashSet<string> EphemeralTranslationKeys { get; } = new();
 
         internal static bool HasOfficialTcn { get; private set; }
-        
-        [CanBeNull]
-        private Harmony _harmony;
 
         private void Awake()
         {
@@ -78,7 +74,7 @@ namespace ue.Peak.TcnPatch
 
             if (ModConfig.DownloadFromRemote.Value)
             {
-                _ = Task.Run(async () =>
+                Task.Run(async () =>
                 {
                     var url = ModConfig.DownloadUrl.Value;
                     Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
@@ -106,12 +102,18 @@ namespace ue.Peak.TcnPatch
                         Directory.CreateDirectory(dir);
 
                         var path = Path.Combine(dir, TcnTranslationFileName);
-                        await _lock.EnterScopeAsync(async () =>
+                        await _lock.WaitAsync();
+                    
+                        try
                         {
                             await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
                             await using var writer = new StreamWriter(targetStream);
                             await writer.WriteAsync(content);
-                        });
+                        }
+                        finally
+                        {
+                            _lock.Release();
+                        }
 
                         Logger.LogInfo("翻譯資料下載完成！");
                     }
@@ -124,8 +126,8 @@ namespace ue.Peak.TcnPatch
                     client.Dispose();
                 });
             }
-
-            _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
+        
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
         
             var api = API.TcnPatch.InternalInstance;
             api.RegisterLocalizationKey("PeakTcnPatch.Passport.Crabland", "CRABLAND");
@@ -159,62 +161,52 @@ namespace ue.Peak.TcnPatch
             _watcher.EnableRaisingEvents = true;
         }
 
-        private void OnDestroy()
-        {
-            _harmony?.UnpatchSelf();
-        }
-
-        internal static Dictionary<string, string> TranslationsLookup { get; } = new();
-    
-        internal static Dictionary<string, string> AdditionalTranslationsLookup { get; } = new();
-    
-        // Registered from API, contains unlocalized texts
-        internal static Dictionary<string, string> KeyToUnlocalizedLookup { get; } = new();
+        internal static Dictionary<string, string> TcnTable { get; } = new();
+        internal static Dictionary<string, string> RegisteredTable { get; } = new();
+        internal static Dictionary<string, string> RegisteredOrigTable { get; } = new();
 
         internal static bool TryGetVanilla(string id, out string result) 
-            => TranslationsLookup.TryGetValue(id.ToUpperInvariant(), out result);
+            => TcnTable.TryGetValue(id.ToUpperInvariant(), out result);
 
         internal static bool TryGetRegistered(string id, LocalizedText.Language? language, out string result)
         {
             language ??= LocalizedText.CURRENT_LANGUAGE;
         
-            if (language == LocalizedText.Language.TraditionalChinese && AdditionalTranslationsLookup.TryGetValue(id, out result))
+            if (language == LocalizedText.Language.TraditionalChinese && RegisteredTable.TryGetValue(id, out result))
             {
                 return true;
             }
         
-            return KeyToUnlocalizedLookup.TryGetValue(id, out result);
+            return RegisteredOrigTable.TryGetValue(id, out result);
         }
     
         private static void UpdateMainTable()
         {
-            var flow = _lock.EnterScope(() =>
+            _lock.Wait();
+        
+            try
             {
-                try
-                {
-                    if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
-                        return ReturnFlow.Break;
+                if (!TryReadFromJson(TcnTranslationFileName, out JObject obj, () => []))
+                    return;
 
-                    CurrentTranslationFile = TranslationFile.Deserialize(obj);
-                }
-                catch (TranslationParseException e)
-                {
-                    Logger.LogError(e.UserMessage);
-                    Logger.LogError("翻譯資料分析失敗！");
-                    return ReturnFlow.Break;
-                }
-                catch (Exception e)
-                {
-                    Logger.LogError("翻譯資料分析失敗！");
-                    Logger.LogError(e);
-                    return ReturnFlow.Break;
-                }
-
-                return ReturnFlow.Continue;
-            });
-
-            if (flow == ReturnFlow.Break) 
+                CurrentTranslationFile = TranslationFile.Deserialize(obj);
+            }
+            catch (TranslationParseException e)
+            {
+                Logger.LogError(e.UserMessage);
+                Logger.LogError("翻譯資料分析失敗！");
                 return;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("翻譯資料分析失敗！");
+                Logger.LogError(e);
+                return;
+            }
+            finally
+            {
+                _lock.Release();
+            }
 
             var mainTable = LocalizedText.mainTable;
             var keys = mainTable.Keys.ToHashSet();
@@ -228,14 +220,14 @@ namespace ue.Peak.TcnPatch
                 Logger.LogInfo("翻譯資料作者：未知");
             }
 
-            TranslationsLookup.Clear();
-            AdditionalTranslationsLookup.Clear();
+            TcnTable.Clear();
+            RegisteredTable.Clear();
         
             foreach (var (key, value) in CurrentTranslationFile.Translations)
             {
                 var upper = key.ToUpperInvariant();
             
-                if (TranslationsLookup.ContainsKey(upper))
+                if (TcnTable.ContainsKey(upper))
                 {
                     Logger.LogInfo($"發現重複的翻譯key：「{key}」！已存在大寫的同名key！");
                     continue;
@@ -249,13 +241,13 @@ namespace ue.Peak.TcnPatch
                     }
                 }
 
-                TranslationsLookup[upper] = value;
+                TcnTable[upper] = value;
                 keys.Remove(upper);
             }
         
             foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
             {
-                AdditionalTranslationsLookup[key] = value;
+                RegisteredTable[key] = value;
                 keys.Remove(key);
             }
 
@@ -276,7 +268,7 @@ namespace ue.Peak.TcnPatch
             // Perform a force refresh on all localizable text
             LocalizedText.RefreshAllText();
         }
-
+    
         private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
         {
             var dir = Path.Combine(Paths.ConfigPath, ModGuid);

@@ -3,13 +3,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Threading.Tasks;
-using ue.Core;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace ue.Peak.TcnPatch
 {
@@ -33,18 +28,5 @@ namespace ue.Peak.TcnPatch
         
             source.SetResult(resultGetter());
         }
-    }
-
-    public enum ReturnFlow
-    {
-        /// <summary>
-        /// The handler should continue the further operations.
-        /// </summary>
-        Continue,
-        
-        /// <summary>
-        /// The handler should immediately return, not performing all further unnecessary operations.
-        /// </summary>
-        Break,
     }
 }

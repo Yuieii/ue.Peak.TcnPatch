@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using ue.Core;
 
 namespace ue.Peak.TcnPatch
 {
@@ -118,7 +117,7 @@ namespace ue.Peak.TcnPatch
                             $"無效的附加翻譯資料！ ({AdditionalTranslationEntriesKey})"
                         );
                     }
-                    
+                
                     var additionalKeys = new List<string>();
                     foreach (var (key, value) in entriesObj)
                     {
@@ -127,7 +126,7 @@ namespace ue.Peak.TcnPatch
                             Plugin.Logger.LogWarning($"翻譯資料出現已註冊過的附加翻譯key「{key}」！新的同名翻譯將會被忽略。");
                             continue;
                         }
-                        
+                    
                         additionalKeys.Add(key);
                         result.AdditionalTranslations[key] = value!.Value<string>();
                     }
