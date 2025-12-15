@@ -3,6 +3,7 @@
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -85,7 +86,11 @@ archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Icon.png"), "icon.png");
     var content = reader.ReadToEnd()
         .Replace("\r", "")
         .Replace("> [!TIP]\n", "")
+        .Replace("<!-- @placeholder/version -->", $"![v{version}](https://img.shields.io/badge/v{version}-blue?style=)")
         .Replace("> [!IMPORTANT]\n", "");
+
+    content = ThunderstoreOmitRegex().Replace(content, "");
+    content = ThunderstoreOnlyRegex().Replace(content, "$1");
 
     var readmeEntry = archive.CreateEntry("README.md");
     using var entryStream = readmeEntry.Open();
@@ -96,3 +101,12 @@ archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Icon.png"), "icon.png");
 archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Changelog.md"), "CHANGELOG.md");
 
 Console.WriteLine("Created an archive file for Thunderstore.");
+
+internal partial class Program
+{
+    [GeneratedRegex("<!-- @start\\/thunderstore-omit -->(?:.*?)<!-- @end\\/thunderstore-omit -->", RegexOptions.Singleline)]
+    private static partial Regex ThunderstoreOmitRegex();
+    
+    [GeneratedRegex("<!-- @start\\/thunderstore-only {{(.*?)}} @end\\/thunderstore-only -->", RegexOptions.Singleline)]
+    private static partial Regex ThunderstoreOnlyRegex();
+}

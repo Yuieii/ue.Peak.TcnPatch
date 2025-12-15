@@ -2,7 +2,7 @@
 
 # PeakTcnPatch 
 <!-- shields.io: 為什麼他不給我用 JSON 的 endpoint :( -->
-![v1.5.7](https://img.shields.io/badge/v1.5.7-blue?style=)
+<!-- @placeholder/version -->
 ![支援的 PEAK 版本](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2FYuieii%2Fue.Peak.TcnPatch%2Frefs%2Fheads%2Fmaster%2FDocs%2FMetadata.json&search=%22GameVersion%22%3A%20%22(.%2B)%22&replace=%241&label=PEAK&color=red) \
 這是悠依的 PEAK 繁體中文化模組～
 
@@ -14,8 +14,9 @@
 （所以如果官方真的有推出繁體中文，那這個模組將會毫無用處）
 
 > [!IMPORTANT]
-> 模組設定可以更改是否要下載最新的翻譯資料。 \
-> 翻譯資料連結：[這裡](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/master/TcnTranslations.json)
+> 模組設定可以更改是否要下載最新的翻譯資料。 <!-- @start/thunderstore-only {{\
+> 翻譯資料連結：[這裡](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/master/TcnTranslations.json) }} @end/thunderstore-only --><!-- @start/thunderstore-omit -->\
+> 翻譯資料格式請參考[這裡](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/master/TcnTranslations.json)。 <!-- @end/thunderstore-omit -->
 
 ### 如何切換至繁體中文
 就有如遊戲本身就支援繁體中文一般，到遊戲設定內選擇「繁體中文」的語言即可。
