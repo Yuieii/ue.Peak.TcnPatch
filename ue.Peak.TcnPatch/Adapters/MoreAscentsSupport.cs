@@ -29,9 +29,10 @@ namespace ue.Peak.TcnPatch.Adapters
         {
             if (!IsMoreAscentsInstalled) return;
         
-            var hasInitializedField = AccessTools.Field(GimmickHandlerType, "HasInitialized");
+            var hasInitializedField = AccessTools.Field(GimmickHandlerType, "HasInitialized")
+                .AsTyped<object, bool>();
             if (hasInitializedField == null) return;
-            if (!(bool)hasInitializedField.GetValue(null))
+            if (!hasInitializedField.GetStaticValue())
             {
                 Plugin.Logger.LogWarning("MoreAscents 還沒初始化！？");
                 return;

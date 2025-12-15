@@ -33,6 +33,8 @@ namespace ue.Peak.TcnPatch
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static implicit operator FieldInfo(TypedFieldInfo<TOwner, TValue> fieldInfo) 
                 => fieldInfo?.FieldInfo;
+
+            public TValue GetStaticValue() => (TValue) FieldInfo.GetValue(null);
         }
     }
 }
