@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using ue.Core;
+using ue.Peak.TcnPatch.Core;
 
 namespace ue.Peak.TcnPatch
 {

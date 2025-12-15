@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using ue.Core;
+using ue.Peak.TcnPatch.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -15,16 +15,13 @@ namespace ue.Peak.TcnPatch
 {
     public static class Utils
     {
-        extension<T>(T obj) where T: Object
+        public static Option<T> ToOptionUnity<T>(this T obj) where T: Object
         {
-            public Option<T> ToOptionUnity()
-            {
-                return obj == null 
-                    ? Option.None 
-                    : Option.Some(obj);
-            }
+            return obj == null 
+                ? Option.None 
+                : Option.Some(obj);
         }
-        
+
         public static Task WaitForFramesAsync(int frames)
         {
             var tcs = new TaskCompletionSource<bool>();

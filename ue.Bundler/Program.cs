@@ -75,7 +75,7 @@ using var archive = new ZipArchive(modZip, ZipArchiveMode.Create);
 }
 
 archive.CreateEntryFromFile(Path.Combine(dllBasePath, "ue.Peak.TcnPatch.dll"), "ue.Peak.TcnPatch.dll");
-archive.CreateEntryFromFile(Path.Combine(dllBasePath, "ue.Core.dll"), "ue.Core.dll");
+// archive.CreateEntryFromFile(Path.Combine(dllBasePath, "ue.Core.dll"), "ue.Core.dll");
 archive.CreateEntryFromFile(Path.Combine(docsBasePath, "Icon.png"), "icon.png");
 
 {

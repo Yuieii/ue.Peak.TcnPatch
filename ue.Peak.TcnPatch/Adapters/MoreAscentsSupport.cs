@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using HarmonyLib;
-using ue.Core;
+using ue.Peak.TcnPatch.Core;
 
 namespace ue.Peak.TcnPatch.Adapters
 {
