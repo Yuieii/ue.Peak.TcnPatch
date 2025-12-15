@@ -40,6 +40,9 @@ namespace ue.Peak.TcnPatch
         // Mods (or supporting adapter) can register new localization keys via the provided API.
         public Dictionary<string, string> AdditionalTranslations { get; } = new();
 
+        public static Result<TranslationFile, Exception> TryDeserialize(JObject obj)
+            => Result.Catch(() => Deserialize(obj));
+        
         public static TranslationFile Deserialize(JObject obj)
         {
             var schemefulKeys = new[]

@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.7";
+        public const string ModVersion = "1.5.8";
     
         internal static Plugin Instance { get; private set; }
     
@@ -39,13 +39,9 @@ namespace ue.Peak.TcnPatch
 
         private static readonly SemaphoreSlim _lock = new(1, 1);
 
-        internal static TranslationFile EmptyTranslationFile { get; set; }
-
-        internal static TranslationFile CurrentTranslationFile { get; private set; }
+        internal static TranslationFile CurrentTranslationFile { get; private set; } = new();
 
         internal static PluginConfig ModConfig { get; private set; }
-
-        internal static HashSet<string> EphemeralTranslationKeys { get; } = new();
 
         internal static bool HasOfficialTcn { get; private set; }
         
@@ -78,51 +74,7 @@ namespace ue.Peak.TcnPatch
 
             if (ModConfig.DownloadFromRemote.Value)
             {
-                _ = Task.Run(async () =>
-                {
-                    var url = ModConfig.DownloadUrl.Value;
-                    Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
-                    Logger.LogInfo($"網址：{url}");
-
-                    var client = new HttpClient();
-                
-                    try
-                    {
-                        var content = await client.GetStringAsync(url);
-
-                        try
-                        {
-                            // The content we get should at least be a valid JSON object
-                            _ = JObject.Parse(content);
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
-                            Logger.LogWarning(e);
-                            return;
-                        }
-
-                        var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-                        Directory.CreateDirectory(dir);
-
-                        var path = Path.Combine(dir, TcnTranslationFileName);
-                        await _lock.EnterScopeAsync(async () =>
-                        {
-                            await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
-                            await using var writer = new StreamWriter(targetStream);
-                            await writer.WriteAsync(content);
-                        });
-
-                        Logger.LogInfo("翻譯資料下載完成！");
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
-                        Logger.LogError(e);
-                    }
-                
-                    client.Dispose();
-                });
+                _ = DownloadTranslationsAsync();
             }
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
@@ -164,6 +116,50 @@ namespace ue.Peak.TcnPatch
             _harmony?.UnpatchSelf();
         }
 
+        private async Task DownloadTranslationsAsync()
+        {
+            var url = ModConfig.DownloadUrl.Value;
+            Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
+            Logger.LogInfo($"網址：{url}");
+
+            using var client = new HttpClient();
+                
+            try
+            {
+                var content = await client.GetStringAsync(url);
+
+                try
+                {
+                    // The content we get should at least be a valid JSON object
+                    _ = JObject.Parse(content);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
+                    Logger.LogWarning(e);
+                    return;
+                }
+
+                var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+                Directory.CreateDirectory(dir);
+
+                var path = Path.Combine(dir, TcnTranslationFileName);
+                await _lock.EnterScopeAsync(async () =>
+                {
+                    await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
+                    await using var writer = new StreamWriter(targetStream);
+                    await writer.WriteAsync(content);
+                });
+
+                Logger.LogInfo("翻譯資料下載完成！");
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
+                Logger.LogError(e);
+            }
+        }
+
         internal static Dictionary<string, string> TranslationsLookup { get; } = new();
     
         internal static Dictionary<string, string> AdditionalTranslationsLookup { get; } = new();
@@ -190,7 +186,7 @@ namespace ue.Peak.TcnPatch
             var flow = _lock.EnterScope(() =>
             {
                 return TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
-                    .Select(TranslationFile.Deserialize)
+                    .SelectMany(TranslationFile.TryDeserialize)
                     .Select(f =>
                     {
                         CurrentTranslationFile = f;
@@ -310,20 +306,6 @@ namespace ue.Peak.TcnPatch
             {
                 return Result.Error(e);
             }
-        }
-    
-        [Obsolete("Use the Result version instead.", true)]
-        private static bool TryReadFromJson<T>(string fileName, out T result, Func<T> defaultContent) where T : class
-        {
-            var res = TryReadFromJson(fileName, defaultContent);
-            if (res.IsSuccess)
-            {
-                result = res.Unwrap();
-                return true;
-            }
-
-            result = null;
-            return false;
         }
     }
 }

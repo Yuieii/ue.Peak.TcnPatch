@@ -12,6 +12,18 @@ namespace ue.Peak.TcnPatch.Core
         public static PartialWithSuccess<T> Success<T>(T value) => new(value);
 
         public static PartialWithError<T> Error<T>(T error) => new(error);
+
+        public static Result<T, Exception> Catch<T>(Func<T> func)
+        {
+            try
+            {
+                return Success(func());
+            }
+            catch (Exception ex)
+            {
+                return Error(ex);
+            }
+        }
         
         public class PartialWithSuccess<T>
         {
