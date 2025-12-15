@@ -52,7 +52,7 @@ namespace ue.Peak.TcnPatch.Core
         {
             public T FastUnwrap() => self.ValueUnsafe;
         }
-        
+
         extension<T>(Result<Never, T> self)
         {
             public T FastUnwrapError() => self.ErrUnsafe;

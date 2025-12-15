@@ -67,67 +67,73 @@ namespace ue.Peak.TcnPatch.Core
         public static Result<Unit, AggregateException> SafeInvoke<T1, T2>(this Action<T1, T2>? self, T1 arg1, T2 arg2)
             => SafeInvokeInternal(self, a => a(arg1, arg2));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<IDisposable> CreateScopeAsync(this SemaphoreSlim semaphore) 
-            => await SemaphoreSlimGuard.CreateAsync(semaphore);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IDisposable CreateScope(this SemaphoreSlim semaphore)
-            => new SemaphoreSlimGuard(semaphore);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EnterScope(this SemaphoreSlim semaphore, Action action)
+        extension(SemaphoreSlim semaphore)
         {
-            using var scope = semaphore.CreateScope();
-            action();
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public async Task<IDisposable> CreateScopeAsync() 
+                => await SemaphoreSlimGuard.CreateAsync(semaphore);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public IDisposable CreateScope()
+                => new SemaphoreSlimGuard(semaphore);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void EnterScope(Action action)
+            {
+                using var scope = semaphore.CreateScope();
+                action();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public T EnterScope<T>(Func<T> func)
+            {
+                using var scope = semaphore.CreateScope();
+                return func();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public async Task EnterScopeAsync(Action action)
+            {
+                using var scope = await semaphore.CreateScopeAsync();
+                action();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public async Task<T> EnterScopeAsync<T>(Func<T> func)
+            {
+                using var scope = await semaphore.CreateScopeAsync();
+                return func();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public async Task EnterScopeAsync(Func<Task> action)
+            {
+                using var scope = await semaphore.CreateScopeAsync();
+                await action();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public async Task<T> EnterScopeAsync<T>(Func<Task<T>> action)
+            {
+                using var scope = await semaphore.CreateScopeAsync();
+                return await action();
+            }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T EnterScope<T>(this SemaphoreSlim semaphore, Func<T> func)
+        extension(Exception ex)
         {
-            using var scope = semaphore.CreateScope();
-            return func();
-        }
+            [DoesNotReturn]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public Never Rethrow() 
+                => Rethrow<Never>(ex);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task EnterScopeAsync(this SemaphoreSlim semaphore, Action action)
-        {
-            using var scope = await semaphore.CreateScopeAsync();
-            action();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> EnterScopeAsync<T>(this SemaphoreSlim semaphore, Func<T> func)
-        {
-            using var scope = await semaphore.CreateScopeAsync();
-            return func();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task EnterScopeAsync(this SemaphoreSlim semaphore, Func<Task> action)
-        {
-            using var scope = await semaphore.CreateScopeAsync();
-            await action();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> EnterScopeAsync<T>(this SemaphoreSlim semaphore, Func<Task<T>> action)
-        {
-            using var scope = await semaphore.CreateScopeAsync();
-            return await action();
-        }
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Never Rethrow(this Exception ex) 
-            => Rethrow<Never>(ex);
-
-        [DoesNotReturn]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Rethrow<T>(this Exception ex)
-        {
-            ExceptionDispatchInfo.Capture(ex).Throw();
-            return default;
+            [DoesNotReturn]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public T Rethrow<T>()
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+                return default;
+            }
         }
 
         private class SemaphoreSlimGuard : IDisposable
