@@ -51,7 +51,7 @@ var manifest = new Manifest
     Name = "PeakTcnPatch",
     Description = "PEAK 繁體中文化模組 by悠依",
     VersionNumber = version,
-    WebsiteUrl = new Uri("https://github.com/Yuieii/ue.Peak.TcnPatch"),
+    WebsiteUrl = "https://github.com/Yuieii/ue.Peak.TcnPatch",
     Dependencies = [
         new Dependency("BepInEx", "BepInExPack_PEAK", "5.4.75301")
     ]
