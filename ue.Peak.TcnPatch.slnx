@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Documentations/">
     <File Path="Docs/Changelog.md" />
+    <File Path="Docs/Metadata.json" />
     <File Path="Readme.md" />
   </Folder>
   <Folder Name="/Translations/">

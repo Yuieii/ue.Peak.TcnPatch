@@ -646,12 +646,16 @@
         "REVIVE_BOOKOFBONES": "復活？",
         "NAME_MANDRAKE": "曼德拉草",
 
-        // -- PEAK v1.49.a - bbno$
-        "NAME_BUGLEBBNO": "喇叭？"
+        // -- PEAK v1.50.a - 聖誕節rrrrr
+        "NAME_SNOWPILE": "雪堆",
+        "NAME_SNOWBALL": "雪球"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
         "PeakTcnPatch.Passport.Crabland": "蟹蟹島",
+
+        // -- PEAK v1.49.a - bbno$
+        "NAME_BUGLEBBNO": "喇叭？",
         
         // -- ModConfig (via PEAKLib.UI)
         "MOD SETTINGS": "模組設定",
