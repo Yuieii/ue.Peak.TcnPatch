@@ -114,6 +114,7 @@ namespace ue.Peak.TcnPatch
         private void OnDestroy()
         {
             _harmony?.UnpatchSelf();
+            _lock.Dispose();
         }
 
         private async Task DownloadTranslationsAsync()
