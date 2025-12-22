@@ -12,8 +12,14 @@ using System.Threading.Tasks;
 
 namespace ue.Peak.TcnPatch.Core
 {
+    /// <summary>
+    /// Represents the type of computations which never resolve to any meaningful value at all.
+    /// </summary>
     public enum Never;
 
+    /// <summary>
+    /// Represents the type which has exactly one value.
+    /// </summary>
     public struct Unit
     {
         public static Unit Instance => new();
@@ -21,24 +27,25 @@ namespace ue.Peak.TcnPatch.Core
 
     public static class Utils
     {
-        public static Option<TValue> GetOptional<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) 
-            => dict.TryGetValue(key, out var value) 
-                ? Option.Some(value) 
+        public static Option<TValue> GetOptional<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
+            => dict.TryGetValue(key, out var value)
+                ? Option.Some(value)
                 : Option<TValue>.None;
 
         private static Result<Unit, AggregateException> SafeInvokeInternal<T>(T? self, Action<T> invoke)
             where T : Delegate
         {
             if (self == null) return Result.Success(Unit.Instance);
-                
+
             var exceptions = new Lazy<List<Exception>>(() => []);
-            
+
             foreach (var action in self.GetInvocationList().Cast<T>())
             {
                 try
                 {
                     invoke(action);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     exceptions.Value.Add(ex);
                 }
@@ -47,7 +54,7 @@ namespace ue.Peak.TcnPatch.Core
             if (exceptions.IsValueCreated)
             {
                 return Result.Error(new AggregateException(
-                    "One or more exceptions occured while safe-invoking the delegate.", 
+                    "One or more exceptions occured while safe-invoking the delegate.",
                     exceptions.Value
                 ));
             }
@@ -70,12 +77,12 @@ namespace ue.Peak.TcnPatch.Core
         extension(SemaphoreSlim semaphore)
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public async Task<IDisposable> CreateScopeAsync() 
+            public async Task<IDisposable> CreateScopeAsync()
                 => await SemaphoreSlimGuard.CreateAsync(semaphore);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public IDisposable CreateScope()
-                => new SemaphoreSlimGuard(semaphore);
+                => SemaphoreSlimGuard.Create(semaphore);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void EnterScope(Action action)
@@ -124,7 +131,7 @@ namespace ue.Peak.TcnPatch.Core
         {
             [DoesNotReturn]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public Never Rethrow() 
+            public Never Rethrow()
                 => Rethrow<Never>(ex);
 
             [DoesNotReturn]
@@ -134,27 +141,6 @@ namespace ue.Peak.TcnPatch.Core
                 ExceptionDispatchInfo.Capture(ex).Throw();
                 return default;
             }
-        }
-
-        private class SemaphoreSlimGuard : IDisposable
-        {
-            private readonly SemaphoreSlim _semaphore;
-
-            public SemaphoreSlimGuard(SemaphoreSlim semaphore, bool wait = true)
-            {
-                _semaphore = semaphore;
-                if (wait) semaphore.Wait();
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static async Task<SemaphoreSlimGuard> CreateAsync(SemaphoreSlim semaphore)
-            {
-                await semaphore.WaitAsync();
-                return new SemaphoreSlimGuard(semaphore, false);
-            }
-
-            public void Dispose()
-                => _semaphore.Release();
         }
     }
 }

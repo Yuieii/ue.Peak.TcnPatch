@@ -28,11 +28,11 @@ namespace ue.Peak.TcnPatch
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
         public const string ModVersion = "1.5.8";
-    
+
         internal static Plugin Instance { get; private set; }
-    
+
         internal new static ManualLogSource Logger { get; private set; }
-        
+
         private static FileSystemWatcher _watcher;
 
         public const string TcnTranslationFileName = "TcnTranslations.json";
@@ -44,7 +44,7 @@ namespace ue.Peak.TcnPatch
         internal static PluginConfig ModConfig { get; private set; }
 
         internal static bool HasOfficialTcn { get; private set; }
-        
+
         [CanBeNull]
         private Harmony _harmony;
 
@@ -53,17 +53,17 @@ namespace ue.Peak.TcnPatch
             // Plugin startup logic
             Instance = this;
             ModConfig = new PluginConfig(Config);
-        
+
             ModConfig.EnableAutoDumpLanguage.SettingChanged += (_, _) =>
             {
                 if (!ModConfig.EnableAutoDumpLanguage.Value) return;
                 LocalizedTextPatch.DumpLanguageEntries();
             };
-        
+
             Logger = base.Logger;
-        
+
             Logger.LogInfo($"正在載入模組 - {ModGuid}");
-        
+
             if (Enum.GetValues(typeof(LanguageSetting.Language))
                 .Cast<int>()
                 .Any(values => values == (int) LocalizedText.Language.TraditionalChinese))
@@ -78,12 +78,12 @@ namespace ue.Peak.TcnPatch
             }
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
-        
+
             var api = API.TcnPatch.InternalInstance;
             api.RegisterLocalizationKey("PeakTcnPatch.Passport.Crabland", "CRABLAND");
-        
+
             MoreAscentsSupport.RegisterLocalizations();
-        
+
             Logger.LogInfo($"已載入模組 - {ModGuid}");
             Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
         }
@@ -92,11 +92,11 @@ namespace ue.Peak.TcnPatch
         {
             var dir = Path.Combine(Paths.ConfigPath, ModGuid);
             Directory.CreateDirectory(dir);
-        
+
             _watcher = new FileSystemWatcher(dir, "*.json");
 
             _watcher.NotifyFilter = NotifyFilters.LastWrite;
-        
+
             _watcher.Changed += (_, args) =>
             {
                 if (args.Name == TcnTranslationFileName)
@@ -105,9 +105,9 @@ namespace ue.Peak.TcnPatch
                     UpdateMainTable();
                 }
             };
-        
+
             UpdateMainTable();
-        
+
             _watcher.EnableRaisingEvents = true;
         }
 
@@ -123,7 +123,7 @@ namespace ue.Peak.TcnPatch
             Logger.LogInfo($"網址：{url}");
 
             using var client = new HttpClient();
-                
+
             try
             {
                 var content = await client.GetStringAsync(url);
@@ -161,13 +161,13 @@ namespace ue.Peak.TcnPatch
         }
 
         internal static Dictionary<string, string> TranslationsLookup { get; } = new();
-    
+
         internal static Dictionary<string, string> AdditionalTranslationsLookup { get; } = new();
-    
+
         // Registered from API, contains unlocalized texts
         internal static Dictionary<string, string> KeyToUnlocalizedLookup { get; } = new();
 
-        internal static Option<string> GetVanilla(string id) 
+        internal static Option<string> GetVanilla(string id)
             => TranslationsLookup.GetOptional(id.ToUpperInvariant());
 
         internal static Option<string> GetRegistered(string id, LocalizedText.Language? language)
@@ -177,10 +177,10 @@ namespace ue.Peak.TcnPatch
             var result = language == LocalizedText.Language.TraditionalChinese
                 ? AdditionalTranslationsLookup.GetOptional(id)
                 : Option<string>.None;
-        
+
             return result.OrGet(() => KeyToUnlocalizedLookup.GetOptional(id));
         }
-    
+
         private static void UpdateMainTable()
         {
             var flow = _lock.EnterScope(() =>
@@ -190,7 +190,7 @@ namespace ue.Peak.TcnPatch
                     .Select(f =>
                     {
                         CurrentTranslationFile = f;
-                        return ReturnFlow.Continue;
+                        return ControlFlow.Continue().FulfillBreakType<Unit>();
                     })
                     .SelectError(ex =>
                     {
@@ -204,14 +204,13 @@ namespace ue.Peak.TcnPatch
                             Logger.LogError("翻譯資料分析失敗！");
                             Logger.LogError(ex);
                         }
-                    
-                        return ReturnFlow.Break;
+
+                        return ControlFlow.Break().FulfillContinueType<Unit>();
                     })
                     .Branch();
             });
 
-            if (flow == ReturnFlow.Break) 
-                return;
+            if (flow.IsBreak) return;
 
             var mainTable = LocalizedText.mainTable;
             var keys = mainTable.Keys.ToHashSet();
@@ -227,17 +226,17 @@ namespace ue.Peak.TcnPatch
 
             TranslationsLookup.Clear();
             AdditionalTranslationsLookup.Clear();
-        
+
             foreach (var (key, value) in CurrentTranslationFile.Translations)
             {
                 var upper = key.ToUpperInvariant();
-            
+
                 if (TranslationsLookup.ContainsKey(upper))
                 {
                     Logger.LogInfo($"發現重複的翻譯key：「{key}」！已存在大寫的同名key！");
                     continue;
                 }
-            
+
                 if (!mainTable.ContainsKey(upper))
                 {
                     if (ModConfig.WarnUnknownTranslationKeys.Value)
@@ -249,7 +248,7 @@ namespace ue.Peak.TcnPatch
                 TranslationsLookup[upper] = value;
                 keys.Remove(upper);
             }
-        
+
             foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
             {
                 AdditionalTranslationsLookup[key] = value;
@@ -257,7 +256,7 @@ namespace ue.Peak.TcnPatch
             }
 
             var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;
-        
+
             foreach (var missing in keys)
             {
                 if (vanillaKeys.Contains(missing))
@@ -269,43 +268,46 @@ namespace ue.Peak.TcnPatch
                     Logger.LogWarning($"*附加翻譯* 缺少「{missing}」翻譯key！");
                 }
             }
-        
+
             // Perform a force refresh on all localizable text
             LocalizedText.RefreshAllText();
         }
 
         private static Result<T, Exception> TryReadFromJson<T>(string fileName, Func<T> defaultContent) where T : class
         {
-            try
+            var preparePath = Result.Catch(() =>
             {
                 var dir = Path.Combine(Paths.ConfigPath, ModGuid);
                 Directory.CreateDirectory(dir);
 
                 var path = Path.Combine(dir, fileName);
+                if (File.Exists(path)) return path;
+                
+                var def = JsonConvert.SerializeObject(defaultContent());
+                File.WriteAllText(path, def);
+                return path;
+            });
 
-                if (!File.Exists(path))
+            return preparePath
+                .IfError(e =>
                 {
-                    var def = JsonConvert.SerializeObject(defaultContent());
-                    File.WriteAllText(path, def);
-                }
+                    Logger.LogError($"無法初始化 JSON 設定：{fileName}");
+                    Logger.LogError(e);
+                })
+                .SelectMany(DeserializeFromPath);
 
-                try
+            Result<T, Exception> DeserializeFromPath(string path) 
+                => Result.Catch(() =>
                 {
                     using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     using var reader = new StreamReader(stream);
-                    return Result.Success(JsonConvert.DeserializeObject<T>(reader.ReadToEnd()));
-                }
-                catch (Exception e)
+                    return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+                })
+                .IfError(e =>
                 {
                     Logger.LogError($"無法讀取 JSON 設定：{fileName}");
                     Logger.LogError(e);
-                    return Result.Error(e);
-                }
-            }
-            catch (Exception e)
-            {
-                return Result.Error(e);
-            }
+                });
         }
     }
 }
