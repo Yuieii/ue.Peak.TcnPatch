@@ -659,6 +659,9 @@
         
         // -- ModConfig (via PEAKLib.UI)
         "MOD SETTINGS": "模組設定",
-        "MOD CONTROLS": "模組按鍵設定"
+        "MOD CONTROLS": "模組按鍵設定",
+
+        // -- Lucky Block Mod
+        "NAME_LUCKYBLOCK": "幸運方塊"
     }
 }
