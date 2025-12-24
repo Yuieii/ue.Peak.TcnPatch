@@ -1,12 +1,16 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
 
 namespace ue.Peak.TcnPatch.Patches
 {
+    // -- Harmony patch methods need special parameter names to do advanced stuffs like passing results or deciding
+    //    whether to run original method after prefixes.
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     [HarmonyPatch]
     public class VersionStringPatch
     {

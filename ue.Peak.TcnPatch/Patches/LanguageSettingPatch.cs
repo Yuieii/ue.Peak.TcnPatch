@@ -2,11 +2,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using HarmonyLib;
 
 namespace ue.Peak.TcnPatch.Patches
 {
+    // -- Harmony patch methods need special parameter names to do advanced stuffs like passing results or deciding
+    //    whether to run original method after prefixes.
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     [HarmonyPatch]
     public class LanguageSettingPatch
     {

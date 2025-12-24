@@ -117,6 +117,20 @@ namespace ue.Peak.TcnPatch
             _lock.Dispose();
         }
 
+        private static async Task SaveTranslationsAsync(string content)
+        {
+            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+            Directory.CreateDirectory(dir);
+
+            var path = Path.Combine(dir, TcnTranslationFileName);
+            await _lock.EnterScopeAsync(async () =>
+            {
+                await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
+                await using var writer = new StreamWriter(targetStream);
+                await writer.WriteAsync(content);
+            });
+        }
+
         private async Task DownloadTranslationsAsync()
         {
             var url = ModConfig.DownloadUrl.Value;
@@ -141,17 +155,7 @@ namespace ue.Peak.TcnPatch
                     return;
                 }
 
-                var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-                Directory.CreateDirectory(dir);
-
-                var path = Path.Combine(dir, TcnTranslationFileName);
-                await _lock.EnterScopeAsync(async () =>
-                {
-                    await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
-                    await using var writer = new StreamWriter(targetStream);
-                    await writer.WriteAsync(content);
-                });
-
+                await SaveTranslationsAsync(content);
                 Logger.LogInfo("翻譯資料下載完成！");
             }
             catch (Exception e)
@@ -188,12 +192,12 @@ namespace ue.Peak.TcnPatch
             {
                 return TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
                     .SelectMany(TranslationFile.TryDeserialize)
-                    .Select(f =>
+                    .Select<ControlFlow<Unit, Unit>>(f =>
                     {
                         CurrentTranslationFile = f;
-                        return ControlFlow.Continue().FulfillBreakType<Unit>();
+                        return ControlFlow.Continue();
                     })
-                    .SelectError(ex =>
+                    .SelectError<ControlFlow<Unit, Unit>>(ex =>
                     {
                         if (ex is TranslationParseException e)
                         {
@@ -206,15 +210,12 @@ namespace ue.Peak.TcnPatch
                             Logger.LogError(ex);
                         }
 
-                        return ControlFlow.Break().FulfillContinueType<Unit>();
+                        return ControlFlow.Break();
                     })
                     .Branch();
             });
 
             if (flow.IsBreak) return;
-
-            var mainTable = LocalizedText.mainTable;
-            var keys = mainTable.Keys.ToHashSet();
 
             if (CurrentTranslationFile.Authors.Count > 0)
             {
@@ -225,6 +226,11 @@ namespace ue.Peak.TcnPatch
                 Logger.LogInfo("翻譯資料作者：未知");
             }
 
+            // Intentionally get main table before cleaning local lookups.
+            // LocalizedText.mainTable is lazily loaded with LocalizedText.LoadMainTable().
+            var mainTable = LocalizedText.mainTable;
+            var keys = mainTable.Keys.ToHashSet();
+            
             TranslationsLookup.Clear();
             AdditionalTranslationsLookup.Clear();
 

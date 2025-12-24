@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2025 Yuieii.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using BepInEx;
@@ -10,6 +11,9 @@ using ue.Peak.TcnPatch.Core;
 
 namespace ue.Peak.TcnPatch.Patches
 {
+    // -- Harmony patch methods need special parameter names to do advanced stuffs like passing results or deciding
+    //    whether to run original method after prefixes.
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     [HarmonyPatch]
     public class LocalizedTextPatch
     {
