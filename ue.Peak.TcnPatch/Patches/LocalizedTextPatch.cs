@@ -19,6 +19,8 @@ namespace ue.Peak.TcnPatch.Patches
     {
         private static bool _autoDumpedMainTable;
 
+        private static readonly Lazy<int> _languageCountLazy = new(() => Enum.GetNames(typeof(LanguageSetting.Language)).Length); 
+        
         public static HashSet<string> VanillaLocalizationKeys { get; } = [];
 
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.GetText), typeof(string), typeof(bool))]
@@ -56,6 +58,20 @@ namespace ue.Peak.TcnPatch.Patches
 
             __runOriginal = runOriginal;
             __result = res;
+
+            if (!__runOriginal) return;
+            
+            // Try to fix inconsistent localization entries here, thanks to those *smart* modders who register their
+            // localization entries with a single element list. (thumbs up)
+            // -- To those who are curious about why this concerns:
+            // This is an error when the game is set to non-English. It spams errors and the text ends up completely empty.
+            // 你們他媽看不懂這是 "Localized" Text 嗎？
+            if (!LocalizedText.mainTable.TryGetValue(id.ToUpperInvariant(), out var list)) return;
+            
+            while (list.Count <= _languageCountLazy.Value)
+            {
+                list.Add(string.Empty);
+            }
         }
     
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
