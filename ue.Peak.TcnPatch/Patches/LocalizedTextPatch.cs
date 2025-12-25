@@ -8,6 +8,7 @@ using System.Linq;
 using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json;
+using ue.Peak.TcnPatch.Core;
 
 namespace ue.Peak.TcnPatch.Patches
 {
@@ -32,13 +33,6 @@ namespace ue.Peak.TcnPatch.Patches
         [HarmonyPrefix]
         private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
         {
-            // Don't do anything if the user is not using Traditional Chinese. 
-            if (language != LocalizedText.Language.TraditionalChinese)
-            {
-                __runOriginal = true;
-                return;
-            }
-            
             // First we search for registered localizations and see if we have a non-empty localization.
             // (e.g. additional translations and those which are registered from the API)
             var (runOriginal, res) = Plugin.GetRegistered(id, language)
@@ -48,7 +42,14 @@ namespace ue.Peak.TcnPatch.Patches
                 .Where(result => !string.IsNullOrEmpty(result.Trim()))
                 // If we still don't get a valid registered localizations, we then search from locally-stored vanilla
                 // localizations and see if we have a non-empty localization.
-                .OrGet(() => Plugin.GetVanilla(id))
+                .OrGet(() =>
+                {
+                    // Don't do anything here if the user is not using Traditional Chinese. 
+                    if (language != LocalizedText.Language.TraditionalChinese)
+                        return Option.None;
+                    
+                    return Plugin.GetVanilla(id);
+                })
                 .Where(result => !string.IsNullOrEmpty(result.Trim()))
                 // If we have a valid result, we do early return. (don't run original)
                 .Select(result => (false, result))
