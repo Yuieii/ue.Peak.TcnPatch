@@ -68,7 +68,7 @@ namespace ue.Peak.TcnPatch.Patches
             // 你們他媽看不懂這是 "Localized" Text 嗎？
             if (!LocalizedText.mainTable.TryGetValue(id.ToUpperInvariant(), out var list)) return;
             
-            while (list.Count <= _languageCountLazy.Value)
+            while (list.Count < _languageCountLazy.Value)
             {
                 list.Add(string.Empty);
             }
