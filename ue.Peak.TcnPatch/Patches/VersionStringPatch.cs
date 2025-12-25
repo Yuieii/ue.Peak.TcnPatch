@@ -21,7 +21,7 @@ namespace ue.Peak.TcnPatch.Patches
         private static void PatchVersionStringWarnOnStart(VersionString __instance)
         {
             // Just in case the field is missing in a future release of the game (unlikely but why not)
-            if (ReflectionMembers.Fields.VersionStringText == null)
+            if (Refl.VersionString.Text == null)
             {
                 if (_versionTextMissingWarned) return;
             
@@ -42,7 +42,7 @@ namespace ue.Peak.TcnPatch.Patches
                 anchored.y -= 10;
                 rect.anchoredPosition = anchored;
             
-                var textField = ReflectionMembers.Fields.VersionStringText;
+                var textField = Refl.VersionString.Text;
                 var text = __instance.GetReflectionFieldValue(textField);
                 text.verticalAlignment = VerticalAlignmentOptions.Top;
             }
@@ -59,7 +59,7 @@ namespace ue.Peak.TcnPatch.Patches
             if (!Plugin.ModConfig.ShowPatchCredit.Value) return;
         
             // Just in case the field is missing in a future release of the game (unlikely but why not)
-            var textField = ReflectionMembers.Fields.VersionStringText;
+            var textField = Refl.VersionString.Text;
             if (textField == null) return;
         
             var text = __instance.GetReflectionFieldValue(textField);

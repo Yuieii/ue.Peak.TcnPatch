@@ -7,34 +7,41 @@ using TMPro;
 
 namespace ue.Peak.TcnPatch
 {
-    public static class ReflectionMembers
+    public static class Refl // Reflection members shorthand prefix
     {
-        public static class Fields
+        public static class LoadingScreenAnimation
         {
-            public static TypedFieldInfo<LocalizedText, LocalizedText.Language> CurrentLanguage { get; }
-                = AccessTools.Field(typeof(LocalizedText), nameof(LocalizedText.CURRENT_LANGUAGE));
-        
-            public static TypedFieldInfo<VersionString, TextMeshProUGUI> VersionStringText { get; } 
-                = AccessTools.Field(typeof(VersionString), "m_text");
-            public static TypedFieldInfo<LoadingScreenAnimation, string> LoadingScreenString { get; } 
-                = AccessTools.Field(typeof(LoadingScreenAnimation), "loadingString");
-            public static TypedFieldInfo<LoadingScreenAnimation, float> LoadingScreenDefaultStringLength { get; } 
-                = AccessTools.Field(typeof(LoadingScreenAnimation), "defaultLoadingStringLength");
+            public static TypedFieldInfo<global::LoadingScreenAnimation, string> LoadingString { get; } 
+                = AccessTools.Field(typeof(global::LoadingScreenAnimation), "loadingString");
+            public static TypedFieldInfo<global::LoadingScreenAnimation, float> DefaultLoadingStringLength { get; } 
+                = AccessTools.Field(typeof(global::LoadingScreenAnimation), "defaultLoadingStringLength");
         }
 
-        public class TypedFieldInfo<TOwner, TValue>(FieldInfo fieldInfo)
+        public static class LocalizedText
         {
-            public FieldInfo FieldInfo { get; } = fieldInfo;
-        
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static implicit operator TypedFieldInfo<TOwner, TValue>(FieldInfo fieldInfo) 
-                => fieldInfo == null ? null : new TypedFieldInfo<TOwner, TValue>(fieldInfo);
-        
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static implicit operator FieldInfo(TypedFieldInfo<TOwner, TValue> fieldInfo) 
-                => fieldInfo?.FieldInfo;
-
-            public TValue GetStaticValue() => (TValue) FieldInfo.GetValue(null);
+            public static TypedFieldInfo<global::LocalizedText, global::LocalizedText.Language> CurrentLanguage { get; }
+                = AccessTools.Field(typeof(global::LocalizedText), nameof(global::LocalizedText.CURRENT_LANGUAGE));
         }
+
+        public static class VersionString
+        {
+            public static TypedFieldInfo<global::VersionString, TextMeshProUGUI> Text { get; } 
+                = AccessTools.Field(typeof(global::VersionString), "m_text");
+        }
+    }
+
+    public class TypedFieldInfo<TOwner, TValue>(FieldInfo fieldInfo)
+    {
+        public FieldInfo FieldInfo { get; } = fieldInfo;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator TypedFieldInfo<TOwner, TValue>(FieldInfo fieldInfo) 
+            => fieldInfo == null ? null : new TypedFieldInfo<TOwner, TValue>(fieldInfo);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator FieldInfo(TypedFieldInfo<TOwner, TValue> fieldInfo) 
+            => fieldInfo?.FieldInfo;
+
+        public TValue GetStaticValue() => (TValue) FieldInfo.GetValue(null);
     }
 }

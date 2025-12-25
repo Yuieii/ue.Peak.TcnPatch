@@ -36,7 +36,7 @@ namespace ue.Peak.TcnPatch.Patches
             for (var i = 0; i < list.Count; i++)
             {
                 var c = list[i];
-                if (!c.LoadsField(ReflectionMembers.Fields.CurrentLanguage)) continue;
+                if (!c.LoadsField(Refl.LocalizedText.CurrentLanguage)) continue;
 
                 // ldc.i4.s has a `sbyte` operand
                 var nextInstruction = list[i + 1];
@@ -85,13 +85,13 @@ namespace ue.Peak.TcnPatch.Patches
         
             var text = LocalizedText.GetText("LOADING");
         
-            if (ReflectionMembers.Fields.LoadingScreenString == null)
+            if (Refl.LoadingScreenAnimation.LoadingString == null)
             {
                 Plugin.Logger.LogWarning("Patcher 找不到欄位: LoadingScreenAnimation.loadingString");
                 return;
             }
         
-            if (ReflectionMembers.Fields.LoadingScreenDefaultStringLength == null)
+            if (Refl.LoadingScreenAnimation.DefaultLoadingStringLength == null)
             {
                 Plugin.Logger.LogWarning("Patcher 找不到欄位: LoadingScreenAnimation.defaultLoadingStringLength");
                 return;
@@ -100,8 +100,8 @@ namespace ue.Peak.TcnPatch.Patches
             Plugin.Logger.LogInfo("正在修正載入中動畫的文字 @ LoadingScreenAnimation.Start()...");
         
             var loadingString = $"{text}...{text}...{text}...{text}...";
-            __instance.SetReflectionFieldValue(ReflectionMembers.Fields.LoadingScreenString, loadingString);
-            __instance.SetReflectionFieldValue(ReflectionMembers.Fields.LoadingScreenDefaultStringLength, loadingString.Length);
+            __instance.SetReflectionFieldValue(Refl.LoadingScreenAnimation.LoadingString, loadingString);
+            __instance.SetReflectionFieldValue(Refl.LoadingScreenAnimation.DefaultLoadingStringLength, loadingString.Length);
         }
     }
 }
