@@ -17,13 +17,16 @@ namespace ue.Peak.TcnPatch.Adapters
     // a separate plugin to support one another plugin.
     public static class MoreAscentsSupport
     {
-        private static readonly Lazy<Type> _gimmickHandlerType = new(() => Type.GetType("MoreAscents.AscentGimmickHandler"));
+        private static readonly Lazy<Type> _gimmickHandlerType 
+            = new(() => Type.GetType("MoreAscents.AscentGimmickHandler"));
     
-        public static bool IsMoreAscentsInstalled => _gimmickHandlerType.Value != null;
+        public static bool IsMoreAscentsInstalled 
+            => _gimmickHandlerType.Value != null;
     
-        private static Type GimmickHandlerType => _gimmickHandlerType.Value;
+        private static Type GimmickHandlerType 
+            => _gimmickHandlerType.Value;
 
-        private static bool _setupSupport;
+        private static bool _addedSupport;
     
         public static void RegisterLocalizations()
         {
@@ -38,8 +41,8 @@ namespace ue.Peak.TcnPatch.Adapters
                 return;
             }
         
-            if (_setupSupport) return;
-            _setupSupport = true;
+            if (_addedSupport) return;
+            _addedSupport = true;
         
             Plugin.Logger.LogInfo("偵測到 MoreAscents！正在為 MoreAscents 提供繁中支援...");
         
@@ -48,23 +51,23 @@ namespace ue.Peak.TcnPatch.Adapters
             try
             {
                 if (!FindType("MoreAscents.AscentGimmick")
-                        .IfError(e => e())
+                        .IfError(e => e.ShowWarning())
                         .TryUnwrap(out var gimmickType)) return;
 
                 if (!FindMethod(gimmickType, "GetTitle")
-                        .IfError(e => e())
+                        .IfError(e => e.ShowWarning())
                         .TryUnwrap(out var gimmickGetTitleMethod)) return;
                 
                 if (!FindMethod(gimmickType, "GetDescription")
-                        .IfError(e => e())
+                        .IfError(e => e.ShowWarning())
                         .TryUnwrap(out var gimmickGetDescriptionMethod)) return;
                 
                 if (!FindMethod(gimmickType, "GetTitleReward")
-                        .IfError(e => e())
+                        .IfError(e => e.ShowWarning())
                         .TryUnwrap(out var gimmickGetTitleRewardMethod)) return;
 
                 if (!FindField(GimmickHandlerType, "gimmicks")
-                        .IfError(e => e())
+                        .IfError(e => e.ShowWarning())
                         .TryUnwrap(out var field)) return;
             
                 var gimmicks = (IReadOnlyList<object>) field.GetValue(null);
@@ -104,38 +107,45 @@ namespace ue.Peak.TcnPatch.Adapters
                 Plugin.Logger.LogError(e);
             }
 
-            Result<Type, Action> FindType(string typeName)
+            return;
+
+            Result<Type, ReflectionFailedError> FindType(string typeName)
             {
                 var type = AccessTools.TypeByName(typeName);
                 if (type != null) return Result.Success(type);
 
-                return Result.Error(() =>
+                return Result.Error(new ReflectionFailedError(() =>
                 {
                     Plugin.Logger.LogWarning($"無法找到 {typeName} 類型！{noSupport}"); 
-                });
+                }));
             }
             
-            Result<MethodInfo, Action> FindMethod(Type type, string methodName)
+            Result<MethodInfo, ReflectionFailedError> FindMethod(Type type, string methodName)
             {
                 var method = AccessTools.Method(type, methodName);
                 if (method != null) return Result.Success(method);
 
-                return Result.Error(() =>
+                return Result.Error(new ReflectionFailedError(() =>
                 {
                     Plugin.Logger.LogWarning($"無法找到 {type.Name}.{methodName}() 方法！{noSupport}");    
-                });
+                }));
             }
 
-            Result<FieldInfo, Action> FindField(Type type, string fieldName)
+            Result<FieldInfo, ReflectionFailedError> FindField(Type type, string fieldName)
             {
                 var field = AccessTools.Field(type, fieldName);
                 if (field != null) return Result.Success(field);
 
-                return Result.Error(() =>
+                return Result.Error(new ReflectionFailedError(() =>
                 {
                     Plugin.Logger.LogWarning($"無法找到 {type.Name}.{fieldName} 欄位！{noSupport}");
-                });
+                }));
             }
+        }
+
+        private class ReflectionFailedError(Action showWarning)
+        {
+            public void ShowWarning() => showWarning();
         }
     }
 }
