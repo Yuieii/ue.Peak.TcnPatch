@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.8";
+        public const string ModVersion = "1.5.9";
 
         internal static Plugin Instance { get; private set; }
 
