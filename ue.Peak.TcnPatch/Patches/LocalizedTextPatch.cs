@@ -9,6 +9,7 @@ using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json;
 using ue.Peak.TcnPatch.Core;
+using UnityEngine;
 
 namespace ue.Peak.TcnPatch.Patches
 {
@@ -20,7 +21,33 @@ namespace ue.Peak.TcnPatch.Patches
     {
         private static bool _autoDumpedMainTable;
 
-        private static readonly Lazy<int> _languageCountLazy = new(() => Enum.GetNames(typeof(LanguageSetting.Language)).Length); 
+        private static readonly Lazy<Unit> _readIfTooLate = new(() =>
+        {
+            // Assume that LocalizedText.mainTable is already initialized before we check this.
+            // `_earlyEnough` will be set to `true` when LoadMainTable() is called.
+            
+            // Are we early enough?
+            if (_earlyEnough) return Unit.Instance;
+            
+            // If not, we need to re-fetch the official table now :P
+            Plugin.Logger.LogWarning("正在重新讀取 PEAK 官方翻譯表...");
+            var data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>((Resources.Load("Localization/SerializedTermsData") as TextAsset)!.text);
+            
+            foreach (var key in data.Keys)
+            {
+                VanillaLocalizationKeys.Add(key);    
+            }
+
+            if (!_autoDumpedMainTable)
+            {
+                PatchLoadMainTable();
+            }
+            
+            return Unit.Instance;
+        });
+        
+        private static readonly Lazy<int> _languageCountLazy = new(() => Enum.GetNames(typeof(LanguageSetting.Language)).Length);
+        private static bool _earlyEnough;
         
         public static HashSet<string> VanillaLocalizationKeys { get; } = [];
 
@@ -33,6 +60,8 @@ namespace ue.Peak.TcnPatch.Patches
         [HarmonyPrefix]
         private static void PatchGetText(string id, LocalizedText.Language language, ref string __result, ref bool __runOriginal)
         {
+            _ = _readIfTooLate.Value;
+            
             // First we search for registered localizations and see if we have a non-empty localization.
             // (e.g. additional translations and those which are registered from the API)
             var (runOriginal, res) = Plugin.GetRegistered(id, language)
@@ -68,19 +97,26 @@ namespace ue.Peak.TcnPatch.Patches
             // This is an error when the game is set to non-English. It spams errors and the text ends up completely empty.
             // 你們他媽看不懂這是 "Localized" Text 嗎？
             if (!LocalizedText.mainTable.TryGetValue(id.ToUpperInvariant(), out var list)) return;
-            
+            FixLanguageList(list);
+        }
+
+        private static List<string> FixLanguageList(List<string> list)
+        {
             while (list.Count < _languageCountLazy.Value)
             {
                 list.Add(string.Empty);
             }
+
+            return list;
         }
     
-        // FIXME: Investigate why LoadMainTable is not being called (mod conflicts?)
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
         [HarmonyPriority(Priority.First)]
         [HarmonyPostfix]
         private static void PatchLoadMainTableFirstChance()
         {
+            _earlyEnough = true;
+            
             foreach (var key in LocalizedText.mainTable.Keys)
             {
                 VanillaLocalizationKeys.Add(key);
@@ -116,14 +152,14 @@ namespace ue.Peak.TcnPatch.Patches
                 .Where(p => VanillaLocalizationKeys.Contains(p.Key))
                 .ToDictionary(
                     p => p.Key,
-                    p => p.Value[(int) language]
+                    p => FixLanguageList(p.Value)[(int) language]
                 );
         
             var additionalTable = LocalizedText.mainTable
                 .Where(p => !VanillaLocalizationKeys.Contains(p.Key))
                 .ToDictionary(
                     p => p.Key,
-                    p => p.Value[(int) language]
+                    p => FixLanguageList(p.Value)[(int) language]
                 );
         
             foreach (var (key, value) in Plugin.KeyToUnlocalizedLookup)
