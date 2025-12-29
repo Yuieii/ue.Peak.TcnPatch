@@ -75,22 +75,12 @@ namespace ue.Peak.TcnPatch.Patches
             }
         }
     
+        // FIXME: Investigate why LoadMainTable is not being called (mod conflicts?)
         [HarmonyPatch(typeof(LocalizedText), nameof(LocalizedText.LoadMainTable))]
         [HarmonyPriority(Priority.First)]
         [HarmonyPostfix]
         private static void PatchLoadMainTableFirstChance()
         {
-            if (VanillaLocalizationKeys.Count > 0)
-            {
-                foreach (var key in LocalizedText.mainTable.Keys
-                             .Where(key => !VanillaLocalizationKeys.Contains(key)))
-                {
-                    LocalizedText.mainTable.Remove(key);
-                }
-
-                return;
-            }
-        
             foreach (var key in LocalizedText.mainTable.Keys)
             {
                 VanillaLocalizationKeys.Add(key);
