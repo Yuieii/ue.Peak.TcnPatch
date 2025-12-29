@@ -55,6 +55,12 @@
 
 若翻譯資料有問題歡迎到 [GitHub](https://github.com/Yuieii/ue.Peak.TcnPatch/issues) 提出～
 
+## 給模組包 (modpack) 作者們
+如果想要自己增加翻譯資料的話，請務必：
+- 將 `ue.Peak.TcnPatch.cfg` 的 `DownloadFromRemote` 設定為 `false`，並自行更改 `TcnTranslations.json` 檔案
+- 或者，自己利用其他網站或服務上傳你自己的 `TcnTranslations.json`，然後將 `ue.Peak.TcnPatch.cfg` 的 `DownloadUrl` 設定為您的網址
+  - 舉例來說，可以上傳至 GitHub 並將設定檔的下載 URL 更改為對應的網址（請參考本模組的預設設定）
+
 ---
 
 目前這裡提供數種翻譯資料：
