@@ -31,9 +31,23 @@ namespace ue.Peak.TcnPatch.Patches
             
             // If not, we need to re-fetch the official table now :P
             Plugin.Logger.LogWarning("正在重新讀取 PEAK 官方翻譯表...");
-            var data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>((Resources.Load("Localization/SerializedTermsData") as TextAsset)!.text);
             
-            foreach (var key in data.Keys)
+            const string assetPath = "Localization/SerializedTermsData";
+            var keys = Resources.Load<TextAsset>(assetPath)
+                .ToOptionUnity()
+                .Select(t =>
+                {
+                    var text = t.text;
+                    return JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(text).Keys;
+                })
+                .OrElseGet(() =>
+                {
+                    Plugin.Logger.LogWarning($"找不到 PEAK 官方翻譯表: 無法讀取 TextAsset @ {assetPath}");
+                    Plugin.Logger.LogWarning("所有的現有翻譯將會被視為原版翻譯。");
+                    return LocalizedText.mainTable.Keys;
+                });
+            
+            foreach (var key in keys)
             {
                 VanillaLocalizationKeys.Add(key);    
             }
