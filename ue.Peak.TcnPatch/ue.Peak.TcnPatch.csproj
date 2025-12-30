@@ -15,10 +15,19 @@
     <RootNamespace>ue.Peak.TcnPatch</RootNamespace>
   </PropertyGroup>
   
+  <Import Project="UserPath.props" Condition="Exists('UserPath.props')" />
+  <Target Name="ValidateUserPath" BeforeTargets="BeforeBuild">
+    <Error
+      Condition="'$(PeakRootDir)' == ''"
+      Text="The root directory of PEAK is not set!"
+    />
+    <Error 
+      Condition="!Exists('$(PeakLibDir)\Assembly-CSharp.dll')"
+      Text="Required PEAK assemblies not found! Path: $(PeakLibDir)"
+    />
+  </Target>
+  
   <PropertyGroup>
-    <!-- !! 請自行更改成你的遊戲對應的路徑 !! -->
-    <PeakRootDir>E:\SteamLibrary\steamapps\common\PEAK</PeakRootDir>
-    
     <!-- !! 這裡請勿更動 !! -->
     <PeakLibDir>$(PeakRootDir)\PEAK_Data\Managed</PeakLibDir>
   </PropertyGroup>

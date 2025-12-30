@@ -1,0 +1,6 @@
+﻿<Project>
+    <PropertyGroup>
+        <!-- !! 請自行更改成你的遊戲對應的路徑 !! -->
+        <PeakRootDir>E:\SteamLibrary\steamapps\common\PEAK</PeakRootDir>
+    </PropertyGroup>
+</Project>
