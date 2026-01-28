@@ -648,7 +648,13 @@
 
         // -- PEAK v1.50.a - 聖誕節rrrrr
         "NAME_SNOWPILE": "雪堆",
-        "NAME_SNOWBALL": "雪球"
+        "NAME_SNOWBALL": "雪球",
+
+        // -- PEAK v1.53.a
+        "MODAL_KICK_PROMPT": "要將 # 踢出冒險嗎？",
+        "MODAL_KICKED_TITLE": "你被踢了",
+        "MODAL_KICKED_BODY": "小隊隊長把你踢出了冒險。",
+        "LEAVE_GAME_CONFIRM": "要離開冒險嗎？"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
