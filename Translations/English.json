@@ -1,8 +1,4 @@
 ﻿{
-    // 提供英文原文，以方便參考
-    // - This is for you! XUnity.AutoTranslator
-    // --
-    
     "FormatVersion": 0,
     "Authors": [],
     "Translations": {
@@ -447,8 +443,6 @@
         "FRIENDS": "OPEN TO FRIENDS",
         "NAME_FRISBEE": "FLYING DISC",
         "NAME_PARASOL": "PARASOL",
-        "STYLE1": "GAMEPAD STYLE 1",
-        "STYLE2": "GAMEPAD STYLE 2",
         "AUTO": "AUTO",
         "MODAL_MISMATCH_TITLE": "GAME VERSION MISMATCH",
         "MODAL_MISMATCH_BODY": "Host has different game version: [#] while you have [&].",
@@ -520,17 +514,18 @@
         "NAME_BIRD": "BIRD",
         "BUGPHOBIAMODE": "BUG PHOBIA MODE",
         "NAME_STRANGE GEM": "STRANGE GEM",
-
-        // -- PEAK v1.25.a
-        // * The Looker: 彩蛋？躲在石頭後面一直看著你的那位
         "ENABLETHELOOKER": "ENABLE <i>THE LOOKER</i>",
-
-        // -- PEAK v1.27.a
-        "TEXTURE QUALITY": "TEXTURE QUALITY",
         "PHOTOSENSITIVEMODE": "PHOTOSENSITIVE MODE",
         "COLORBLINDNESSMODE": "COLOR BLINDNESS MODE",
-
-        // -- PEAK v1.30.a
+        "NAME_RED SHROOMBERRY": "RED SHROOMBERRY",
+        "NAME_YELLOW SHROOMBERRY": "YELLOW SHROOMBERRY",
+        "NAME_GREEN SHROOMBERRY": "GREEN SHROOMBERRY",
+        "NAME_BLUE SHROOMBERRY": "BLUE SHROOMBERRY",
+        "NAME_FORTIFIED MILK": "FORTIFIED MILK",
+        "NAME_HOT DOG": "HOT DOG",
+        "NAME_CHECKPOINT FLAG": "CHECKPOINT FLAG",
+        "ROOTS": "ROOTS",
+        "TEXTURE QUALITY": "TEXTURE QUALITY",
         "RESET": "Reset",
         "REBIND": "REBIND",
         "MOVE FORWARD": "MOVE FORWARD",
@@ -551,6 +546,8 @@
         "REBINDCONTROLS": "REBIND CONTROLS",
         "INPUTICONS": "INPUT ICONS",
         "KBM": "KEYBOARD & MOUSE",
+        "STYLE1": "GAMEPAD STYLE 1",
+        "STYLE2": "GAMEPAD STYLE 2",
         "GAMEPAD": "GAMEPAD",
         "CANCEL": "CANCEL",
         "ASK": "ask",
@@ -592,19 +589,7 @@
         "BB_ASKYOURFRIENDS": "you should ask your friends for help!",
         "PHOTOBOOTH": "PHOTOBOOTH",
         "START2": "start",
-
-        // -- PEAK v1.31.a
         "JUMPTOCLIMB": "JUMP TO GRAB WALL",
-
-        // -- PEAK v1.40.a
-        "NAME_RED SHROOMBERRY": "RED SHROOMBERRY",
-        "NAME_YELLOW SHROOMBERRY": "YELLOW SHROOMBERRY",
-        "NAME_GREEN SHROOMBERRY": "GREEN SHROOMBERRY",
-        "NAME_BLUE SHROOMBERRY": "BLUE SHROOMBERRY",
-        "NAME_FORTIFIED MILK": "FORTIFIED MILK",
-        "NAME_HOT DOG": "HOT DOG",
-        "NAME_CHECKPOINT FLAG": "CHECKPOINT FLAG",
-        "ROOTS": "ROOTS",
         "NAME_CLOUD FUNGUS": "CLOUD FUNGUS",
         "NAME_RESCUE CLAW": "RESCUE CLAW",
         "NAME_PURPLE SHROOMBERRY": "PURPLE SHROOMBERRY",
@@ -647,11 +632,78 @@
         "NAME_SKELETON_PLAYER": "#'S SKELETON",
         "REVIVE_BOOKOFBONES": "REVIVE?",
         "NAME_MANDRAKE": "MANDRAKE",
-
-        // -- PEAK v1.49.a - bbno$
-        "NAME_BUGLEBBNO": "BUGLE?"
+        "NAME_SNOWPILE": "SNOW PILE",
+        "NAME_SNOWBALL": "SNOWBALL",
+        "MODAL_KICK_PROMPT": "Do you want to kick # from the expedition?",
+        "MODAL_KICKED_TITLE": "YOU WERE KICKED",
+        "MODAL_KICKED_BODY": "The Troop Leader has kicked you from the expedition.",
+        "LEAVE_GAME_CONFIRM": "Leave the expedition?",
+        "HOSTCHANGED": "# is now the Troop Leader.",
+        "YOUARETROOPLEADER": "You are the Troop Leader.",
+        "JELLYFISH": "JELLYFISH",
+        "URCHINS": "URCHINS",
+        "SPOREBOMBS": "SPORE BOMBS",
+        "BEES": "BEES",
+        "RAIN": "RAIN",
+        "ZOMBIES": "ZOMBIES",
+        "BEETLES": "BEETLES",
+        "SPIDERS": "SPIDERS",
+        "SPORECLOUDS": "SPORE CLOUDS",
+        "WIND": "WIND",
+        "BLIZZARD": "BLIZZARDS",
+        "GEYSERS": "GEYSERS",
+        "FLASHPLANT": "FLASH BULBS",
+        "TORNADOES": "TORNADOES",
+        "ANTLIONS": "ANTLIONS",
+        "CACTUSTHORNS": "CACTUS THORNS",
+        "TUMBLEWEEDS": "TUMBLEWEEDS",
+        "BLAZINGSUN": "BLAZING SUN",
+        "SCOUTMASTER": "THE SCOUTMASTER",
+        "HUNGERRATE": "HUNGER RATE",
+        "FALLDAMAGE": "FALL DAMAGE",
+        "ETCDAMAGE": "OTHER DAMAGE",
+        "COLDNIGHT": "COLD AT NIGHT",
+        "ITEMWEIGHT": "ITEM WEIGHT",
+        "FLARESATPEAK": "FLARES AT PEAK",
+        "CLIMBINGSTAMINAUSAGE": "CLIMBING STAMINA USAGE",
+        "CUSTOM": "CUSTOM RUN",
+        "DESC_CUSTOM": "Customize your PEAK experience.",
+        "CUSTOMOPTIONS": "CUSTOM OPTIONS",
+        "NORMAL": "NORMAL",
+        "HAZARDS": "HAZARDS",
+        "GAMEPLAY": "GAMEPLAY",
+        "SPAWNPOOL": "SPAWN POOL",
+        "EXPEDITION": "EXPEDITION",
+        "EXPEDITIONTYPE": "EXPEDITION TYPE",
+        "EXPEDITIONTYPECLASSIC": "CLASSIC",
+        "MINIRUN": "MINI RUN",
+        "MINIRUNBIOME": "MINI RUN BIOME",
+        "BIOME1": "BIOME 1",
+        "BIOME2": "BIOME 2",
+        "BIOME3": "BIOME 3",
+        "BIOME4": "BIOME 4",
+        "TOOLTIP_NORMAL": "Climb all the way to the PEAK.",
+        "TOOLTIP_MINIRUN": "Climb a single biome to win.",
+        "BADGESDISABLED": "Progress towards earning Badges is disabled in Custom Expeditions.",
+        "YOUWIN": "YOU WIN",
+        "ZOMBIEPHOBIAMODE": "ZOMBIE PHOBIA MODE",
+        "CONTINUERUN": "CONTINUE RUN",
+        "STAMINAUSAGE": "STAMINA USAGE",
+        "SAVE_DESTROY_ON_JOIN": "Joining this game will delete your current autosave.<br>Are you sure?",
+        "SAVE_DESTROY_ON_HOST": "Hosting a new game will delete your current autosave.<br>Are you sure?",
+        "GRAPPLEMODE": "GRAPPLE MODE",
+        "SPEEDYMODE": "SPEEDY MODE",
+        "KICKMODE": "KICK MODE",
+        "STUPIDSTUFF": "STUPID STUFF",
+        "LEAVE_GAME_CONFIRM_QUICKSAVE": "Leave the expedition?<br><br>You can continue from the last campfire.",
+        "TOOLTIP_GRAPPLE": "Start with an infinite-use Rescue Claw...but you suck at climbing.",
+        "TOOLTIP_SPEEDY": "Everything moves twice as fast!",
+        "TOOLTIP_KICK": "Replaces your helping hand with a kick.",
+        "FOG": "THE FOG RISES",
+        "LAVA": "THE LAVA RISES"
     },
     "AdditionalTranslations": {
-        "PeakTcnPatch.Passport.Crabland": "CRABLAND"
+        "PeakTcnPatch.Passport.Crabland": "CRABLAND",
+        "PeakTcnPatch.BoardingPass.CustomExpedition": "CUSTOM EXPEDITION"
     }
 }
