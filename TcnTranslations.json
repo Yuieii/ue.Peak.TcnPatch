@@ -719,7 +719,10 @@
         "TOOLTIP_SPEEDY": "所有東西全部變為兩倍快！",
         "TOOLTIP_KICK": "將伸出援手替換為踢踹動作。",
         "FOG": "寒霧升起",
-        "LAVA": "岩漿奔涌" // 岩漿漲湧
+        "LAVA": "岩漿奔涌", // 岩漿漲湧
+
+        // -- PEAK v1.60.d
+        "SCORPIONS": "蠍子"
     },
     "AdditionalTranslations": {
         "NAME_Cheater's Compass": "作弊羅盤",
