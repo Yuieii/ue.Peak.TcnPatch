@@ -17,6 +17,7 @@ namespace ue.Peak.TcnPatch
         public ConfigEntry<string> DownloadUrl { get; } = config.Bind(
             "Update",
             "DownloadUrl",
+            // For compatibility reasons don't move this default translation
             "https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json",
             "翻譯資料的 URL"
         );

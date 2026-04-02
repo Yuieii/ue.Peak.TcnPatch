@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.10";
+        public const string ModVersion = "1.5.11"; // The best version ever?
 
         internal static Plugin Instance { get; private set; }
 
@@ -72,11 +72,6 @@ namespace ue.Peak.TcnPatch
                 HasOfficialTcn = true;
             }
 
-            if (ModConfig.DownloadFromRemote.Value)
-            {
-                _ = DownloadTranslationsAsync();
-            }
-
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
 
             var api = API.TcnPatch.InternalInstance;
@@ -105,8 +100,24 @@ namespace ue.Peak.TcnPatch
                     UpdateMainTable();
                 }
             };
-
-            UpdateMainTable();
+            
+            if (!ModConfig.DownloadFromRemote.Value)
+            {
+                // Directly read from our locally stored translations
+                UpdateMainTable();
+            }
+            else
+            {
+                _ = Task.Run(async () =>
+                {
+                    var result = await DownloadTranslationsAsync();
+                    if (result.IsSuccess) return;
+                    
+                    // A failing result means the main table is not updated (due to the file not being modified)
+                    // Manually run it once
+                    UpdateMainTable();
+                });
+            }
 
             _watcher.EnableRaisingEvents = true;
         }
@@ -131,7 +142,7 @@ namespace ue.Peak.TcnPatch
             });
         }
 
-        private async Task DownloadTranslationsAsync()
+        private async Task<Result<Unit, Exception>> DownloadTranslationsAsync()
         {
             var url = ModConfig.DownloadUrl.Value;
             Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
@@ -152,17 +163,22 @@ namespace ue.Peak.TcnPatch
                 {
                     Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
                     Logger.LogWarning(e);
-                    return;
+                    return Result.Error(e);
                 }
 
                 await SaveTranslationsAsync(content);
                 Logger.LogInfo("翻譯資料下載完成！");
+                return Result.Success(Unit.Instance);
             }
             catch (Exception e)
             {
                 Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
                 Logger.LogError(e);
+                return Result.Error(e);
             }
+            
+            // Unreachable.
+            // A successful result means we don't need to update manually since it is handled via the watcher
         }
 
         internal static Dictionary<string, string> TranslationsLookup { get; } = new();
@@ -217,6 +233,8 @@ namespace ue.Peak.TcnPatch
 
             if (flow.IsBreak) return;
 
+            // The statement would become too unnecessarily complicated if we apply this fix suggestion
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (CurrentTranslationFile.Authors.Count > 0)
             {
                 Logger.LogInfo($"翻譯資料作者：{string.Join("、", CurrentTranslationFile.Authors)}");
