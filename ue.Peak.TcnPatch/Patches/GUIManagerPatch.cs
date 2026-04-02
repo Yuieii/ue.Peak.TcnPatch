@@ -26,6 +26,8 @@ namespace ue.Peak.TcnPatch.Patches
                 })
                 .IfSome(text =>
                 {
+                    if (text.autoSet) return;
+                    
                     // The "autoSet" is not set to true, therefore the text becomes unlocalized,
                     // even a localized text for this prompt exists.
                     text.autoSet = true;
