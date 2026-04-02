@@ -26,6 +26,17 @@ namespace ue.Peak.TcnPatch.Patches
                 .IfSome(transform =>
                 {
                     var localized = transform.gameObject.GetComponent<LocalizedText>();
+                    if (localized == null)
+                    {
+                        localized = transform.gameObject.AddComponent<LocalizedText>();
+                        
+                        // See below
+                        localized.autoSet = false;
+                    }
+                    
+                    // We currently use this to determine if it changes to a (really) localizable text
+                    if (localized.autoSet) return;
+                            
                     localized.index = "PeakTcnPatch.BoardingPass.CustomExpedition";
                     localized.autoSet = true;
                     localized.RefreshText();
