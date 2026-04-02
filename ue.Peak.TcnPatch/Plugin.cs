@@ -76,7 +76,8 @@ namespace ue.Peak.TcnPatch
 
             var api = API.TcnPatch.InternalInstance;
             api.RegisterLocalizationKey("PeakTcnPatch.Passport.Crabland", "CRABLAND");
-
+            api.RegisterLocalizationKey("PeakTcnPatch.BoardingPass.CustomExpedition", "CUSTOM EXPEDITION");
+            
             MoreAscentsSupport.RegisterLocalizations();
 
             Logger.LogInfo($"已載入模組 - {ModGuid}");
