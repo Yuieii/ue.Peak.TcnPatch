@@ -191,7 +191,7 @@ namespace ue.Peak.TcnPatch.Patches
 
         private class AutoDumpRecord(Dictionary<string, string> translations, Dictionary<string, string> additionalTranslations)
         {
-            public int FormatVersion { get; } = TranslationFile.CurrentFormatVersion;
+            public int FormatVersion { get; set; } = TranslationFile.CurrentFormatVersion;
             public List<string> Authors { get; } = [];
             public Dictionary<string, string> Translations { get; } = translations;
             public Dictionary<string, string> AdditionalTranslations { get; } = additionalTranslations;

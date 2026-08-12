@@ -20,13 +20,8 @@ namespace ue.Peak.TcnPatch.Patches
         [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> PatchLoadingAnimationSwitch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            if (Plugin.HasOfficialTcn)
-            {
-                // Now (?) we have official Traditional Chinese.
-                // The game should now interpret the loading animation in its own way.
-                _loadingScreenAnimationStartTranspiled = true;
-                return instructions;
-            }
+            // PEAK v2.0.a has official Traditional Chinese support,
+            // *** but with broken loading animation text... ***
         
             Plugin.Logger.LogInfo("正在修補 LoadingScreenAnimation.Start() 的 IL code...");
             var list = instructions.ToList();

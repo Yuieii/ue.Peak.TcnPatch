@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "1.5.11"; // The best version ever?
+        public const string ModVersion = "2.0.0";
 
         internal static Plugin Instance { get; private set; }
 
@@ -42,8 +42,11 @@ namespace ue.Peak.TcnPatch
         internal static TranslationFile CurrentTranslationFile { get; private set; } = new();
 
         internal static PluginConfig ModConfig { get; private set; }
+        
+        [CanBeNull]
+        internal static VersionString VersionStringInstance { get; set; }
 
-        internal static bool HasOfficialTcn { get; private set; }
+        private static readonly VersionTextUpdater _versionStringUpdater = new();
 
         [CanBeNull]
         private Harmony _harmony;
@@ -63,14 +66,6 @@ namespace ue.Peak.TcnPatch
             Logger = base.Logger;
 
             Logger.LogInfo($"正在載入模組 - {ModGuid}");
-
-            if (Enum.GetValues(typeof(LanguageSetting.Language))
-                .Cast<int>()
-                .Any(values => values == (int) LocalizedText.Language.TraditionalChinese))
-            {
-                // We have official Traditional Chinese now!
-                HasOfficialTcn = true;
-            }
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGuid);
 
@@ -123,6 +118,26 @@ namespace ue.Peak.TcnPatch
             _watcher.EnableRaisingEvents = true;
         }
 
+        private bool _hasSetTraditionalChineseFont;
+
+        private void Update()
+        {
+            if (!_hasSetTraditionalChineseFont && FontFallbackSwapper.instance)
+            {
+                _hasSetTraditionalChineseFont = true;
+                
+                if (LocalizedText.CURRENT_LANGUAGE == LocalizedText.Language.TraditionalChinese)
+                {
+                    FontFallbackSwapper.instance.SwitchToTraditional();
+                }
+            }
+            
+            if (VersionStringInstance)
+            {
+                _versionStringUpdater.Update(VersionStringInstance);
+            }
+        }
+
         private void OnDestroy()
         {
             _harmony?.UnpatchSelf();
@@ -143,13 +158,15 @@ namespace ue.Peak.TcnPatch
             });
         }
 
+        private static HttpClient _httpClient = new(); 
+
         private async Task<Result<Unit, Exception>> DownloadTranslationsAsync()
         {
             var url = ModConfig.DownloadUrl.Value;
             Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
             Logger.LogInfo($"網址：{url}");
 
-            using var client = new HttpClient();
+            var client = _httpClient;
 
             try
             {
