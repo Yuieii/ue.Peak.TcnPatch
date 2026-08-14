@@ -16,37 +16,6 @@
 > 翻譯資料連結：[這裡](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/master/TcnTranslations.json) }} @end/thunderstore-only --><!-- @start/thunderstore-omit -->\
 > 翻譯資料格式請參考[這裡](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/master/TcnTranslations.json)。 <!-- @end/thunderstore-omit -->
 
-### 如何切換至繁體中文
-就有如遊戲本身就支援繁體中文一般，到遊戲設定內選擇「繁體中文」的語言即可。
-- 英文介面：主畫面/暫停選單 → `Settings` → `General` → `Language`，下拉選單中選擇「繁體中文」
-
-依照模組的設定，繁體中文的選項可以有 5 種出現的方式：
-
-| # | 設定值                            | 描述                    |                    
-|---|--------------------------------|-----------------------|
-| 1 | `InsertAfterSimplifiedChinese` | 放在簡體中文後面；位於簡體中文和日文之間  |
-| 2 | `ReplaceEnglish`               | 取代英文的選項               |
-| 3 | `ReplaceSimplifiedChinese`     | 取代簡體中文的選項             |
-| 4 | `Append`                       | 放在語言清單的最下面            |
-| 5 | `TraditionalChineseOnly`       | 或者最簡單粗暴的... 只有繁體中文可以用 |
-
-> [!TIP]
-> 關於設定值和對應的描述，請以[原始碼的註解](https://github.com/Yuieii/ue.Peak.TcnPatch/blob/d647e5e87b89ec6b92eb8576aa28094a572ce05c/PluginConfig.cs#L67-L93)為準。
-
-5 種方式都會各自影響設定的讀取方式：
-
-1. 若選擇 **「放在簡體中文後面；位於簡體中文和日文之間」**：
-   - 若已安裝完模組並使用繁體中文選項，移除模組後語言會變為日文
-   - 原本使用日文、韓文、波蘭語、土耳其語的使用者會受此影響（但應該這裡沒有人會用吧）
-2. 若選擇 **「取代英文的選項」**、**「取代簡體中文的選項」**：
-   - 若已安裝完模組並使用繁體中文選項，移除模組後語言會變為取代前的原始語言
-3. 若選擇 **「放在語言清單的最下面」**、**「只有繁體中文可以用」**：
-   - 若已安裝完模組並且到設定選擇繁體中文，移除模組後語言會變為英文
-   - 若已安裝完模組並且尚未到設定選擇繁體中文，移除模組後語言會變為安裝模組前的語言
-
-> [!TIP]
-> 以上三種讀取方式透過設定更改後重啟之後，也會有語言設定跑掉的情況發生，屬於正常現象。
-
 ## 關於翻譯資料
 您可以自己選擇想要使用的翻譯資料！ \
 請在安裝完模組後至少開過一次 PEAK，之後在模組設定檔 `BepInEx/config/ue.Peak.TcnPatch.cfg` 更改翻譯資料的來源。

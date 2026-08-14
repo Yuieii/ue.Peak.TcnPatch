@@ -53,13 +53,6 @@ namespace ue.Peak.TcnPatch
             "有缺失的附加翻譯key時是否觸發警告"
         );
 
-        public ConfigEntry<LanguagePatchMode> LanguagePatchMode { get; } = config.Bind(
-            "Patch",
-            "LanguagePatchMode",
-            TcnPatch.LanguagePatchMode.InsertAfterSimplifiedChinese,
-            "設定如何修正設定中的語言清單"
-        );
-
         public ConfigEntry<bool> ShowPatchCredit { get; } = config.Bind(
             "Patch",
             "ShowPatchCredit",
@@ -80,33 +73,5 @@ namespace ue.Peak.TcnPatch
             true,
             $"在主畫面版本文字後面顯示這個模組的版本？ (v{Plugin.ModVersion})"
         );
-    }
-
-    public enum LanguagePatchMode
-    {
-        /// <summary>
-        /// 放在簡體中文後面；位於簡體中文和日文之間 
-        /// </summary>
-        InsertAfterSimplifiedChinese,
-    
-        /// <summary>
-        /// 取代英文的選項 
-        /// </summary>
-        ReplaceEnglish,
-    
-        /// <summary>
-        /// 取代簡體中文的選項 
-        /// </summary>
-        ReplaceSimplifiedChinese,
-    
-        /// <summary>
-        /// 放在語言清單的最下面
-        /// </summary>
-        Append,
-    
-        /// <summary>
-        /// 只有繁體中文可以用
-        /// </summary>
-        TraditionalChineseOnly,
     }
 }
