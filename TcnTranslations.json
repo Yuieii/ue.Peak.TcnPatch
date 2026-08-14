@@ -104,7 +104,7 @@
         "DESC_ENDURANCE": "在不觸碰地面的情況下連續向上攀爬 50 公尺。",
         "BADGELOCKED": "你還沒獲得這枚徽章！",
         "NAME_AIRLINE FOOD": "飛機餐",
-        "NAME_ANTI-ROPE SPOOL": "反向繩索堆",
+        "NAME_ANTI-ROPE SPOOL": "反重繩索堆", // 反向繩索堆
         "NAME_ANTIDOTE": "解毒劑",
         "NAME_GREEN CRISPBERRY": "綠色脆莓",
         "NAME_RED CRISPBERRY": "紅色脆莓",
@@ -171,7 +171,7 @@
         "NAME_PIRATE'S COMPASS": "海盜的指南針",
         "NAME_PORTABLE STOVE": "便攜爐",
         "NAME_ROPE CANNON": "繩索槍",
-        "NAME_ANTI-ROPE CANNON": "反向繩索槍",
+        "NAME_ANTI-ROPE CANNON": "反重繩索槍", // 反向繩索槍
         "NAME_ROPE SPOOL": "繩索堆",
         "NAME_SCOUT COOKIES": "童軍餅乾",
         "NAME_SCOUT EFFIGY": "童軍雕像",
@@ -338,7 +338,7 @@
         "CHAIN": "鎖鏈",
         "VINE": "藤蔓",
         "ROPE": "繩索",
-        "ANTI-ROPE": "反向繩索",
+        "ANTI-ROPE": "反重繩索", // 反向繩索
         "HOWTONOTDIE": "如何不死掉",
         "AGUIDEBY": "指南作者：<br>童軍領隊邁爾斯", // 童軍大師邁爾斯
         "TITLE_PREFACE": "前言",
@@ -825,11 +825,11 @@
         "TITLE_BONUSRULE10": "別睡著了！",
         "BODY_BONUSRULE10": "      這片特殊的霧讓我好想睡覺...我得記得呼吸一些新鮮空氣，不然一定會昏睡過去！",
         "BODY_BONUSRULE10_1": "      這些高塔裡面似乎有某種魔法火焰可以驅散這片霧。要是我能想辦法把火帶在身邊...",
-        "AREA_VOID": "地深冥淵",
+        "AREA_VOID": "地深冥淵", // Nadir, 深淵?
         "THEGHOSTSRISE": "迷失的亡魂再次甦醒...",
         "ACTION_ENTER": "進入",
         "NAME_PEAKPORTAL": "傳送門",
-        "NAME_VOIDLAUNCHER": "反向火箭砲",
+        "NAME_VOIDLAUNCHER": "反重火箭砲", // Anti-Zooka
         "CONTROLLER SENSITIVITY_PS5": "控制器靈敏度",
         "SCOUTMASTER_RANK": "童軍領隊",
         "CONDORS": "禿鷹",
