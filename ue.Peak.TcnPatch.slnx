@@ -7,8 +7,6 @@
   <Folder Name="/Translations/">
     <File Path="TcnTranslations.json" />
     <File Path="Translations/English.json" />
-    <File Path="Translations/LiteraryChinese.json" />
-    <File Path="Translations/SimplifiedChinese.json" />
     <File Path="Translations/Vocaloid2048.json" />
   </Folder>
   <Project Path="ue.Bundler/ue.Bundler.csproj" />
