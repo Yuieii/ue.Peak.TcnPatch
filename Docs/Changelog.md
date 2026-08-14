@@ -1,3 +1,8 @@
+# 2.1.0
+## 新增
+- 現在可以調整翻譯資料下載失敗的處理方式
+  - 預設為**下載[預設遠端來源](https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json)**！
+
 # 2.0.0
 ## 修正
 - PEAK v2.0.a 正式支援繁體中文！已經移除偵測是否有官方繁體中文的代碼。

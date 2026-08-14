@@ -22,6 +22,13 @@ namespace ue.Peak.TcnPatch
             "翻譯資料的 URL"
         );
 
+        public ConfigEntry<DownloadFailureHandling> DownloadFailureHandling { get; } = config.Bind(
+            "Update",
+            "DownloadFailureHandling",
+            TcnPatch.DownloadFailureHandling.UseDefaultRemote,
+            "當設定的 URL 下載失敗時如何處理"
+        );
+
         public ConfigEntry<LocalizedText.Language> AutoDumpLanguage { get; } = config.Bind(
             "Debug",
             "AutoDumpLanguage",
@@ -73,5 +80,11 @@ namespace ue.Peak.TcnPatch
             true,
             $"在主畫面版本文字後面顯示這個模組的版本？ (v{Plugin.ModVersion})"
         );
+    }
+
+    public enum DownloadFailureHandling
+    {
+        UseLocal,
+        UseDefaultRemote,
     }
 }

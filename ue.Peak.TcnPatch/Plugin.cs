@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "2.0.0";
+        public const string ModVersion = "2.1.0";
 
         internal static Plugin Instance { get; private set; }
 
@@ -118,9 +118,19 @@ namespace ue.Peak.TcnPatch
             _watcher.EnableRaisingEvents = true;
         }
 
-        private bool _hasSetTraditionalChineseFont;
-
         private void Update()
+        {
+            if (VersionStringInstance)
+            {
+                _versionStringUpdater.Update(VersionStringInstance);
+            }
+            
+            SetTraditionalChineseFont();
+        }
+
+        private bool _hasSetTraditionalChineseFont;
+        
+        private void SetTraditionalChineseFont()
         {
             if (!_hasSetTraditionalChineseFont && FontFallbackSwapper.instance)
             {
@@ -130,11 +140,6 @@ namespace ue.Peak.TcnPatch
                 {
                     FontFallbackSwapper.instance.SwitchToTraditional();
                 }
-            }
-            
-            if (VersionStringInstance)
-            {
-                _versionStringUpdater.Update(VersionStringInstance);
             }
         }
 
@@ -158,45 +163,62 @@ namespace ue.Peak.TcnPatch
             });
         }
 
-        private static HttpClient _httpClient = new(); 
+        private static readonly HttpClient _httpClient = new(); 
 
         private async Task<Result<Unit, Exception>> DownloadTranslationsAsync()
         {
             var url = ModConfig.DownloadUrl.Value;
-            Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
-            Logger.LogInfo($"網址：{url}");
 
-            var client = _httpClient;
-
-            try
+            for (var i = 0; i < 2; i++)
             {
-                var content = await client.GetStringAsync(url);
+                Logger.LogInfo("正在從遠端下載翻譯資料... (可以在模組設定停用)");
+                Logger.LogInfo($"網址：{url}");
+
+                var client = _httpClient;
 
                 try
                 {
-                    // The content we get should at least be a valid JSON object
-                    _ = JObject.Parse(content);
+                    var content = await client.GetStringAsync(url);
+
+                    try
+                    {
+                        // The content we get should at least be a valid JSON object
+                        _ = JObject.Parse(content);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
+                        Logger.LogWarning(e);
+                        return Result.Error(e);
+                    }
+
+                    await SaveTranslationsAsync(content);
+                    Logger.LogInfo("翻譯資料下載完成！");
+                    return Result.Success(Unit.Instance);
+                }
+                catch (HttpRequestException e)
+                {
+                    if (i > 0 || ModConfig.DownloadFailureHandling.Value == DownloadFailureHandling.UseLocal)
+                    {
+                        Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
+                        Logger.LogError(e);
+                        return Result.Error<Exception>(e);    
+                    }
+                    
+                    Logger.LogError("翻譯資料下載失敗！將嘗試使用預設的遠端資料。");
+                    url = (string) ModConfig.DownloadUrl.DefaultValue;
                 }
                 catch (Exception e)
                 {
-                    Logger.LogWarning("無效的遠端翻譯資料！將使用本機資料。");
-                    Logger.LogWarning(e);
-                    return Result.Error(e);
+                    Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
+                    Logger.LogError(e);
+                    return Result.Error(e);    
                 }
+            }
 
-                await SaveTranslationsAsync(content);
-                Logger.LogInfo("翻譯資料下載完成！");
-                return Result.Success(Unit.Instance);
-            }
-            catch (Exception e)
-            {
-                Logger.LogError("翻譯資料下載失敗！將使用本機資料。");
-                Logger.LogError(e);
-                return Result.Error(e);
-            }
-            
             // Unreachable.
             // A successful result means we don't need to update manually since it is handled via the watcher
+            return Result.Error(new Exception("unreachable"));
         }
 
         internal static Dictionary<string, string> TranslationsLookup { get; } = new();
