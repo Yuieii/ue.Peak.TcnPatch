@@ -5,7 +5,6 @@
     <File Path="Readme.md" />
   </Folder>
   <Folder Name="/Translations/">
-    <File Path="TcnTranslations-sc.json" />
     <File Path="TcnTranslations.json" />
     <File Path="Translations/English.json" />
     <File Path="Translations/LiteraryChinese.json" />

@@ -32,16 +32,12 @@
 
 目前這裡提供數種翻譯資料：
 
-### 官方簡中 → 繁中 (ue)
+### 官方繁中 + 官方簡中 + ue繁中
 `https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations.json`
 - 目前預設提供的翻譯資料
-- 由官方簡體中文翻譯成繁體中文，附加一點翻譯修正。
-  - 可能會有與簡中原文不同的翻譯或措辭
-
-### 官方簡中 → 繁中 (貼近原文)
-`https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/TcnTranslations-sc.json`
-- 由官方簡體中文翻譯成繁體中文，附加比預設更少的翻譯修正。
-  - 在原文無錯誤的情況下盡可能保留原文
+- 由官方的繁體中文結合部分先前的官方簡體中文翻譯成繁體中文，附加一點翻譯修正。
+  - 可能會有與簡中、繁中原文不同的措辭
+  - 舊有生態域名稱、部分物品名稱採用簡中翻譯，提供給已經習慣簡中名稱的大家
 
 ### 夜芷冰繁體中文
 `https://raw.githubusercontent.com/Yuieii/ue.Peak.TcnPatch/refs/heads/master/Translations/Vocaloid2048.json`
