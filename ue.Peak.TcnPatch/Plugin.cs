@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "2.1.0";
+        public const string ModVersion = "2.1.1";
 
         internal static Plugin Instance { get; private set; }
 
@@ -37,7 +37,8 @@ namespace ue.Peak.TcnPatch
 
         public const string TcnTranslationFileName = "TcnTranslations.json";
 
-        private static readonly SemaphoreSlim _lock = new(1, 1);
+        // This field is initialized at Start()
+        private static Mutex<FileIO> _fileIO;
 
         internal static TranslationFile CurrentTranslationFile { get; private set; } = new();
 
@@ -79,16 +80,11 @@ namespace ue.Peak.TcnPatch
             Logger.LogInfo("  + 非官方繁體中文翻譯支援模組 -- by悠依");
         }
 
-        private void Start()
+        private static FileSystemWatcher InitializeFileWatcher(string dir)
         {
-            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-            Directory.CreateDirectory(dir);
-
-            _watcher = new FileSystemWatcher(dir, "*.json");
-
-            _watcher.NotifyFilter = NotifyFilters.LastWrite;
-
-            _watcher.Changed += (_, args) =>
+            var watcher = new FileSystemWatcher(dir, "*.json");
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += (_, args) =>
             {
                 if (args.Name == TcnTranslationFileName)
                 {
@@ -96,6 +92,17 @@ namespace ue.Peak.TcnPatch
                     UpdateMainTable();
                 }
             };
+
+            watcher.EnableRaisingEvents = true;
+            return watcher;
+        }
+
+        private void Start()
+        {
+            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
+            Directory.CreateDirectory(dir);
+
+            _fileIO = new Mutex<FileIO>(new FileIO(Path.Combine(dir, TcnTranslationFileName)));
             
             if (!ModConfig.DownloadFromRemote.Value)
             {
@@ -115,7 +122,7 @@ namespace ue.Peak.TcnPatch
                 });
             }
 
-            _watcher.EnableRaisingEvents = true;
+            _watcher = InitializeFileWatcher(dir);
         }
 
         private void Update()
@@ -145,22 +152,17 @@ namespace ue.Peak.TcnPatch
 
         private void OnDestroy()
         {
+            _watcher?.Dispose();
             _harmony?.UnpatchSelf();
-            _lock.Dispose();
+            _fileIO.Dispose();
         }
 
         private static async Task SaveTranslationsAsync(string content)
         {
-            var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-            Directory.CreateDirectory(dir);
-
-            var path = Path.Combine(dir, TcnTranslationFileName);
-            await _lock.EnterScopeAsync(async () =>
-            {
-                await using var targetStream = File.Open(path, FileMode.Create, FileAccess.Write);
-                await using var writer = new StreamWriter(targetStream);
-                await writer.WriteAsync(content);
-            });
+            using var guard = _fileIO.AcquireExclusive();
+            await using var targetStream = guard.Value.Open(FileMode.Create, FileAccess.Write);
+            await using var writer = new StreamWriter(targetStream);
+            await writer.WriteAsync(content);
         }
 
         private static readonly HttpClient _httpClient = new(); 
@@ -244,32 +246,29 @@ namespace ue.Peak.TcnPatch
 
         private static void UpdateMainTable()
         {
-            var flow = _lock.EnterScope(() =>
-            {
-                return TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
-                    .SelectMany(TranslationFile.TryDeserialize)
-                    .Select<ControlFlow<Unit, Unit>>(f =>
+            var flow = TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
+                .SelectMany(TranslationFile.TryDeserialize)
+                .Select<ControlFlow<Unit, Unit>>(f =>
+                {
+                    CurrentTranslationFile = f;
+                    return ControlFlow.Continue();
+                })
+                .SelectError<ControlFlow<Unit, Unit>>(ex =>
+                {
+                    if (ex is TranslationParseException e)
                     {
-                        CurrentTranslationFile = f;
-                        return ControlFlow.Continue();
-                    })
-                    .SelectError<ControlFlow<Unit, Unit>>(ex =>
+                        Logger.LogError(e.UserMessage);
+                        Logger.LogError("翻譯資料分析失敗！");
+                    }
+                    else
                     {
-                        if (ex is TranslationParseException e)
-                        {
-                            Logger.LogError(e.UserMessage);
-                            Logger.LogError("翻譯資料分析失敗！");
-                        }
-                        else
-                        {
-                            Logger.LogError("翻譯資料分析失敗！");
-                            Logger.LogError(ex);
-                        }
+                        Logger.LogError("翻譯資料分析失敗！");
+                        Logger.LogError(ex);
+                    }
 
-                        return ControlFlow.Break();
-                    })
-                    .Branch();
-            });
+                    return ControlFlow.Break();
+                })
+                .Branch();
 
             if (flow.IsBreak) return;
 
@@ -342,29 +341,33 @@ namespace ue.Peak.TcnPatch
         {
             var preparePath = Result.Catch(() =>
             {
-                var dir = Path.Combine(Paths.ConfigPath, ModGuid);
-                Directory.CreateDirectory(dir);
-
-                var path = Path.Combine(dir, fileName);
-                if (File.Exists(path)) return path;
+                using var guard = _fileIO.AcquireExclusive();
                 
-                var def = JsonConvert.SerializeObject(defaultContent());
-                File.WriteAllText(path, def);
-                return path;
-            });
+                if (!guard.Value.Exists)
+                {
+                    using var stream = guard.Value.Open(FileMode.CreateNew, FileAccess.Write);
+                    using var writer = new StreamWriter(stream);
 
+                    var def = JsonConvert.SerializeObject(defaultContent());
+                    writer.Write(def);
+                }
+
+                return Unit.Instance;
+            });
+            
             return preparePath
                 .IfError(e =>
                 {
                     Logger.LogError($"無法初始化 JSON 設定：{fileName}");
                     Logger.LogError(e);
                 })
-                .SelectMany(DeserializeFromPath);
-
-            Result<T, Exception> DeserializeFromPath(string path) 
+                .SelectMany(_ => DeserializeFromPath());
+            
+            Result<T, Exception> DeserializeFromPath() 
                 => Result.Catch(() =>
                 {
-                    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using var guard = _fileIO.AcquireExclusive();
+                    using var stream = guard.Value.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     using var reader = new StreamReader(stream);
                     return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
                 })

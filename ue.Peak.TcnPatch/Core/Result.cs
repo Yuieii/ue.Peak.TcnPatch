@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ue.Peak.TcnPatch.Core
 {
@@ -87,6 +88,18 @@ namespace ue.Peak.TcnPatch.Core
             try
             {
                 return Success(func());
+            }
+            catch (Exception ex)
+            {
+                return Error(ex);
+            }
+        }
+        
+        public static async Task<Result<T, Exception>> CatchAsync<T>(Func<Task<T>> func)
+        {
+            try
+            {
+                return Success(await func());
             }
             catch (Exception ex)
             {
