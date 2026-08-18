@@ -15,20 +15,22 @@ namespace ue.Peak.TcnPatch
         {
             // We only want to show this when our language is Traditional Chinese
             if (LocalizedText.CURRENT_LANGUAGE != LocalizedText.Language.TraditionalChinese) return;
-        
-            // We only want to show this when this is not explicitly disabled
-            if (!Plugin.ModConfig.ShowPatchCredit.Value) return;
-        
+            
             // Just in case the field is missing in a future release of the game (unlikely but why not)
             var textField = Refl.VersionString.Text;
             if (textField == null) return;
-        
+            
             var text = instance.GetReflectionFieldValue(textField);
             
             if (_originalText == null)
             {
                 _originalText = text.text;
             }
+            
+            text.text = _originalText;
+            
+            // We only want to show this when this is not explicitly disabled
+            if (!Plugin.ModConfig.ShowPatchCredit.Value) return;
 
             // We only want to show this when we are in the main menu
             var translatorText = $"繁中翻譯by: {string.Join("、", Plugin.CurrentTranslationFile.Authors)}";
@@ -41,8 +43,6 @@ namespace ue.Peak.TcnPatch
         
             var parentName = instance.transform.GetParent().gameObject.name;
             var objectName = instance.gameObject.name;
-
-            text.text = _originalText;
             
             // PEAK <v1.31.a
             // !!: Users should have the latest version installed!
