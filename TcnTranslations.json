@@ -529,7 +529,7 @@
         "ROOTS": "森蕈",
         "TEXTURE QUALITY": "紋理品質",
         "RESET": "重設",
-        "REBIND": "重新設定控制",
+        "REBIND": "變更按鍵", // 重新設定控制 
         "MOVE FORWARD": "向前移動",
         "MOVE BACKWARD": "向後移動",
         "MOVE LEFT": "向左移動",
