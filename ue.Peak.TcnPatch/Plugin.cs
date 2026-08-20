@@ -116,7 +116,7 @@ namespace ue.Peak.TcnPatch
                     var result = await DownloadTranslationsAsync();
                     if (result.IsSuccess) return;
                     
-                    // A failing result means the main table is not updated (due to the file not being modified)
+                    // If the code above fails, the translation file is not being updated, thus the main table remains untouched.
                     // Manually run it once
                     UpdateMainTable();
                 });
@@ -222,28 +222,11 @@ namespace ue.Peak.TcnPatch
             // A successful result means we don't need to update manually since it is handled via the watcher
             return Result.Error(new Exception("unreachable"));
         }
+        
+        #region Translation storage / lookup
 
-        internal static Dictionary<string, string> TranslationsLookup { get; } = new();
-
-        internal static Dictionary<string, string> AdditionalTranslationsLookup { get; } = new();
-
-        // Registered from API, contains unlocalized texts
-        internal static Dictionary<string, string> KeyToUnlocalizedLookup { get; } = new();
-
-        internal static Option<string> GetVanilla(string id)
-            => TranslationsLookup.GetOptional(id.ToUpperInvariant());
-
-        internal static Option<string> GetRegistered(string id, LocalizedText.Language? language)
-        {
-            language ??= LocalizedText.CURRENT_LANGUAGE;
-
-            var result = language == LocalizedText.Language.TraditionalChinese
-                ? AdditionalTranslationsLookup.GetOptional(id)
-                : Option<string>.None;
-
-            return result.OrGet(() => KeyToUnlocalizedLookup.GetOptional(id));
-        }
-
+        public static TranslationStorage TranslationStorage { get; } = new();
+        
         private static void UpdateMainTable()
         {
             var flow = TryReadFromJson<JObject>(TcnTranslationFileName, () => [])
@@ -282,59 +265,8 @@ namespace ue.Peak.TcnPatch
             {
                 Logger.LogInfo("翻譯資料作者：未知");
             }
-
-            // Intentionally get main table before cleaning local lookups.
-            // LocalizedText.mainTable is lazily loaded with LocalizedText.LoadMainTable().
-            var mainTable = LocalizedText.mainTable;
-            var keys = mainTable.Keys.ToHashSet();
             
-            TranslationsLookup.Clear();
-            AdditionalTranslationsLookup.Clear();
-
-            foreach (var (key, value) in CurrentTranslationFile.Translations)
-            {
-                var upper = key.ToUpperInvariant();
-
-                if (TranslationsLookup.ContainsKey(upper))
-                {
-                    Logger.LogInfo($"發現重複的翻譯key：「{key}」！已存在大寫的同名key！");
-                    continue;
-                }
-
-                if (!mainTable.ContainsKey(upper))
-                {
-                    if (ModConfig.WarnUnknownTranslationKeys.Value)
-                    {
-                        Logger.LogWarning($"正在使用未知的翻譯key：「{upper}」！");
-                    }
-                }
-
-                TranslationsLookup[upper] = value;
-                keys.Remove(upper);
-            }
-
-            foreach (var (key, value) in CurrentTranslationFile.AdditionalTranslations)
-            {
-                AdditionalTranslationsLookup[key] = value;
-                keys.Remove(key);
-            }
-
-            var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;
-
-            foreach (var missing in keys)
-            {
-                if (vanillaKeys.Contains(missing))
-                {
-                    Logger.LogWarning($"缺少「{missing}」翻譯key，請更新翻譯資料！");
-                }
-                else if (ModConfig.WarnMissingAdditionalKeys.Value)
-                {
-                    Logger.LogWarning($"*附加翻譯* 缺少「{missing}」翻譯key！");
-                }
-            }
-
-            // Perform a force refresh on all localizable text
-            LocalizedText.RefreshAllText();
+            TranslationStorage.ImportFrom(CurrentTranslationFile);
         }
 
         private static Result<T, Exception> TryReadFromJson<T>(string fileName, Func<T> defaultContent) where T : class
@@ -377,5 +309,7 @@ namespace ue.Peak.TcnPatch
                     Logger.LogError(e);
                 });
         }
+        
+        #endregion
     }
 }

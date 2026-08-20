@@ -10,7 +10,7 @@ namespace ue.Peak.TcnPatch.API
     
         public void RegisterLocalizationKey(string key, string unlocalized)
         {
-            Plugin.KeyToUnlocalizedLookup[key] = unlocalized;
+            Plugin.TranslationStorage.RegisterExternalLocalizationKey(key, unlocalized);
         }
     }
 }

@@ -78,10 +78,10 @@ namespace ue.Peak.TcnPatch.Patches
             
             // First we search for registered localizations and see if we have a non-empty localization.
             // (e.g. additional translations and those which are registered from the API)
-            var (runOriginal, res) = Plugin.GetRegistered(id, language)
+            var (runOriginal, res) = Plugin.TranslationStorage.GetRegistered(id, language)
                 .Where(result => !string.IsNullOrEmpty(result.Trim()))
                 // If we don't get a valid registered localizations, try searching by uppercase keys first.
-                .OrGet(() => Plugin.GetRegistered(id.ToUpperInvariant(), language))
+                .OrGet(() => Plugin.TranslationStorage.GetRegistered(id.ToUpperInvariant(), language))
                 .Where(result => !string.IsNullOrEmpty(result.Trim()))
                 // If we still don't get a valid registered localizations, we then search from locally-stored vanilla
                 // localizations and see if we have a non-empty localization.
@@ -91,7 +91,7 @@ namespace ue.Peak.TcnPatch.Patches
                     if (language != LocalizedText.Language.TraditionalChinese)
                         return Option.None;
                     
-                    return Plugin.GetVanilla(id);
+                    return Plugin.TranslationStorage.GetVanilla(id);
                 })
                 .Where(result => !string.IsNullOrEmpty(result.Trim()))
                 // If we have a valid result, we do early return. (don't run original)
@@ -176,10 +176,10 @@ namespace ue.Peak.TcnPatch.Patches
                     p => FixLanguageList(p.Value)[(int) language]
                 );
         
-            foreach (var (key, value) in Plugin.KeyToUnlocalizedLookup)
+            Plugin.TranslationStorage.VisitExternalLocalizationKeys((key, value) =>
             {
                 additionalTable[key] = value;
-            }
+            });
         
             var json = JsonConvert.SerializeObject(
                 new AutoDumpRecord(table, additionalTable), 
