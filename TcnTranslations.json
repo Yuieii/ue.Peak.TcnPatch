@@ -529,7 +529,7 @@
         "ROOTS": "森蕈",
         "TEXTURE QUALITY": "紋理品質",
         "RESET": "重設",
-        "REBIND": "變更按鍵", // 重新設定控制 
+        "REBIND": "變更按鍵", // 重新設定控制
         "MOVE FORWARD": "向前移動",
         "MOVE BACKWARD": "向後移動",
         "MOVE LEFT": "向左移動",
@@ -747,7 +747,7 @@
         "NAME_MEDIEVAL HISTORY": "中世紀歷史徽章",
         "DESC_MEDIEVAL HISTORY": "在不被任何陷阱擊中的情況下越過教堂。",
         "NAME_JESTER": "小丑徽章",
-        "DESC_JESTER": "在一次探險中開啟 3 個小丑行李箱。",
+        "DESC_JESTER": "在一次探險中開啟 2 個小丑行李箱。",
         "NAME_EXORCIST": "驅魔徽章",
         "DESC_EXORCIST": "在憂愁地燒掉巨大幽靈。",
         "NAME_HANG GLIDING": "滑翔翼徽章",
