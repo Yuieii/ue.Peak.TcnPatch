@@ -59,6 +59,20 @@ namespace ue.Peak.TcnPatch
             false,
             "有缺失的附加翻譯key時是否觸發警告"
         );
+        
+        public ConfigEntry<bool> IgnoreAllTranslations { get; } = config.Bind(
+            "Debug",
+            "IgnoreAllTranslations",
+            false,
+            "是否忽略翻譯資料？ (true: 是, false: 否)"
+        );
+
+        public ConfigEntry<bool> ExportIgnoreList { get; } = config.Bind(
+            "Debug",
+            "ExportIgnoreList",
+            false,
+            "本設定被更改的當下輸出一份忽略所有未翻譯文本的翻譯資料"
+        );
 
         public ConfigEntry<bool> ShowPatchCredit { get; } = config.Bind(
             "Patch",

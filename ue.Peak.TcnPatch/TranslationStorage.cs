@@ -84,6 +84,12 @@ namespace ue.Peak.TcnPatch
                 keys.Remove(key);
             }
 
+            foreach (var key in file.IgnoredTranslations)
+            {
+                keys.Remove(key.ToUpperInvariant());
+                keys.Remove(key);
+            }
+
             var vanillaKeys = LocalizedTextPatch.VanillaLocalizationKeys;
 
             foreach (var missing in keys)
@@ -103,10 +109,22 @@ namespace ue.Peak.TcnPatch
         }
         
         public Option<string> GetVanilla(string id)
-            => TranslationsLookup.GetOptional(id.ToUpperInvariant());
+        {
+            if (Plugin.ModConfig.IgnoreAllTranslations.Value)
+            {
+                return Option<string>.None;
+            }
+            
+            return TranslationsLookup.GetOptional(id.ToUpperInvariant());
+        }
 
         public Option<string> GetRegistered(string id, LocalizedText.Language? language)
         {
+            if (Plugin.ModConfig.IgnoreAllTranslations.Value)
+            {
+                return Option<string>.None;
+            }
+            
             language ??= LocalizedText.CURRENT_LANGUAGE;
 
             var result = language == LocalizedText.Language.TraditionalChinese

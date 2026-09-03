@@ -27,7 +27,7 @@ namespace ue.Peak.TcnPatch
     {
         public const string ModGuid = "ue.Peak.TcnPatch";
         public const string ModName = "ue.Peak.TcnPatch";
-        public const string ModVersion = "2.1.1";
+        public const string ModVersion = "2.3.0";
 
         internal static Plugin Instance { get; private set; }
 
@@ -57,6 +57,43 @@ namespace ue.Peak.TcnPatch
             // Plugin startup logic
             Instance = this;
             ModConfig = new PluginConfig(Config);
+
+            // This config is intended to be used for debugging only.
+            // We want the plugin to load translation data every time but let users be able to temporary
+            // revert to vanilla text to observe any different text 
+            ModConfig.IgnoreAllTranslations.Value = false;
+
+            ModConfig.IgnoreAllTranslations.SettingChanged += (_, _) =>
+            {
+                // Force a refresh when it gets changed
+                LocalizedText.RefreshAllText();  
+            };
+
+            ModConfig.ExportIgnoreList.SettingChanged += (_, _) =>
+            {
+                var file = CurrentTranslationFile.CreateCopy();
+
+                foreach (var key in LocalizedTextPatch.VanillaLocalizationKeys
+                             .Where(x => !file.Translations.Keys.Contains(x)))
+                {
+                    file.IgnoredTranslations.Add(key);
+                }
+                
+                var dir = Path.Combine(Paths.ConfigPath, Plugin.ModGuid);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                var path =  Path.Combine(dir, "_Ignored" + TcnTranslationFileName);
+                
+                var json = JsonConvert.SerializeObject(
+                    file,
+                    Formatting.Indented
+                );
+        
+                File.WriteAllText(path, json);
+            };
 
             ModConfig.EnableAutoDumpLanguage.SettingChanged += (_, _) =>
             {

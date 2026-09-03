@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using ue.Peak.TcnPatch.Core;
 
@@ -31,7 +32,12 @@ namespace ue.Peak.TcnPatch
         public const string AuthorKey = "Authors";
         public const string TranslationEntriesKey = "Translations";
         public const string AdditionalTranslationEntriesKey = "AdditionalTranslations";
+        public const string IgnoredTranslationEntriesKey = "IgnoredTranslations";
 
+        // The field is needed for serialization
+        [UsedImplicitly]
+        private int FormatVersion { get; } = CurrentFormatVersion;
+        
         public List<string> Authors { get; } = new();
 
         public Dictionary<string, string> Translations { get; } = new();
@@ -39,6 +45,35 @@ namespace ue.Peak.TcnPatch
         // Apart from `Translations`, additional translations contains those which may come from other mods.
         // Mods (or supporting adapter) can register new localization keys via the provided API.
         public Dictionary<string, string> AdditionalTranslations { get; } = new();
+
+        public HashSet<string> IgnoredTranslations { get; } = new();
+
+        public TranslationFile CreateCopy()
+        {
+            var cloned = new TranslationFile();
+
+            foreach (var author in Authors)
+            {
+                cloned.Authors.Add(author);
+            }
+            
+            foreach (var (key, value) in Translations)
+            {
+                cloned.Translations[key] = value;
+            }
+
+            foreach (var (key, value) in AdditionalTranslations)
+            {
+                cloned.AdditionalTranslations[key] = value;
+            }
+
+            foreach (var key in IgnoredTranslations)
+            {
+                cloned.IgnoredTranslations.Add(key);
+            }
+
+            return cloned;
+        }
 
         public static Result<TranslationFile, Exception> TryDeserialize(JObject obj)
             => Result.Catch(() => Deserialize(obj));
@@ -106,6 +141,12 @@ namespace ue.Peak.TcnPatch
 
                 foreach (var (key, value) in entriesObj)
                 {
+                    if (value?.Type != JTokenType.String)
+                    {
+                        Plugin.Logger.LogWarning($"無效的單一翻譯資料：\"{key}\" (非字串)");    
+                        continue;
+                    }
+                    
                     result.Translations[key] = value!.Value<string>();
                 }
             }
@@ -124,6 +165,12 @@ namespace ue.Peak.TcnPatch
                 var additionalKeys = new List<string>();
                 foreach (var (key, value) in entriesObj)
                 {
+                    if (value?.Type != JTokenType.String)
+                    {
+                        Plugin.Logger.LogWarning($"無效的單一附加翻譯資料：\"{key}\" (非字串)");    
+                        continue;
+                    }
+                    
                     if (additionalKeys.Contains(key, StringComparer.InvariantCultureIgnoreCase))
                     {
                         Plugin.Logger.LogWarning($"翻譯資料出現已註冊過的附加翻譯key「{key}」！新的同名翻譯將會被忽略。");
@@ -132,6 +179,29 @@ namespace ue.Peak.TcnPatch
                     
                     additionalKeys.Add(key);
                     result.AdditionalTranslations[key] = value!.Value<string>();
+                }
+            });
+
+            obj.GetOptional(IgnoredTranslationEntriesKey).IfSome(entries =>
+            {
+                // Additional translation entries.
+                if (entries is not JArray entriesArr)
+                {
+                    throw new TranslationParseException(
+                        $"Ignored translation entries must be an array, found {entries.Type}",
+                        $"無效的忽略翻譯資料！ ({IgnoredTranslationEntriesKey})"
+                    );
+                }
+
+                foreach (var value in entriesArr)
+                {
+                    if (value.Type != JTokenType.String)
+                    {
+                        // Can't log here because the value can be anything
+                        continue;
+                    }
+                    
+                    result.IgnoredTranslations.Add(value.Value<string>());
                 }
             });
 
