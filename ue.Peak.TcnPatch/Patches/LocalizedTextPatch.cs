@@ -60,7 +60,7 @@ namespace ue.Peak.TcnPatch.Patches
             return Unit.Instance;
         });
         
-        private static readonly Lazy<int> _languageCountLazy = new(() => Enum.GetNames(typeof(LanguageSetting.Language)).Length);
+        private static readonly Lazy<int> _languageCountLazy = new(() => Enum.GetNames(typeof(LocalizedText.Language)).Length);
         private static bool _earlyEnough;
         
         public static HashSet<string> VanillaLocalizationKeys { get; } = [];
