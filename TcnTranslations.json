@@ -879,6 +879,9 @@
         "MODDEDGAME",
         "MODWARNING",
         "USINGMODS",
-        "ROOMCODEHIDDEN"
+        "ROOMCODEHIDDEN",
+
+        // v3.0.0
+        "PARENTAL_CONTROL_INFO"
     ]
 }
