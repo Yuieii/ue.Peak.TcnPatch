@@ -11,10 +11,14 @@ namespace ue.Peak.TcnPatch
         [CanBeNull]
         private string _originalText;
 
+        private bool _forceOnNonTcn = false;
+
         public void Update(VersionString instance)
         {
+            var isTcn = LocalizedText.CURRENT_LANGUAGE == LocalizedText.Language.TraditionalChinese;
+            
             // We only want to show this when our language is Traditional Chinese
-            if (LocalizedText.CURRENT_LANGUAGE != LocalizedText.Language.TraditionalChinese) return;
+            if (!_forceOnNonTcn && !isTcn) return;
             
             // Just in case the field is missing in a future release of the game (unlikely but why not)
             var textField = Refl.VersionString.Text;
@@ -28,6 +32,14 @@ namespace ue.Peak.TcnPatch
             }
             
             text.text = _originalText;
+
+            if (!isTcn)
+            {
+                _forceOnNonTcn = false;
+                return;
+            }
+            
+            _forceOnNonTcn = true;
             
             // We only want to show this when this is not explicitly disabled
             if (!Plugin.ModConfig.ShowPatchCredit.Value) return;
